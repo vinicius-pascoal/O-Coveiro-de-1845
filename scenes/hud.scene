@@ -171,7 +171,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|18#57
+          id: font|18#64
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -296,9 +296,9 @@ entities:
         colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
         colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
         colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
-        scaleHovered: 1
-        scalePressed: 1
-        transitionTime: 0
+        scaleHovered: 1.03
+        scalePressed: 0.98
+        transitionTime: 0.08
         disabled: false
         focusable: true
       uilayout:
@@ -359,7 +359,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#57
+              id: font|18#64
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -484,9 +484,9 @@ entities:
         colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
         colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
         colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
-        scaleHovered: 1
-        scalePressed: 1
-        transitionTime: 0
+        scaleHovered: 1.03
+        scalePressed: 0.98
+        transitionTime: 0.08
         disabled: false
         focusable: true
       uilayout:
@@ -547,7 +547,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#57
+              id: font|18#64
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -672,9 +672,9 @@ entities:
         colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
         colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
         colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
-        scaleHovered: 1
-        scalePressed: 1
-        transitionTime: 0
+        scaleHovered: 1.03
+        scalePressed: 0.98
+        transitionTime: 0.08
         disabled: false
         focusable: true
       uilayout:
@@ -735,7 +735,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#57
+              id: font|18#64
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -807,7 +807,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|20#43
+          id: font|20#65
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -1158,7 +1158,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|30#17
+                  id: font|30#30
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -1188,7 +1188,7 @@ entities:
                 containerBoxIndex: -1
                 scissor: [193.25189, 103.661736, 518.5548, 371.9047]
                 ignoreScissor: false
-                ignoreEvents: false
+                ignoreEvents: true
               text:
                 font: []
                 text: Título
@@ -1230,7 +1230,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|17#16
+                  id: font|17#35
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -1260,7 +1260,7 @@ entities:
                 containerBoxIndex: -1
                 scissor: [193.25189, 103.661736, 518.5548, 371.9047]
                 ignoreScissor: false
-                ignoreEvents: false
+                ignoreEvents: true
               text:
                 font: []
                 text: Subtítulo
@@ -1302,7 +1302,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#43
+                  id: font|20#65
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -1332,7 +1332,7 @@ entities:
                 containerBoxIndex: -1
                 scissor: [193.25189, 103.661736, 518.5548, 371.9047]
                 ignoreScissor: false
-                ignoreEvents: false
+                ignoreEvents: true
               text:
                 font: []
                 text: Corpo
@@ -1427,9 +1427,9 @@ entities:
                 colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
                 colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
                 colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
-                scaleHovered: 1
-                scalePressed: 1
-                transitionTime: 0
+                scaleHovered: 1.03
+                scalePressed: 0.98
+                transitionTime: 0.08
                 disabled: false
                 focusable: true
               uilayout:
@@ -1490,7 +1490,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|20#43
+                      id: font|20#65
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -1615,9 +1615,9 @@ entities:
                 colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
                 colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
                 colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
-                scaleHovered: 1
-                scalePressed: 1
-                transitionTime: 0
+                scaleHovered: 1.03
+                scalePressed: 0.98
+                transitionTime: 0.08
                 disabled: false
                 focusable: true
               uilayout:
@@ -1678,7 +1678,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#57
+                      id: font|18#64
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -1803,9 +1803,9 @@ entities:
                 colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
                 colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
                 colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
-                scaleHovered: 1
-                scalePressed: 1
-                transitionTime: 0
+                scaleHovered: 1.03
+                scalePressed: 0.98
+                transitionTime: 0.08
                 disabled: false
                 focusable: true
               uilayout:
@@ -1866,7 +1866,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#57
+                      id: font|18#64
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -1991,9 +1991,9 @@ entities:
                 colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
                 colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
                 colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
-                scaleHovered: 1
-                scalePressed: 1
-                transitionTime: 0
+                scaleHovered: 1.03
+                scalePressed: 0.98
+                transitionTime: 0.08
                 disabled: false
                 focusable: true
               uilayout:
@@ -2054,7 +2054,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#57
+                      id: font|18#64
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2179,9 +2179,9 @@ entities:
                 colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
                 colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
                 colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
-                scaleHovered: 1
-                scalePressed: 1
-                transitionTime: 0
+                scaleHovered: 1.03
+                scalePressed: 0.98
+                transitionTime: 0.08
                 disabled: false
                 focusable: true
               uilayout:
@@ -2242,7 +2242,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#57
+                      id: font|18#64
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2357,14 +2357,14 @@ entities:
         name: OverlayTitle
         components:
           transform:
-            position: [474, 120, 0]
+            position: [474, 96, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [474, 120, 0]
+            worldPosition: [474, 96, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [474, 120, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [474, 120, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [474, 96, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [474, 96, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -2378,8 +2378,8 @@ entities:
               min: [0, 0, 0]
               max: [332, 39, 0]
             worldAABB:
-              min: [474, 120, 0]
-              max: [806, 159, 0]
+              min: [474, 96, 0]
+              max: [806, 135, 0]
             texture:
               textureType: 2D
               source: id
@@ -2405,7 +2405,7 @@ entities:
             anchorOffsetTop: 0
             anchorOffsetRight: 167
             anchorOffsetBottom: 48
-            positionOffset: [0, 120]
+            positionOffset: [0, 96]
             pivot: [0, 0]
             anchorPreset: CENTER_TOP
             usingAnchors: true
@@ -2413,7 +2413,7 @@ entities:
             containerBoxIndex: -1
             scissor: [77.104996, 78.4379, 750.84863, 422.35236]
             ignoreScissor: false
-            ignoreEvents: false
+            ignoreEvents: true
           text:
             font: []
             text: O Coveiro de 1845
@@ -2429,14 +2429,14 @@ entities:
         name: OverlaySubtitle
         components:
           transform:
-            position: [546, 186, 0]
+            position: [546, 162, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [546, 186, 0]
+            worldPosition: [546, 162, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [546, 186, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [546, 186, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [546, 162, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [546, 162, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -2450,8 +2450,8 @@ entities:
               min: [0, 0, 0]
               max: [188, 21.416666, 0]
             worldAABB:
-              min: [546, 186, 0]
-              max: [734, 207.41667, 0]
+              min: [546, 162, 0]
+              max: [734, 183.41667, 0]
             texture:
               textureType: 2D
               source: id
@@ -2477,7 +2477,7 @@ entities:
             anchorOffsetTop: 0
             anchorOffsetRight: 94
             anchorOffsetBottom: 22
-            positionOffset: [0, 186]
+            positionOffset: [0, 162]
             pivot: [0, 0]
             anchorPreset: CENTER_TOP
             usingAnchors: true
@@ -2485,13 +2485,13 @@ entities:
             containerBoxIndex: -1
             scissor: [77.104996, 78.4379, 750.84863, 422.35236]
             ignoreScissor: false
-            ignoreEvents: false
+            ignoreEvents: true
           text:
             font: []
             text: Os Nomes Esquecidos
             fontSize: 22
             multiline: true
-            maxTextSize: 200
+            maxTextSize: 300
             fixedWidth: false
             fixedHeight: false
             pivotBaseline: false
@@ -2557,7 +2557,7 @@ entities:
             containerBoxIndex: -1
             scissor: [77.104996, 78.4379, 750.84863, 422.35236]
             ignoreScissor: false
-            ignoreEvents: false
+            ignoreEvents: true
           text:
             font: []
             text: ""
@@ -2573,14 +2573,14 @@ entities:
         name: OverlayBtn1
         components:
           transform:
-            position: [430, 494, 0]
+            position: [420, 420, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [430, 494, 0]
+            worldPosition: [420, 420, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [430, 494, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [430, 494, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 420, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 420, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -2592,10 +2592,10 @@ entities:
             vertexCount: 54
             aabb:
               min: [0, 0, 0]
-              max: [420, 48, 0]
+              max: [440, 50, 0]
             worldAABB:
-              min: [430, 494, 0]
-              max: [850, 542, 0]
+              min: [420, 420, 0]
+              max: [860, 470, 0]
             texture:
               textureType: 2D
               source: path
@@ -2652,23 +2652,23 @@ entities:
             colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
             colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
             colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
-            scaleHovered: 1
-            scalePressed: 1
-            transitionTime: 0
+            scaleHovered: 1.03
+            scalePressed: 0.98
+            transitionTime: 0.08
             disabled: false
             focusable: true
           uilayout:
-            width: 420
-            height: 48
+            width: 440
+            height: 50
             anchorPointLeft: 0.5
             anchorPointTop: 1
             anchorPointRight: 0.5
             anchorPointBottom: 1
-            anchorOffsetLeft: -210
-            anchorOffsetTop: -48
-            anchorOffsetRight: 210
+            anchorOffsetLeft: -220
+            anchorOffsetTop: -50
+            anchorOffsetRight: 220
             anchorOffsetBottom: 0
-            positionOffset: [0, -178]
+            positionOffset: [0, -250]
             pivot: [0, 0]
             anchorPreset: CENTER_BOTTOM
             usingAnchors: true
@@ -2689,14 +2689,14 @@ entities:
             name: Label
             components:
               transform:
-                position: [187, 14, 0]
+                position: [197, 15, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [617, 508, 0]
+                worldPosition: [617, 435, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
-                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [187, 14, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [617, 508, 0, 1]]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [197, 15, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [617, 435, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -2710,12 +2710,12 @@ entities:
                   min: [0, 0, 0]
                   max: [47, 16.833334, 0]
                 worldAABB:
-                  min: [617, 508, 0]
-                  max: [664, 524.8333, 0]
+                  min: [617, 435, 0]
+                  max: [664, 451.83334, 0]
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#43
+                  id: font|20#65
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -2761,14 +2761,14 @@ entities:
         name: OverlayBtn2
         components:
           transform:
-            position: [430, 556, 0]
+            position: [420, 480, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [430, 556, 0]
+            worldPosition: [420, 480, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [430, 556, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [430, 556, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 480, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 480, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -2780,10 +2780,10 @@ entities:
             vertexCount: 54
             aabb:
               min: [0, 0, 0]
-              max: [420, 48, 0]
+              max: [440, 50, 0]
             worldAABB:
-              min: [430, 556, 0]
-              max: [850, 604, 0]
+              min: [420, 480, 0]
+              max: [860, 530, 0]
             texture:
               textureType: 2D
               source: path
@@ -2840,23 +2840,23 @@ entities:
             colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
             colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
             colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
-            scaleHovered: 1
-            scalePressed: 1
-            transitionTime: 0
+            scaleHovered: 1.03
+            scalePressed: 0.98
+            transitionTime: 0.08
             disabled: false
             focusable: true
           uilayout:
-            width: 420
-            height: 48
+            width: 440
+            height: 50
             anchorPointLeft: 0.5
             anchorPointTop: 1
             anchorPointRight: 0.5
             anchorPointBottom: 1
-            anchorOffsetLeft: -210
-            anchorOffsetTop: -48
-            anchorOffsetRight: 210
+            anchorOffsetLeft: -220
+            anchorOffsetTop: -50
+            anchorOffsetRight: 220
             anchorOffsetBottom: 0
-            positionOffset: [0, -116]
+            positionOffset: [0, -190]
             pivot: [0, 0]
             anchorPreset: CENTER_BOTTOM
             usingAnchors: true
@@ -2877,14 +2877,14 @@ entities:
             name: Label
             components:
               transform:
-                position: [174, 14, 0]
+                position: [184, 15, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [604, 570, 0]
+                worldPosition: [604, 495, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
-                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [174, 14, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [604, 570, 0, 1]]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [184, 15, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [604, 495, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -2898,12 +2898,12 @@ entities:
                   min: [0, 0, 0]
                   max: [72, 16.833334, 0]
                 worldAABB:
-                  min: [604, 570, 0]
-                  max: [676, 586.8333, 0]
+                  min: [604, 495, 0]
+                  max: [676, 511.83334, 0]
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#43
+                  id: font|20#65
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -2949,14 +2949,14 @@ entities:
         name: OverlayBtn3
         components:
           transform:
-            position: [430, 618, 0]
+            position: [420, 540, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [430, 618, 0]
+            worldPosition: [420, 540, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [430, 618, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [430, 618, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 540, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 540, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -2968,10 +2968,10 @@ entities:
             vertexCount: 54
             aabb:
               min: [0, 0, 0]
-              max: [420, 48, 0]
+              max: [440, 50, 0]
             worldAABB:
-              min: [430, 618, 0]
-              max: [850, 666, 0]
+              min: [420, 540, 0]
+              max: [860, 590, 0]
             texture:
               textureType: 2D
               source: path
@@ -3028,23 +3028,23 @@ entities:
             colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
             colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
             colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
-            scaleHovered: 1
-            scalePressed: 1
-            transitionTime: 0
+            scaleHovered: 1.03
+            scalePressed: 0.98
+            transitionTime: 0.08
             disabled: false
             focusable: true
           uilayout:
-            width: 420
-            height: 48
+            width: 440
+            height: 50
             anchorPointLeft: 0.5
             anchorPointTop: 1
             anchorPointRight: 0.5
             anchorPointBottom: 1
-            anchorOffsetLeft: -210
-            anchorOffsetTop: -48
-            anchorOffsetRight: 210
+            anchorOffsetLeft: -220
+            anchorOffsetTop: -50
+            anchorOffsetRight: 220
             anchorOffsetBottom: 0
-            positionOffset: [0, -54]
+            positionOffset: [0, -130]
             pivot: [0, 0]
             anchorPreset: CENTER_BOTTOM
             usingAnchors: true
@@ -3065,14 +3065,14 @@ entities:
             name: Label
             components:
               transform:
-                position: [179, 14, 0]
+                position: [189, 15, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [609, 632, 0]
+                worldPosition: [609, 555, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
-                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [179, 14, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [609, 632, 0, 1]]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [189, 15, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [609, 555, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -3086,12 +3086,12 @@ entities:
                   min: [0, 0, 0]
                   max: [63, 16.833334, 0]
                 worldAABB:
-                  min: [609, 632, 0]
-                  max: [672, 648.8333, 0]
+                  min: [609, 555, 0]
+                  max: [672, 571.8333, 0]
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#43
+                  id: font|20#65
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -3132,6 +3132,334 @@ entities:
                 fixedHeight: false
                 pivotBaseline: false
                 pivotCentered: false
+      - type: Entity
+        entity: 1060
+        name: OverlayBtn4
+        components:
+          transform:
+            position: [420, 600, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [420, 600, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 600, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 600, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [440, 50, 0]
+            worldAABB:
+              min: [420, 600, 0]
+              max: [860, 650, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          button:
+            label: 1061
+            textureNormal:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            textureHovered:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            texturePressed:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            textureDisabled:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+            colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
+            colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
+            colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+            scaleHovered: 1.03
+            scalePressed: 0.98
+            transitionTime: 0.08
+            disabled: false
+            focusable: true
+          uilayout:
+            width: 440
+            height: 50
+            anchorPointLeft: 0.5
+            anchorPointTop: 1
+            anchorPointRight: 0.5
+            anchorPointBottom: 1
+            anchorOffsetLeft: -220
+            anchorOffsetTop: -50
+            anchorOffsetRight: 220
+            anchorOffsetBottom: 0
+            positionOffset: [0, -70]
+            pivot: [0, 0]
+            anchorPreset: CENTER_BOTTOM
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            ignoreScissor: false
+            ignoreEvents: false
+          image:
+            patchMarginLeft: 6
+            patchMarginRight: 6
+            patchMarginTop: 6
+            patchMarginBottom: 6
+            textureScaleFactor: 0
+        children:
+          - type: Entity
+            entity: 1061
+            name: Label
+            components:
+              transform:
+                position: [189, 15, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [609, 615, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [189, 15, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [609, 615, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 48
+                aabb:
+                  min: [0, 0, 0]
+                  max: [63, 16.833334, 0]
+                worldAABB:
+                  min: [609, 615, 0]
+                  max: [672, 631.8333, 0]
+                texture:
+                  textureType: 2D
+                  source: id
+                  id: font|20#65
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: false
+                color: [0.9141063, 0.81262666, 0.6120656, 1]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              uilayout:
+                width: 63
+                height: 20
+                anchorPointLeft: 0.5
+                anchorPointTop: 0.5
+                anchorPointRight: 0.5
+                anchorPointBottom: 0.5
+                anchorOffsetLeft: -31
+                anchorOffsetTop: -10
+                anchorOffsetRight: 32
+                anchorOffsetBottom: 10
+                positionOffset: [0, 0]
+                pivot: [0, 0]
+                anchorPreset: CENTER
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+                ignoreScissor: false
+                ignoreEvents: true
+              text:
+                font: []
+                text: Créditos
+                fontSize: 20
+                multiline: true
+                maxTextSize: 200
+                fixedWidth: false
+                fixedHeight: false
+                pivotBaseline: false
+                pivotCentered: false
+      - type: Entity
+        entity: 1062
+        name: OverlayRule
+        components:
+          transform:
+            position: [410, 226, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [410, 226, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [410, 226, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [410, 226, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [460, 2, 0]
+            worldAABB:
+              min: [410, 226, 0]
+              max: [870, 228, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/white.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [0.8932889, 0.6814193, 0.30167657, 0.55]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 460
+            height: 2
+            anchorPointLeft: 0.5
+            anchorPointTop: 0
+            anchorPointRight: 0.5
+            anchorPointBottom: 0
+            anchorOffsetLeft: -230
+            anchorOffsetTop: 0
+            anchorOffsetRight: 230
+            anchorOffsetBottom: 2
+            positionOffset: [0, 226]
+            pivot: [0, 0]
+            anchorPreset: CENTER_TOP
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [317.61118, 211.0096, 269.8362, 1.1732025]
+            ignoreScissor: false
+            ignoreEvents: true
+          image:
+            patchMarginLeft: 0
+            patchMarginRight: 0
+            patchMarginTop: 0
+            patchMarginBottom: 0
+            textureScaleFactor: 0
+      - type: Entity
+        entity: 1063
+        name: OverlayFooter
+        components:
+          transform:
+            position: [24, 687, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [24, 687, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [24, 687, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [24, 687, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 126
+            aabb:
+              min: [0, 0, 0]
+              max: [131, 12.875, 0]
+            worldAABB:
+              min: [24, 687, 0]
+              max: [155, 699.875, 0]
+            texture:
+              textureType: 2D
+              source: id
+              id: font|15#32
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: false
+            color: [0.32503697, 0.2903519, 0.21763764, 0.9]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 131
+            height: 15
+            anchorPointLeft: 0
+            anchorPointTop: 1
+            anchorPointRight: 0
+            anchorPointBottom: 1
+            anchorOffsetLeft: 0
+            anchorOffsetTop: -15
+            anchorOffsetRight: 131
+            anchorOffsetBottom: 0
+            positionOffset: [24, -18]
+            pivot: [0, 0]
+            anchorPreset: BOTTOM_LEFT
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            ignoreScissor: false
+            ignoreEvents: true
+          text:
+            font: []
+            text: Doriax Flash Jam 2026
+            fontSize: 15
+            multiline: true
+            maxTextSize: 200
+            fixedWidth: false
+            fixedHeight: false
+            pivotBaseline: false
+            pivotCentered: false
   - type: Entity
     entity: 1059
     name: Crosshair
@@ -3204,4 +3532,4 @@ entities:
         fixedHeight: false
         pivotBaseline: false
         pivotCentered: false
-shaderKeysHash: be125efdced72e76258c68509650287fa643cb06
+shaderKeysHash: 25436c349c7cad1a6011c9f0177d147c3b7c3e48

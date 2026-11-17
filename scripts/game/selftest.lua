@@ -15,7 +15,8 @@ local function clickPanel(hud, labelPrefix)
     for i = 1, 4 do
         local name = "PanelBtn" .. i
         local btn = hud.button[name]
-        if btn.visible and hud.actions[name] and btn.label:sub(1, #labelPrefix) == labelPrefix then
+        local lbl = hud.slotLabels[name] or btn.label
+        if btn.visible and hud.actions[name] and lbl:sub(1, #labelPrefix) == labelPrefix then
             hud:handleButton(name)
             return true
         end
@@ -29,10 +30,11 @@ local function clickPanel(hud, labelPrefix)
 end
 
 local function clickOverlay(hud, labelPrefix)
-    for i = 1, 3 do
+    for i = 1, 4 do
         local name = "OverlayBtn" .. i
         local btn = hud.button[name]
-        if btn.visible and hud.actions[name] and btn.label:sub(1, #labelPrefix) == labelPrefix then
+        local lbl = hud.slotLabels[name] or btn.label
+        if btn.visible and hud.actions[name] and lbl:sub(1, #labelPrefix) == labelPrefix then
             hud:handleButton(name)
             return true
         end
@@ -89,12 +91,37 @@ function SelfTest.run(hud, endingKind)
     check(hud.overlayOpen and hud.overlayMode == "menu", "main menu expected")
     clickOverlay(hud, "Controles")
     clickOverlay(hud, "Voltar")
-    clickOverlay(hud, "Iniciar")
+    -- opções: alterna tudo e volta ao estado original
+    clickOverlay(hud, "Opções")
+    check(hud.overlayMode == "options", "options expected")
+    local Settings = require("game.settings")
+    local sens0 = Settings.sensitivityIndex
+    for _ = 1, #Settings.sensitivityLevels do clickOverlay(hud, "Sensibilidade") end
+    check(Settings.sensitivityIndex == sens0, "sensitivity should cycle back")
+    clickOverlay(hud, "Inverter"); clickOverlay(hud, "Inverter")
+    clickOverlay(hud, "Texto grande"); check(Settings.largeText, "large text on")
+    clickOverlay(hud, "Texto grande"); check(not Settings.largeText, "large text off")
+    hud:onKeyDown(Input.KEY_ESCAPE, false, 0)
+    check(hud.overlayMode == "menu", "esc should return to menu")
+    -- atalho numérico: 1 = Iniciar
+    hud:onKeyDown(Input.KEY_1, false, 0)
+    check(hud.overlayMode == "night", "key 1 should start the game")
+    -- pausa e confirmação (antes de começar a noite não há pausa; testa depois)
 
     for night = 1, 3 do
         check(hud.overlayMode == "night", "night intro expected for night " .. night)
         clickOverlay(hud, "Começar")
         check(Flow.state.phase == "playing", "phase playing expected")
+        if night == 1 then
+            hud:openPause()
+            check(hud.overlayMode == "pause", "pause expected")
+            clickOverlay(hud, "Voltar ao menu")
+            check(hud.overlayMode == "confirm", "confirm expected")
+            clickOverlay(hud, "Não, voltar")
+            check(hud.overlayMode == "pause", "back to pause expected")
+            hud:onKeyDown(Input.KEY_ESCAPE, false, 0)
+            check(not hud.overlayOpen and Flow.state.phase == "playing", "esc should resume")
+        end
         hud:openBook()
         check(hud.panelOpen, "book should open")
         clickPanel(hud, "Anotações")

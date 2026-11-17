@@ -3,6 +3,7 @@
 
 local Flow = require("game.flow")
 local N = require("game.narrative")
+local Settings = require("game.settings")
 
 local HUDController = {
     properties = {
@@ -13,12 +14,12 @@ local HUDController = {
 local TEXTS = {
     "NightText", "ObjectiveText", "HoverLabel", "Crosshair", "ToastText",
     "PanelTitle", "PanelSubtitle", "PanelBody",
-    "OverlayTitle", "OverlaySubtitle", "OverlayBody",
+    "OverlayTitle", "OverlaySubtitle", "OverlayBody", "OverlayFooter",
 }
 local BUTTONS = {
     "BtnBook", "BtnHelp", "BtnPause", "PanelClose",
     "PanelBtn1", "PanelBtn2", "PanelBtn3", "PanelBtn4",
-    "OverlayBtn1", "OverlayBtn2", "OverlayBtn3",
+    "OverlayBtn1", "OverlayBtn2", "OverlayBtn3", "OverlayBtn4",
 }
 local TOP_BAR = { "NightText", "ObjectiveText" }
 -- Botões do topo só aparecem com o cursor livre (painel aberto); na exploração o
@@ -27,10 +28,30 @@ local TOP_BUTTONS = { "BtnBook", "BtnHelp", "BtnPause" }
 local KEY_HINTS = "E ou clique: examinar   ·   L: livro   ·   H: ajuda   ·   Esc: menu"
 
 local PANEL_SLOTS = 4
-local OVERLAY_SLOTS = 3
-local BODY_SIZE = 20
-local BODY_SIZE_SMALL = 17
+local OVERLAY_SLOTS = 4
 local TOAST_SECONDS = 5.5
+
+-- Tamanhos de texto: normal / grande (opção do jogador)
+local FONT = {
+    body       = { 20, 24 },
+    bodySmall  = { 17, 21 },
+    overlay    = { 21, 25 },
+    objective  = { 18, 21 },
+    button     = { 18, 21 },
+    toast      = { 19, 22 },
+}
+local function fontSize(kind)
+    return FONT[kind][Settings.largeText and 2 or 1]
+end
+
+-- Transparência do fundo de tela cheia: menus deixam ver o cemitério, histórias cobrem a tela
+local OVERLAY_ALPHA = { menu = 0.72, options = 0.80, info = 0.86, pause = 0.78, confirm = 0.82 }
+local OVERLAY_ALPHA_DEFAULT = 0.95
+
+local FOOTER_DEFAULT = "1–4 ou clique para escolher   ·   Enter: primeira opção"
+local FOOTER_BACK = "1–4 ou clique para escolher   ·   Esc: voltar"
+
+local DIGIT_KEYS -- preenchido no init (Input só existe em tempo de execução)
 
 local KIND_LABEL = {
     book = "Livro de registros",
@@ -80,6 +101,16 @@ function HUDController:init()
     self.panelOpen = false
     self.overlayOpen = false
     self.overlayMode = nil
+    self.overlayBack = nil
+    self.slotLabels = {}
+    self.keySlots = { PanelBtn = {}, OverlayBtn = {} }
+
+    DIGIT_KEYS = {
+        [Input.KEY_1] = 1, [Input.KEY_2] = 2, [Input.KEY_3] = 3, [Input.KEY_4] = 4,
+        [Input.KEY_KP_1] = 1, [Input.KEY_KP_2] = 2, [Input.KEY_KP_3] = 3, [Input.KEY_KP_4] = 4,
+    }
+
+    self:applyTextSize()
 
     RegisterEngineEvent(self, "onUpdate")
     RegisterEngineEvent(self, "onKeyDown")
@@ -135,31 +166,47 @@ function HUDController:updateModalFlag()
     self:refreshExploreUI()
 end
 
--- Distribui os botões nos slots de baixo para cima, deixando o espaço livre para o texto
+-- Distribui os botões nos slots de baixo para cima, deixando o espaço livre para o texto.
+-- Cada opção recebe um número (atalho 1–4) na ordem em que aparece.
 local function assignButtons(self, prefix, slots, list)
     list = list or {}
     local first = slots - #list + 1
+    local keys = {}
     for i = 1, slots do
         local name = prefix .. i
         local btn = self.button[name]
-        local spec = (i >= first) and list[i - first + 1] or nil
+        local index = i - first + 1
+        local spec = (i >= first) and list[index] or nil
         if spec then
             btn.visible = true
-            btn.label = spec.label
+            btn.label = string.format("%d   %s", index, spec.label)
+            btn.labelFontSize = fontSize("button")
             btn.disabled = spec.disabled and true or false
+            self.slotLabels[name] = spec.label
             self.actions[name] = (not spec.disabled) and spec.action or nil
+            keys[index] = name
         else
             btn.visible = false
+            self.slotLabels[name] = nil
             self.actions[name] = nil
         end
     end
+    self.keySlots[prefix] = keys
+end
+
+-- Aplica o tamanho de texto escolhido nas opções
+function HUDController:applyTextSize()
+    self.text.ObjectiveText.fontSize = fontSize("objective")
+    self.text.OverlayBody.fontSize = fontSize("overlay")
+    self.text.ToastText.fontSize = fontSize("toast")
+    self.text.PanelBody.fontSize = fontSize("body")
 end
 
 -- spec = { title, subtitle, body, small, buttons = { {label, action, disabled}, ... } }
 function HUDController:showPanel(spec)
     self.text.PanelTitle.text = spec.title or ""
     self.text.PanelSubtitle.text = spec.subtitle or ""
-    self.text.PanelBody.fontSize = spec.small and BODY_SIZE_SMALL or BODY_SIZE
+    self.text.PanelBody.fontSize = fontSize(spec.small and "bodySmall" or "body")
     self.text.PanelBody.text = spec.body or ""
     assignButtons(self, "PanelBtn", PANEL_SLOTS, spec.buttons)
     self.modalDim.visible = true
@@ -170,17 +217,22 @@ end
 function HUDController:closePanel()
     self.modalDim.visible = false
     self.panelOpen = false
+    self.keySlots.PanelBtn = {}
     for i = 1, PANEL_SLOTS do self.actions["PanelBtn" .. i] = nil end
     self:updateModalFlag()
 end
 
+-- spec = { mode, title, subtitle, body, footer, back = fn (Esc), buttons = {...} }
 function HUDController:showOverlay(spec)
     self:closePanel()
     self.overlayMode = spec.mode
+    self.overlayBack = spec.back
     self.text.OverlayTitle.text = spec.title or ""
     self.text.OverlaySubtitle.text = spec.subtitle or ""
     self.text.OverlayBody.text = spec.body or ""
+    self.text.OverlayFooter.text = spec.footer or (spec.back and FOOTER_BACK or FOOTER_DEFAULT)
     assignButtons(self, "OverlayBtn", OVERLAY_SLOTS, spec.buttons)
+    self.overlayBg:setColor(0.01, 0.012, 0.02, OVERLAY_ALPHA[spec.mode] or OVERLAY_ALPHA_DEFAULT)
     self.overlayBg.visible = true
     self.overlayOpen = true
     self:setTopBarVisible(false)
@@ -192,6 +244,8 @@ function HUDController:closeOverlay()
     self.overlayBg.visible = false
     self.overlayOpen = false
     self.overlayMode = nil
+    self.overlayBack = nil
+    self.keySlots.OverlayBtn = {}
     for i = 1, OVERLAY_SLOTS do self.actions["OverlayBtn" .. i] = nil end
     self:setTopBarVisible(Flow.state.phase == "playing")
     self:updateModalFlag()
@@ -492,11 +546,13 @@ function HUDController:showMainMenu()
         title = N.menu.title,
         subtitle = N.menu.subtitle,
         body = N.menu.body,
+        footer = FOOTER_DEFAULT .. "   ·   Doriax Flash Jam 2026",
         buttons = {
             { label = "Iniciar", action = function()
                 self:closeOverlay()
                 Flow.startGame()
             end },
+            { label = "Opções", action = function() self:showOptions(function() self:showMainMenu() end) end },
             { label = "Controles", action = function() self:showInfo("Controles", N.controls, function() self:showMainMenu() end) end },
             { label = "Créditos", action = function() self:showInfo("Créditos", N.credits, function() self:showMainMenu() end) end },
         },
@@ -509,25 +565,97 @@ function HUDController:showInfo(title, body, back)
         title = title,
         subtitle = "",
         body = body,
+        back = back,
         buttons = { { label = "Voltar", action = back } },
     })
 end
 
+-- Opções: cada botão alterna um valor e a tela se redesenha com o novo estado
+function HUDController:showOptions(back)
+    local refresh = function() self:showOptions(back) end
+    self:showOverlay({
+        mode = "options",
+        title = "Opções",
+        subtitle = "Valem até fechar o jogo",
+        body = "Sensibilidade do mouse: quanto a câmera gira ao mover o mouse.\n"
+            .. "Inverter eixo vertical: mover o mouse para cima olha para baixo.\n"
+            .. "Texto grande: aumenta os textos dos painéis, documentos e avisos.",
+        back = back,
+        buttons = {
+            { label = "Sensibilidade do mouse: " .. Settings.sensitivityLabel(), action = function()
+                Settings.cycleSensitivity(); refresh()
+            end },
+            { label = "Inverter eixo vertical: " .. (Settings.invertY and "Sim" or "Não"), action = function()
+                Settings.toggleInvertY(); refresh()
+            end },
+            { label = "Texto grande: " .. (Settings.largeText and "Sim" or "Não"), action = function()
+                Settings.toggleLargeText(); self:applyTextSize(); refresh()
+            end },
+            { label = "Voltar", action = back },
+        },
+    })
+end
+
+-- Pergunta antes de uma ação que descarta o progresso
+function HUDController:confirm(title, body, yesLabel, onYes, onNo)
+    self:showOverlay({
+        mode = "confirm",
+        title = title,
+        subtitle = "",
+        body = body,
+        back = onNo,
+        buttons = {
+            { label = "Não, voltar", action = onNo },
+            { label = yesLabel, action = onYes },
+        },
+    })
+end
+
+function HUDController:pauseSummary()
+    local s = Flow.state
+    local resolvedCount, nightTotal, nightDone = 0, 0, 0
+    for _, c in ipairs(N.cases) do
+        if s.resolved[c.id] then resolvedCount = resolvedCount + 1 end
+        if c.night == s.night then
+            nightTotal = nightTotal + 1
+            if s.resolved[c.id] then nightDone = nightDone + 1 end
+        end
+    end
+    local lines = {}
+    local case = Flow.currentCase()
+    if case then
+        local readCount, total = Flow.progress(case)
+        lines[#lines + 1] = "Objetivo: " .. case.objective
+        lines[#lines + 1] = string.format("Fontes consultadas neste caso: %d de %d", readCount, total)
+    end
+    lines[#lines + 1] = string.format("Registros desta noite: %d de %d   ·   Campanha: %d de %d", nightDone, nightTotal, resolvedCount, #N.cases)
+    if s.mistakes > 0 then
+        lines[#lines + 1] = string.format("Conclusões erradas até agora: %d", s.mistakes)
+    end
+    return table.concat(lines, "\n")
+end
+
 function HUDController:openPause()
     if Flow.state.phase ~= "playing" then return end
-    local resolvedCount = 0
-    for _ in pairs(Flow.state.resolved) do resolvedCount = resolvedCount + 1 end
+    local night = N.nights[Flow.state.night]
+    local resume = function() self:closeOverlay() end
     self:showOverlay({
         mode = "pause",
         title = "Pausa",
-        subtitle = string.format("Noite %d/%d — %d de %d registros resolvidos", Flow.state.night, N.nightCount, resolvedCount, #N.cases),
-        body = "",
+        subtitle = string.format("Noite %d de %d — %s", Flow.state.night, N.nightCount, night and night.subtitle or ""),
+        body = self:pauseSummary(),
+        back = resume,
+        footer = "1–4 ou clique para escolher   ·   Esc: continuar",
         buttons = {
-            { label = "Continuar", action = function() self:closeOverlay() end },
+            { label = "Continuar", action = resume },
+            { label = "Opções", action = function() self:showOptions(function() self:openPause() end) end },
             { label = "Controles", action = function() self:showInfo("Controles", N.controls, function() self:openPause() end) end },
-            { label = "Reiniciar campanha", action = function()
-                Flow.reset()
-                self:showMainMenu()
+            { label = "Voltar ao menu principal", action = function()
+                self:confirm("Voltar ao menu principal?",
+                    "O progresso desta campanha será perdido e a história recomeça da primeira noite.",
+                    "Sim, voltar ao menu",
+                    function() Flow.reset(); self:showMainMenu() end,
+                    function() self:openPause() end)
             end },
         },
     })
@@ -544,8 +672,9 @@ function HUDController:showNightIntro(n)
     self:showOverlay({
         mode = "night",
         title = night.title,
-        subtitle = night.subtitle,
+        subtitle = string.format("%s   ·   noite %d de %d", night.subtitle, n, N.nightCount),
         body = body,
+        footer = "Enter ou 1: começar",
         buttons = { { label = "Começar a noite", action = function()
             self:closeOverlay()
             Flow.beginNight()
@@ -565,8 +694,9 @@ function HUDController:showEnding(kind, page)
     self:showOverlay({
         mode = "ending",
         title = ending.title,
-        subtitle = string.format("Epílogo — %d/%d", page, #ending.pages),
+        subtitle = string.format("Epílogo — %d de %d", page, #ending.pages),
         body = body,
+        footer = "Enter ou 1: continuar",
         buttons = { {
             label = isLast and "Créditos" or "Continuar",
             action = function()
@@ -577,23 +707,50 @@ function HUDController:showEnding(kind, page)
 end
 
 function HUDController:showCredits()
+    local ending = Flow.state.ending and N.endings[Flow.state.ending]
     self:showOverlay({
         mode = "credits",
         title = "Créditos",
-        subtitle = "Obrigado por jogar",
+        subtitle = ending and ("Final: " .. ending.title .. "   ·   obrigado por jogar") or "Obrigado por jogar",
         body = N.credits,
-        buttons = { { label = "Jogar novamente", action = function()
-            Flow.reset()
-            self:showMainMenu()
-        end } },
+        buttons = {
+            { label = "Jogar novamente", action = function()
+                Flow.reset()
+                self:showMainMenu()
+            end },
+        },
     })
 end
 
 ----------------------------------------------------------------------
 -- Eventos do motor
 ----------------------------------------------------------------------
+-- Aciona a opção numerada n do painel aberto (ou da tela cheia)
+function HUDController:pressSlot(n)
+    local prefix = self.panelOpen and "PanelBtn" or (self.overlayOpen and "OverlayBtn" or nil)
+    if not prefix then return false end
+    local name = self.keySlots[prefix][n]
+    if name and self.actions[name] then
+        self:handleButton(name)
+        return true
+    end
+    return false
+end
+
 function HUDController:onKeyDown(key, isRepeat, mods)
     if isRepeat then return end
+
+    local digit = DIGIT_KEYS and DIGIT_KEYS[key]
+    if digit then
+        self:pressSlot(digit)
+        return
+    end
+    -- Enter confirma a primeira opção das telas cheias (nos painéis não, para não escolher hipótese sem querer)
+    if (key == Input.KEY_ENTER or key == Input.KEY_KP_ENTER) and self.overlayOpen and not self.panelOpen then
+        self:pressSlot(1)
+        return
+    end
+
     local playing = Flow.state.phase == "playing" and not self.overlayOpen
     if key == Input.KEY_L and playing then
         if self.panelOpen then self:closePanel() else self:openBook() end
@@ -606,8 +763,8 @@ function HUDController:onKeyDown(key, isRepeat, mods)
     if key ~= Input.KEY_ESCAPE then return end
     if self.panelOpen then
         self:closePanel()
-    elseif self.overlayOpen and self.overlayMode == "pause" then
-        self:closeOverlay()
+    elseif self.overlayOpen and self.overlayBack then
+        self.overlayBack()
     elseif not self.overlayOpen and Flow.state.phase == "playing" then
         self:openPause()
     end

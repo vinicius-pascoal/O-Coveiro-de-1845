@@ -4,6 +4,7 @@
 -- Também aplica as mudanças visuais pedidas pelo Flow (luz do caso, velas, névoa).
 
 local Flow = require("game.flow")
+local Settings = require("game.settings")
 
 local WorldController = {
     properties = {
@@ -178,8 +179,11 @@ function WorldController:onMouseMove(x, y, mods)
         local dx, dy = x - self.lastMouse[1], y - self.lastMouse[2]
         -- saltos grandes acontecem quando o cursor é capturado/recentralizado
         if math.abs(dx) < 400 and math.abs(dy) < 400 then
-            self.yaw = (self.yaw - dx * self.mouseSensitivity) % 360
-            self.pitch = math.max(-80, math.min(80, self.pitch - dy * self.mouseSensitivity))
+            -- a opção do jogador escala a sensibilidade-base do editor (0.14 = Média)
+            local sens = self.mouseSensitivity * Settings.sensitivity() / 0.14
+            if Settings.invertY then dy = -dy end
+            self.yaw = (self.yaw - dx * sens) % 360
+            self.pitch = math.max(-80, math.min(80, self.pitch - dy * sens))
             self:applyLook()
         end
     end
