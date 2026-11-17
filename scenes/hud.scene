@@ -1,0 +1,3135 @@
+id: 2440765117
+name: HUD
+scene:
+  backgroundColor: [0.525, 0.525, 0.525, 1]
+  shadowQuality: low
+  meshLodEnabled: false
+  meshLodThreshold: 1
+  depthPrepassEnabled: false
+  lightState: off
+  globalIlluminationIntensity: 0.1
+  globalIlluminationColor: [1, 1, 1]
+  ambientLight2DIntensity: 1
+  ambientLight2DColor: [1, 1, 1]
+  shadow2DQuality: low
+  ssaoEnabled: false
+  ssaoRadius: 0.5
+  ssaoIntensity: 1
+  ssaoBias: 0.025
+  ssaoHalfResolution: false
+  ssrEnabled: false
+  ssrMaxDistance: 8
+  ssrThickness: 0.5
+  ssrMaxSteps: 48
+  ssrIntensity: 1
+  ssrBlur: 0
+  gravity2D: [0, -9.81]
+  gravity3D: [0, -9.81, 0]
+  fixedResolutionEnabled: false
+  fixedResolutionWidth: 640
+  fixedResolutionHeight: 360
+  fixedResolutionFilter: nearest
+  enableUIEvents: not_set
+sceneType: scene_ui
+mainCamera: 0
+visibilityInherited: true
+maxValues:
+  maxSubmeshes: 0
+  maxTilemapTilesRect: 0
+  maxTilemapTiles: 0
+  maxExternalBuffers: 0
+  maxSpriteFrames: 0
+  maxBones: 0
+  maxShapes2D: 0
+  maxShapePoints2D: 0
+  maxShapes3D: 0
+  maxShapeVertices3D: 0
+  maxShapeIndices3D: 0
+shaderKeys:
+  - type: ui
+    properties: 2
+  - type: ui
+    properties: 9
+  - type: blit
+entities:
+  - type: Entity
+    entity: 1022
+    name: HUDController
+    components:
+      script:
+        scripts:
+          - type: lua
+            path: hud_controller.lua
+            className: HUDController
+            enabled: true
+            properties:
+              - name: selfTest
+                displayName: Self Test
+                type: Bool
+                value: false
+                defaultValue: false
+  - type: Entity
+    entity: 1023
+    name: NightText
+    components:
+      transform:
+        position: [26, 18, 0]
+        rotation: [1, 0, 0, 0]
+        scale: [1, 1, 1]
+        worldPosition: [26, 18, 0]
+        worldRotation: [1, 0, 0, 0]
+        worldScale: [1, 1, 1]
+        localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [26, 18, 0, 1]]
+        modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [26, 18, 0, 1]]
+        normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        visible: true
+        billboardRotation: [1, 0, 0, 0]
+        billboard: false
+        fakeBillboard: false
+        cylindricalBillboard: false
+      ui:
+        primitiveType: triangles
+        vertexCount: 54
+        aabb:
+          min: [0, 0, 0]
+          max: [98, 24.166666, 0]
+        worldAABB:
+          min: [26, 18, 0]
+          max: [124, 42.166664, 0]
+        texture:
+          textureType: 2D
+          source: id
+          id: font|28#19
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: false
+        color: [0.8932889, 0.6814193, 0.30167657, 1]
+        automaticFlipY: true
+        flipY: false
+        pointerMoved: false
+        focused: false
+      uilayout:
+        width: 99
+        height: 28
+        anchorPointLeft: 0
+        anchorPointTop: 0
+        anchorPointRight: 0
+        anchorPointBottom: 0
+        anchorOffsetLeft: 0
+        anchorOffsetTop: 0
+        anchorOffsetRight: 99
+        anchorOffsetBottom: 28
+        positionOffset: [26, 18]
+        pivot: [0, 0]
+        anchorPreset: TOP_LEFT
+        usingAnchors: true
+        panel: 0
+        containerBoxIndex: -1
+        scissor: [0, 0, 0, 0]
+        ignoreScissor: false
+        ignoreEvents: false
+      text:
+        font: []
+        text: Noite 1/3
+        fontSize: 28
+        multiline: true
+        maxTextSize: 200
+        fixedWidth: false
+        fixedHeight: false
+        pivotBaseline: false
+        pivotCentered: false
+  - type: Entity
+    entity: 1024
+    name: ObjectiveText
+    components:
+      transform:
+        position: [26, 58, 0]
+        rotation: [1, 0, 0, 0]
+        scale: [1, 1, 1]
+        worldPosition: [26, 58, 0]
+        worldRotation: [1, 0, 0, 0]
+        worldScale: [1, 1, 1]
+        localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [26, 58, 0, 1]]
+        modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [26, 58, 0, 1]]
+        normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        visible: true
+        billboardRotation: [1, 0, 0, 0]
+        billboard: false
+        fakeBillboard: false
+        cylindricalBillboard: false
+      ui:
+        primitiveType: triangles
+        vertexCount: 48
+        aabb:
+          min: [0, 0, 0]
+          max: [56, 18.25, 0]
+        worldAABB:
+          min: [26, 58, 0]
+          max: [82, 76.25, 0]
+        texture:
+          textureType: 2D
+          source: id
+          id: font|18#52
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: false
+        color: [0.7176234, 0.7176234, 0.6814193, 1]
+        automaticFlipY: true
+        flipY: false
+        pointerMoved: false
+        focused: false
+      uilayout:
+        width: 640
+        height: 18
+        anchorPointLeft: 0
+        anchorPointTop: 0
+        anchorPointRight: 0
+        anchorPointBottom: 0
+        anchorOffsetLeft: 0
+        anchorOffsetTop: 0
+        anchorOffsetRight: 640
+        anchorOffsetBottom: 18
+        positionOffset: [26, 58]
+        pivot: [0, 0]
+        anchorPreset: TOP_LEFT
+        usingAnchors: true
+        panel: 0
+        containerBoxIndex: -1
+        scissor: [0, 0, 0, 0]
+        ignoreScissor: false
+        ignoreEvents: false
+      text:
+        font: []
+        text: Objetivo
+        fontSize: 18
+        multiline: true
+        maxTextSize: 400
+        fixedWidth: true
+        fixedHeight: false
+        pivotBaseline: false
+        pivotCentered: false
+  - type: Entity
+    entity: 1025
+    name: BtnPause
+    components:
+      transform:
+        position: [1140, 18, 0]
+        rotation: [1, 0, 0, 0]
+        scale: [1, 1, 1]
+        worldPosition: [1140, 18, 0]
+        worldRotation: [1, 0, 0, 0]
+        worldScale: [1, 1, 1]
+        localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1140, 18, 0, 1]]
+        modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1140, 18, 0, 1]]
+        normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        visible: true
+        billboardRotation: [1, 0, 0, 0]
+        billboard: false
+        fakeBillboard: false
+        cylindricalBillboard: false
+      ui:
+        primitiveType: triangles
+        vertexCount: 54
+        aabb:
+          min: [0, 0, 0]
+          max: [120, 42, 0]
+        worldAABB:
+          min: [1140, 18, 0]
+          max: [1260, 60, 0]
+        texture:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+        automaticFlipY: true
+        flipY: false
+        pointerMoved: false
+        focused: false
+      button:
+        label: 1026
+        textureNormal:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        textureHovered:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        texturePressed:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        textureDisabled:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+        colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
+        colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
+        colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+        scaleHovered: 1
+        scalePressed: 1
+        transitionTime: 0
+        disabled: false
+        focusable: true
+      uilayout:
+        width: 120
+        height: 42
+        anchorPointLeft: 1
+        anchorPointTop: 0
+        anchorPointRight: 1
+        anchorPointBottom: 0
+        anchorOffsetLeft: -120
+        anchorOffsetTop: 0
+        anchorOffsetRight: 0
+        anchorOffsetBottom: 42
+        positionOffset: [-20, 18]
+        pivot: [0, 0]
+        anchorPreset: TOP_RIGHT
+        usingAnchors: true
+        panel: 0
+        containerBoxIndex: -1
+        scissor: [0, 0, 0, 0]
+        ignoreScissor: false
+        ignoreEvents: false
+      image:
+        patchMarginLeft: 6
+        patchMarginRight: 6
+        patchMarginTop: 6
+        patchMarginBottom: 6
+        textureScaleFactor: 0
+    children:
+      - type: Entity
+        entity: 1026
+        name: Label
+        components:
+          transform:
+            position: [41, 12, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [1181, 30, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [41, 12, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1181, 30, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 24
+            aabb:
+              min: [0, 0, 0]
+              max: [38, 15.25, 0]
+            worldAABB:
+              min: [1181, 30, 0]
+              max: [1219, 45.25, 0]
+            texture:
+              textureType: 2D
+              source: id
+              id: font|18#52
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: false
+            color: [0.9141063, 0.81262666, 0.6120656, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 38
+            height: 18
+            anchorPointLeft: 0.5
+            anchorPointTop: 0.5
+            anchorPointRight: 0.5
+            anchorPointBottom: 0.5
+            anchorOffsetLeft: -19
+            anchorOffsetTop: -9
+            anchorOffsetRight: 19
+            anchorOffsetBottom: 9
+            positionOffset: [0, 0]
+            pivot: [0, 0]
+            anchorPreset: CENTER
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [0, 0, 0, 0]
+            ignoreScissor: false
+            ignoreEvents: true
+          text:
+            font: []
+            text: Menu
+            fontSize: 18
+            multiline: true
+            maxTextSize: 200
+            fixedWidth: false
+            fixedHeight: false
+            pivotBaseline: false
+            pivotCentered: false
+  - type: Entity
+    entity: 1027
+    name: BtnHelp
+    components:
+      transform:
+        position: [1010, 18, 0]
+        rotation: [1, 0, 0, 0]
+        scale: [1, 1, 1]
+        worldPosition: [1010, 18, 0]
+        worldRotation: [1, 0, 0, 0]
+        worldScale: [1, 1, 1]
+        localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1010, 18, 0, 1]]
+        modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1010, 18, 0, 1]]
+        normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        visible: true
+        billboardRotation: [1, 0, 0, 0]
+        billboard: false
+        fakeBillboard: false
+        cylindricalBillboard: false
+      ui:
+        primitiveType: triangles
+        vertexCount: 54
+        aabb:
+          min: [0, 0, 0]
+          max: [120, 42, 0]
+        worldAABB:
+          min: [1010, 18, 0]
+          max: [1130, 60, 0]
+        texture:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+        automaticFlipY: true
+        flipY: false
+        pointerMoved: false
+        focused: false
+      button:
+        label: 1028
+        textureNormal:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        textureHovered:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        texturePressed:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        textureDisabled:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+        colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
+        colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
+        colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+        scaleHovered: 1
+        scalePressed: 1
+        transitionTime: 0
+        disabled: false
+        focusable: true
+      uilayout:
+        width: 120
+        height: 42
+        anchorPointLeft: 1
+        anchorPointTop: 0
+        anchorPointRight: 1
+        anchorPointBottom: 0
+        anchorOffsetLeft: -120
+        anchorOffsetTop: 0
+        anchorOffsetRight: 0
+        anchorOffsetBottom: 42
+        positionOffset: [-150, 18]
+        pivot: [0, 0]
+        anchorPreset: TOP_RIGHT
+        usingAnchors: true
+        panel: 0
+        containerBoxIndex: -1
+        scissor: [0, 0, 0, 0]
+        ignoreScissor: false
+        ignoreEvents: false
+      image:
+        patchMarginLeft: 6
+        patchMarginRight: 6
+        patchMarginTop: 6
+        patchMarginBottom: 6
+        textureScaleFactor: 0
+    children:
+      - type: Entity
+        entity: 1028
+        name: Label
+        components:
+          transform:
+            position: [41, 12, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [1051, 30, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [41, 12, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1051, 30, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 30
+            aabb:
+              min: [0, 0, 0]
+              max: [39, 18.25, 0]
+            worldAABB:
+              min: [1051, 30, 0]
+              max: [1090, 48.25, 0]
+            texture:
+              textureType: 2D
+              source: id
+              id: font|18#52
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: false
+            color: [0.9141063, 0.81262666, 0.6120656, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 39
+            height: 18
+            anchorPointLeft: 0.5
+            anchorPointTop: 0.5
+            anchorPointRight: 0.5
+            anchorPointBottom: 0.5
+            anchorOffsetLeft: -19
+            anchorOffsetTop: -9
+            anchorOffsetRight: 20
+            anchorOffsetBottom: 9
+            positionOffset: [0, 0]
+            pivot: [0, 0]
+            anchorPreset: CENTER
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [0, 0, 0, 0]
+            ignoreScissor: false
+            ignoreEvents: true
+          text:
+            font: []
+            text: Ajuda
+            fontSize: 18
+            multiline: true
+            maxTextSize: 200
+            fixedWidth: false
+            fixedHeight: false
+            pivotBaseline: false
+            pivotCentered: false
+  - type: Entity
+    entity: 1029
+    name: BtnBook
+    components:
+      transform:
+        position: [880, 18, 0]
+        rotation: [1, 0, 0, 0]
+        scale: [1, 1, 1]
+        worldPosition: [880, 18, 0]
+        worldRotation: [1, 0, 0, 0]
+        worldScale: [1, 1, 1]
+        localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [880, 18, 0, 1]]
+        modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [880, 18, 0, 1]]
+        normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        visible: true
+        billboardRotation: [1, 0, 0, 0]
+        billboard: false
+        fakeBillboard: false
+        cylindricalBillboard: false
+      ui:
+        primitiveType: triangles
+        vertexCount: 54
+        aabb:
+          min: [0, 0, 0]
+          max: [120, 42, 0]
+        worldAABB:
+          min: [880, 18, 0]
+          max: [1000, 60, 0]
+        texture:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+        automaticFlipY: true
+        flipY: false
+        pointerMoved: false
+        focused: false
+      button:
+        label: 1030
+        textureNormal:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        textureHovered:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        texturePressed:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        textureDisabled:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+        colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
+        colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
+        colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+        scaleHovered: 1
+        scalePressed: 1
+        transitionTime: 0
+        disabled: false
+        focusable: true
+      uilayout:
+        width: 120
+        height: 42
+        anchorPointLeft: 1
+        anchorPointTop: 0
+        anchorPointRight: 1
+        anchorPointBottom: 0
+        anchorOffsetLeft: -120
+        anchorOffsetTop: 0
+        anchorOffsetRight: 0
+        anchorOffsetBottom: 42
+        positionOffset: [-280, 18]
+        pivot: [0, 0]
+        anchorPreset: TOP_RIGHT
+        usingAnchors: true
+        panel: 0
+        containerBoxIndex: -1
+        scissor: [0, 0, 0, 0]
+        ignoreScissor: false
+        ignoreEvents: false
+      image:
+        patchMarginLeft: 6
+        patchMarginRight: 6
+        patchMarginTop: 6
+        patchMarginBottom: 6
+        textureScaleFactor: 0
+    children:
+      - type: Entity
+        entity: 1030
+        name: Label
+        components:
+          transform:
+            position: [43, 12, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [923, 30, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [43, 12, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [923, 30, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 30
+            aabb:
+              min: [0, 0, 0]
+              max: [34, 15.25, 0]
+            worldAABB:
+              min: [923, 30, 0]
+              max: [957, 45.25, 0]
+            texture:
+              textureType: 2D
+              source: id
+              id: font|18#52
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: false
+            color: [0.9141063, 0.81262666, 0.6120656, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 34
+            height: 18
+            anchorPointLeft: 0.5
+            anchorPointTop: 0.5
+            anchorPointRight: 0.5
+            anchorPointBottom: 0.5
+            anchorOffsetLeft: -17
+            anchorOffsetTop: -9
+            anchorOffsetRight: 17
+            anchorOffsetBottom: 9
+            positionOffset: [0, 0]
+            pivot: [0, 0]
+            anchorPreset: CENTER
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [0, 0, 0, 0]
+            ignoreScissor: false
+            ignoreEvents: true
+          text:
+            font: []
+            text: Livro
+            fontSize: 18
+            multiline: true
+            maxTextSize: 200
+            fixedWidth: false
+            fixedHeight: false
+            pivotBaseline: false
+            pivotCentered: false
+  - type: Entity
+    entity: 1031
+    name: HoverLabel
+    components:
+      transform:
+        position: [0, 0, 0]
+        rotation: [1, 0, 0, 0]
+        scale: [1, 1, 1]
+        worldPosition: [0, 0, 0]
+        worldRotation: [1, 0, 0, 0]
+        worldScale: [1, 1, 1]
+        localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        visible: true
+        billboardRotation: [1, 0, 0, 0]
+        billboard: false
+        fakeBillboard: false
+        cylindricalBillboard: false
+      ui:
+        primitiveType: triangles
+        vertexCount: 3
+        aabb:
+          min: [0, 0, 0]
+          max: [0, 14.25, 0]
+        worldAABB:
+          min: [0, 0, 0]
+          max: [0, 14.25, 0]
+        texture:
+          textureType: 2D
+          source: id
+          id: font|18#52
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: false
+        color: [0.8932889, 0.6814193, 0.30167657, 1]
+        automaticFlipY: true
+        flipY: false
+        pointerMoved: false
+        focused: false
+      uilayout:
+        width: 0
+        height: 18
+        anchorPointLeft: 0
+        anchorPointTop: 0
+        anchorPointRight: 0
+        anchorPointBottom: 0
+        anchorOffsetLeft: 0
+        anchorOffsetTop: 0
+        anchorOffsetRight: 0
+        anchorOffsetBottom: 18
+        positionOffset: [0, 0]
+        pivot: [0, 0]
+        anchorPreset: TOP_LEFT
+        usingAnchors: true
+        panel: 0
+        containerBoxIndex: -1
+        scissor: [0, 0, 0, 0]
+        ignoreScissor: false
+        ignoreEvents: false
+      text:
+        font: []
+        text: ""
+        fontSize: 18
+        multiline: true
+        maxTextSize: 120
+        fixedWidth: false
+        fixedHeight: false
+        pivotBaseline: false
+        pivotCentered: false
+  - type: Entity
+    entity: 1032
+    name: ToastBg
+    components:
+      transform:
+        position: [170, 620, 0]
+        rotation: [1, 0, 0, 0]
+        scale: [1, 1, 1]
+        worldPosition: [170, 620, 0]
+        worldRotation: [1, 0, 0, 0]
+        worldScale: [1, 1, 1]
+        localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [170, 620, 0, 1]]
+        modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [170, 620, 0, 1]]
+        normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        visible: true
+        billboardRotation: [1, 0, 0, 0]
+        billboard: false
+        fakeBillboard: false
+        cylindricalBillboard: false
+      ui:
+        primitiveType: triangles
+        vertexCount: 54
+        aabb:
+          min: [0, 0, 0]
+          max: [940, 74, 0]
+        worldAABB:
+          min: [170, 620, 0]
+          max: [1110, 694, 0]
+        texture:
+          textureType: 2D
+          source: path
+          path: ui/panel.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        color: [0.003861873, 0.0028788277, 0.0020508445, 0.92]
+        automaticFlipY: true
+        flipY: false
+        pointerMoved: false
+        focused: false
+      uilayout:
+        width: 940
+        height: 74
+        anchorPointLeft: 0.5
+        anchorPointTop: 1
+        anchorPointRight: 0.5
+        anchorPointBottom: 1
+        anchorOffsetLeft: -470
+        anchorOffsetTop: -74
+        anchorOffsetRight: 470
+        anchorOffsetBottom: 0
+        positionOffset: [0, -26]
+        pivot: [0, 0]
+        anchorPreset: CENTER_BOTTOM
+        usingAnchors: true
+        panel: 0
+        containerBoxIndex: -1
+        scissor: [180.34666, 445.64978, 544.36523, 36.369232]
+        ignoreScissor: false
+        ignoreEvents: false
+      image:
+        patchMarginLeft: 6
+        patchMarginRight: 6
+        patchMarginTop: 6
+        patchMarginBottom: 6
+        textureScaleFactor: 0
+    children:
+      - type: Entity
+        entity: 1033
+        name: ToastText
+        components:
+          transform:
+            position: [28, 20, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [198, 640, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [28, 20, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [198, 640, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 3
+            aabb:
+              min: [0, 0, 0]
+              max: [0, 15.041666, 0]
+            worldAABB:
+              min: [198, 640, 0]
+              max: [198, 655.0417, 0]
+            texture:
+              textureType: 2D
+              source: id
+              id: font|19#29
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: false
+            color: [0.8932889, 0.8324022, 0.7176234, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 896
+            height: 19
+            anchorPointLeft: 0
+            anchorPointTop: 0
+            anchorPointRight: 0
+            anchorPointBottom: 0
+            anchorOffsetLeft: 0
+            anchorOffsetTop: 0
+            anchorOffsetRight: 896
+            anchorOffsetBottom: 19
+            positionOffset: [22, 14]
+            pivot: [0, 0]
+            anchorPreset: TOP_LEFT
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [180.34666, 445.64978, 544.36523, 36.369232]
+            ignoreScissor: false
+            ignoreEvents: false
+          text:
+            font: []
+            text: ""
+            fontSize: 19
+            multiline: true
+            maxTextSize: 500
+            fixedWidth: true
+            fixedHeight: false
+            pivotBaseline: false
+            pivotCentered: false
+  - type: Entity
+    entity: 1034
+    name: ModalDim
+    components:
+      transform:
+        position: [0, 0, 0]
+        rotation: [1, 0, 0, 0]
+        scale: [1, 1, 1]
+        worldPosition: [0, 0, 0]
+        worldRotation: [1, 0, 0, 0]
+        worldScale: [1, 1, 1]
+        localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        visible: true
+        billboardRotation: [1, 0, 0, 0]
+        billboard: false
+        fakeBillboard: false
+        cylindricalBillboard: false
+      ui:
+        primitiveType: triangles
+        vertexCount: 54
+        aabb:
+          min: [0, 0, 0]
+          max: [1280, 720, 0]
+        worldAABB:
+          min: [0, 0, 0]
+          max: [1280, 720, 0]
+        texture:
+          textureType: 2D
+          source: path
+          path: ui/white.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        color: [0, 0, 0, 0.55]
+        automaticFlipY: true
+        flipY: false
+        pointerMoved: false
+        focused: false
+      uilayout:
+        width: 1280
+        height: 720
+        anchorPointLeft: 0
+        anchorPointTop: 0
+        anchorPointRight: 1
+        anchorPointBottom: 1
+        anchorOffsetLeft: 0
+        anchorOffsetTop: 0
+        anchorOffsetRight: 0
+        anchorOffsetBottom: 0
+        positionOffset: [0, 0]
+        pivot: [0, 0]
+        anchorPreset: FULL_LAYOUT
+        usingAnchors: true
+        panel: 0
+        containerBoxIndex: -1
+        scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+        ignoreScissor: false
+        ignoreEvents: false
+      image:
+        patchMarginLeft: 0
+        patchMarginRight: 0
+        patchMarginTop: 0
+        patchMarginBottom: 0
+        textureScaleFactor: 0
+    children:
+      - type: Entity
+        entity: 1035
+        name: PanelBg
+        components:
+          transform:
+            position: [190, 35, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [190, 35, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [190, 35, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [190, 35, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [900, 650, 0]
+            worldAABB:
+              min: [190, 35, 0]
+              max: [1090, 685, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [0.0153957475, 0.010308656, 0.0063095735, 0.98]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 900
+            height: 650
+            anchorPointLeft: 0.5
+            anchorPointTop: 0.5
+            anchorPointRight: 0.5
+            anchorPointBottom: 0.5
+            anchorOffsetLeft: -450
+            anchorOffsetTop: -325
+            anchorOffsetRight: 450
+            anchorOffsetBottom: 325
+            positionOffset: [0, 0]
+            pivot: [0, 0]
+            anchorPreset: CENTER
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+            ignoreScissor: false
+            ignoreEvents: false
+          image:
+            patchMarginLeft: 8
+            patchMarginRight: 8
+            patchMarginTop: 8
+            patchMarginBottom: 8
+            textureScaleFactor: 0
+        children:
+          - type: Entity
+            entity: 1036
+            name: PanelTitle
+            components:
+              transform:
+                position: [44, 34, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [234, 69, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [44, 34, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [234, 69, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 36
+                aabb:
+                  min: [0, 0, 0]
+                  max: [64, 24.75, 0]
+                worldAABB:
+                  min: [234, 69, 0]
+                  max: [298, 93.75, 0]
+                texture:
+                  textureType: 2D
+                  source: id
+                  id: font|30#18
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: false
+                color: [0.8932889, 0.6814193, 0.30167657, 1]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              uilayout:
+                width: 760
+                height: 30
+                anchorPointLeft: 0
+                anchorPointTop: 0
+                anchorPointRight: 0
+                anchorPointBottom: 0
+                anchorOffsetLeft: 0
+                anchorOffsetTop: 0
+                anchorOffsetRight: 760
+                anchorOffsetBottom: 30
+                positionOffset: [36, 26]
+                pivot: [0, 0]
+                anchorPreset: TOP_LEFT
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                ignoreScissor: false
+                ignoreEvents: false
+              text:
+                font: []
+                text: Título
+                fontSize: 30
+                multiline: true
+                maxTextSize: 200
+                fixedWidth: true
+                fixedHeight: false
+                pivotBaseline: false
+                pivotCentered: false
+          - type: Entity
+            entity: 1037
+            name: PanelSubtitle
+            components:
+              transform:
+                position: [44, 76, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [234, 111, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [44, 76, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [234, 111, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 54
+                aabb:
+                  min: [0, 0, 0]
+                  max: [57, 14.458334, 0]
+                worldAABB:
+                  min: [234, 111, 0]
+                  max: [291, 125.458336, 0]
+                texture:
+                  textureType: 2D
+                  source: id
+                  id: font|17#17
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: false
+                color: [0.48543546, 0.40086365, 0.26840952, 1]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              uilayout:
+                width: 828
+                height: 17
+                anchorPointLeft: 0
+                anchorPointTop: 0
+                anchorPointRight: 0
+                anchorPointBottom: 0
+                anchorOffsetLeft: 0
+                anchorOffsetTop: 0
+                anchorOffsetRight: 828
+                anchorOffsetBottom: 17
+                positionOffset: [36, 68]
+                pivot: [0, 0]
+                anchorPreset: TOP_LEFT
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                ignoreScissor: false
+                ignoreEvents: false
+              text:
+                font: []
+                text: Subtítulo
+                fontSize: 17
+                multiline: true
+                maxTextSize: 200
+                fixedWidth: true
+                fixedHeight: false
+                pivotBaseline: false
+                pivotCentered: false
+          - type: Entity
+            entity: 1038
+            name: PanelBody
+            components:
+              transform:
+                position: [44, 112, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [234, 147, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [44, 112, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [234, 147, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 30
+                aabb:
+                  min: [0, 0, 0]
+                  max: [45, 19.833334, 0]
+                worldAABB:
+                  min: [234, 147, 0]
+                  max: [279, 166.83333, 0]
+                texture:
+                  textureType: 2D
+                  source: id
+                  id: font|20#44
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: false
+                color: [0.8524374, 0.81262666, 0.7176234, 1]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              uilayout:
+                width: 828
+                height: 20
+                anchorPointLeft: 0
+                anchorPointTop: 0
+                anchorPointRight: 0
+                anchorPointBottom: 0
+                anchorOffsetLeft: 0
+                anchorOffsetTop: 0
+                anchorOffsetRight: 828
+                anchorOffsetBottom: 20
+                positionOffset: [36, 104]
+                pivot: [0, 0]
+                anchorPreset: TOP_LEFT
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                ignoreScissor: false
+                ignoreEvents: false
+              text:
+                font: []
+                text: Corpo
+                fontSize: 20
+                multiline: true
+                maxTextSize: 2000
+                fixedWidth: true
+                fixedHeight: false
+                pivotBaseline: false
+                pivotCentered: false
+          - type: Entity
+            entity: 1039
+            name: PanelClose
+            components:
+              transform:
+                position: [828, 26, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [1018, 61, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [828, 26, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1018, 61, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 54
+                aabb:
+                  min: [0, 0, 0]
+                  max: [46, 42, 0]
+                worldAABB:
+                  min: [1018, 61, 0]
+                  max: [1064, 103, 0]
+                texture:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              button:
+                label: 1040
+                textureNormal:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                textureHovered:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                texturePressed:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                textureDisabled:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
+                colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
+                colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+                scaleHovered: 1
+                scalePressed: 1
+                transitionTime: 0
+                disabled: false
+                focusable: true
+              uilayout:
+                width: 46
+                height: 42
+                anchorPointLeft: 1
+                anchorPointTop: 0
+                anchorPointRight: 1
+                anchorPointBottom: 0
+                anchorOffsetLeft: -46
+                anchorOffsetTop: 0
+                anchorOffsetRight: 0
+                anchorOffsetBottom: 42
+                positionOffset: [-18, 18]
+                pivot: [0, 0]
+                anchorPreset: TOP_RIGHT
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                ignoreScissor: false
+                ignoreEvents: false
+              image:
+                patchMarginLeft: 6
+                patchMarginRight: 6
+                patchMarginTop: 6
+                patchMarginBottom: 6
+                textureScaleFactor: 0
+            children:
+              - type: Entity
+                entity: 1040
+                name: Label
+                components:
+                  transform:
+                    position: [18, 11, 0]
+                    rotation: [1, 0, 0, 0]
+                    scale: [1, 1, 1]
+                    worldPosition: [1036, 72, 0]
+                    worldRotation: [1, 0, 0, 0]
+                    worldScale: [1, 1, 1]
+                    localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [18, 11, 0, 1]]
+                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1036, 72, 0, 1]]
+                    normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                    visible: true
+                    billboardRotation: [1, 0, 0, 0]
+                    billboard: false
+                    fakeBillboard: false
+                    cylindricalBillboard: false
+                  ui:
+                    primitiveType: triangles
+                    vertexCount: 6
+                    aabb:
+                      min: [0, 0, 0]
+                      max: [11, 15.833334, 0]
+                    worldAABB:
+                      min: [1036, 72, 0]
+                      max: [1047, 87.833336, 0]
+                    texture:
+                      textureType: 2D
+                      source: id
+                      id: font|20#44
+                      minFilter: linear
+                      magFilter: linear
+                      wrapU: repeat
+                      wrapV: repeat
+                      releaseDataAfterLoad: false
+                    color: [0.9141063, 0.81262666, 0.6120656, 1]
+                    automaticFlipY: true
+                    flipY: false
+                    pointerMoved: false
+                    focused: false
+                  uilayout:
+                    width: 11
+                    height: 20
+                    anchorPointLeft: 0.5
+                    anchorPointTop: 0.5
+                    anchorPointRight: 0.5
+                    anchorPointBottom: 0.5
+                    anchorOffsetLeft: -5
+                    anchorOffsetTop: -10
+                    anchorOffsetRight: 6
+                    anchorOffsetBottom: 10
+                    positionOffset: [0, 0]
+                    pivot: [0, 0]
+                    anchorPreset: CENTER
+                    usingAnchors: true
+                    panel: 0
+                    containerBoxIndex: -1
+                    scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                    ignoreScissor: false
+                    ignoreEvents: true
+                  text:
+                    font: []
+                    text: X
+                    fontSize: 20
+                    multiline: true
+                    maxTextSize: 200
+                    fixedWidth: false
+                    fixedHeight: false
+                    pivotBaseline: false
+                    pivotCentered: false
+          - type: Entity
+            entity: 1041
+            name: PanelBtn1
+            components:
+              transform:
+                position: [44, 410, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [234, 445, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [44, 410, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [234, 445, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 54
+                aabb:
+                  min: [0, 0, 0]
+                  max: [828, 46, 0]
+                worldAABB:
+                  min: [234, 445, 0]
+                  max: [1062, 491, 0]
+                texture:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              button:
+                label: 1042
+                textureNormal:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                textureHovered:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                texturePressed:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                textureDisabled:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
+                colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
+                colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+                scaleHovered: 1
+                scalePressed: 1
+                transitionTime: 0
+                disabled: false
+                focusable: true
+              uilayout:
+                width: 828
+                height: 46
+                anchorPointLeft: 0
+                anchorPointTop: 1
+                anchorPointRight: 0
+                anchorPointBottom: 1
+                anchorOffsetLeft: 0
+                anchorOffsetTop: -46
+                anchorOffsetRight: 828
+                anchorOffsetBottom: 0
+                positionOffset: [36, -186]
+                pivot: [0, 0]
+                anchorPreset: BOTTOM_LEFT
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                ignoreScissor: false
+                ignoreEvents: false
+              image:
+                patchMarginLeft: 6
+                patchMarginRight: 6
+                patchMarginTop: 6
+                patchMarginBottom: 6
+                textureScaleFactor: 0
+            children:
+              - type: Entity
+                entity: 1042
+                name: Label
+                components:
+                  transform:
+                    position: [386, 14, 0]
+                    rotation: [1, 0, 0, 0]
+                    scale: [1, 1, 1]
+                    worldPosition: [620, 459, 0]
+                    worldRotation: [1, 0, 0, 0]
+                    worldScale: [1, 1, 1]
+                    localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [386, 14, 0, 1]]
+                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [620, 459, 0, 1]]
+                    normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                    visible: true
+                    billboardRotation: [1, 0, 0, 0]
+                    billboard: false
+                    fakeBillboard: false
+                    cylindricalBillboard: false
+                  ui:
+                    primitiveType: triangles
+                    vertexCount: 42
+                    aabb:
+                      min: [0, 0, 0]
+                      max: [54, 18.25, 0]
+                    worldAABB:
+                      min: [620, 459, 0]
+                      max: [674, 477.25, 0]
+                    texture:
+                      textureType: 2D
+                      source: id
+                      id: font|18#52
+                      minFilter: linear
+                      magFilter: linear
+                      wrapU: repeat
+                      wrapV: repeat
+                      releaseDataAfterLoad: false
+                    color: [0.9141063, 0.81262666, 0.6120656, 1]
+                    automaticFlipY: true
+                    flipY: false
+                    pointerMoved: false
+                    focused: false
+                  uilayout:
+                    width: 56
+                    height: 18
+                    anchorPointLeft: 0.5
+                    anchorPointTop: 0.5
+                    anchorPointRight: 0.5
+                    anchorPointBottom: 0.5
+                    anchorOffsetLeft: -28
+                    anchorOffsetTop: -9
+                    anchorOffsetRight: 28
+                    anchorOffsetBottom: 9
+                    positionOffset: [0, 0]
+                    pivot: [0, 0]
+                    anchorPreset: CENTER
+                    usingAnchors: true
+                    panel: 0
+                    containerBoxIndex: -1
+                    scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                    ignoreScissor: false
+                    ignoreEvents: true
+                  text:
+                    font: []
+                    text: Opção 1
+                    fontSize: 18
+                    multiline: true
+                    maxTextSize: 200
+                    fixedWidth: false
+                    fixedHeight: false
+                    pivotBaseline: false
+                    pivotCentered: false
+          - type: Entity
+            entity: 1043
+            name: PanelBtn2
+            components:
+              transform:
+                position: [44, 464, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [234, 499, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [44, 464, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [234, 499, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 54
+                aabb:
+                  min: [0, 0, 0]
+                  max: [828, 46, 0]
+                worldAABB:
+                  min: [234, 499, 0]
+                  max: [1062, 545, 0]
+                texture:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              button:
+                label: 1044
+                textureNormal:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                textureHovered:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                texturePressed:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                textureDisabled:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
+                colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
+                colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+                scaleHovered: 1
+                scalePressed: 1
+                transitionTime: 0
+                disabled: false
+                focusable: true
+              uilayout:
+                width: 828
+                height: 46
+                anchorPointLeft: 0
+                anchorPointTop: 1
+                anchorPointRight: 0
+                anchorPointBottom: 1
+                anchorOffsetLeft: 0
+                anchorOffsetTop: -46
+                anchorOffsetRight: 828
+                anchorOffsetBottom: 0
+                positionOffset: [36, -132]
+                pivot: [0, 0]
+                anchorPreset: BOTTOM_LEFT
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                ignoreScissor: false
+                ignoreEvents: false
+              image:
+                patchMarginLeft: 6
+                patchMarginRight: 6
+                patchMarginTop: 6
+                patchMarginBottom: 6
+                textureScaleFactor: 0
+            children:
+              - type: Entity
+                entity: 1044
+                name: Label
+                components:
+                  transform:
+                    position: [386, 14, 0]
+                    rotation: [1, 0, 0, 0]
+                    scale: [1, 1, 1]
+                    worldPosition: [620, 513, 0]
+                    worldRotation: [1, 0, 0, 0]
+                    worldScale: [1, 1, 1]
+                    localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [386, 14, 0, 1]]
+                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [620, 513, 0, 1]]
+                    normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                    visible: true
+                    billboardRotation: [1, 0, 0, 0]
+                    billboard: false
+                    fakeBillboard: false
+                    cylindricalBillboard: false
+                  ui:
+                    primitiveType: triangles
+                    vertexCount: 42
+                    aabb:
+                      min: [0, 0, 0]
+                      max: [57, 18.25, 0]
+                    worldAABB:
+                      min: [620, 513, 0]
+                      max: [677, 531.25, 0]
+                    texture:
+                      textureType: 2D
+                      source: id
+                      id: font|18#52
+                      minFilter: linear
+                      magFilter: linear
+                      wrapU: repeat
+                      wrapV: repeat
+                      releaseDataAfterLoad: false
+                    color: [0.9141063, 0.81262666, 0.6120656, 1]
+                    automaticFlipY: true
+                    flipY: false
+                    pointerMoved: false
+                    focused: false
+                  uilayout:
+                    width: 57
+                    height: 18
+                    anchorPointLeft: 0.5
+                    anchorPointTop: 0.5
+                    anchorPointRight: 0.5
+                    anchorPointBottom: 0.5
+                    anchorOffsetLeft: -28
+                    anchorOffsetTop: -9
+                    anchorOffsetRight: 29
+                    anchorOffsetBottom: 9
+                    positionOffset: [0, 0]
+                    pivot: [0, 0]
+                    anchorPreset: CENTER
+                    usingAnchors: true
+                    panel: 0
+                    containerBoxIndex: -1
+                    scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                    ignoreScissor: false
+                    ignoreEvents: true
+                  text:
+                    font: []
+                    text: Opção 2
+                    fontSize: 18
+                    multiline: true
+                    maxTextSize: 200
+                    fixedWidth: false
+                    fixedHeight: false
+                    pivotBaseline: false
+                    pivotCentered: false
+          - type: Entity
+            entity: 1045
+            name: PanelBtn3
+            components:
+              transform:
+                position: [44, 518, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [234, 553, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [44, 518, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [234, 553, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 54
+                aabb:
+                  min: [0, 0, 0]
+                  max: [828, 46, 0]
+                worldAABB:
+                  min: [234, 553, 0]
+                  max: [1062, 599, 0]
+                texture:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              button:
+                label: 1046
+                textureNormal:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                textureHovered:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                texturePressed:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                textureDisabled:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
+                colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
+                colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+                scaleHovered: 1
+                scalePressed: 1
+                transitionTime: 0
+                disabled: false
+                focusable: true
+              uilayout:
+                width: 828
+                height: 46
+                anchorPointLeft: 0
+                anchorPointTop: 1
+                anchorPointRight: 0
+                anchorPointBottom: 1
+                anchorOffsetLeft: 0
+                anchorOffsetTop: -46
+                anchorOffsetRight: 828
+                anchorOffsetBottom: 0
+                positionOffset: [36, -78]
+                pivot: [0, 0]
+                anchorPreset: BOTTOM_LEFT
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                ignoreScissor: false
+                ignoreEvents: false
+              image:
+                patchMarginLeft: 6
+                patchMarginRight: 6
+                patchMarginTop: 6
+                patchMarginBottom: 6
+                textureScaleFactor: 0
+            children:
+              - type: Entity
+                entity: 1046
+                name: Label
+                components:
+                  transform:
+                    position: [386, 14, 0]
+                    rotation: [1, 0, 0, 0]
+                    scale: [1, 1, 1]
+                    worldPosition: [620, 567, 0]
+                    worldRotation: [1, 0, 0, 0]
+                    worldScale: [1, 1, 1]
+                    localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [386, 14, 0, 1]]
+                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [620, 567, 0, 1]]
+                    normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                    visible: true
+                    billboardRotation: [1, 0, 0, 0]
+                    billboard: false
+                    fakeBillboard: false
+                    cylindricalBillboard: false
+                  ui:
+                    primitiveType: triangles
+                    vertexCount: 42
+                    aabb:
+                      min: [0, 0, 0]
+                      max: [56, 18.25, 0]
+                    worldAABB:
+                      min: [620, 567, 0]
+                      max: [676, 585.25, 0]
+                    texture:
+                      textureType: 2D
+                      source: id
+                      id: font|18#52
+                      minFilter: linear
+                      magFilter: linear
+                      wrapU: repeat
+                      wrapV: repeat
+                      releaseDataAfterLoad: false
+                    color: [0.9141063, 0.81262666, 0.6120656, 1]
+                    automaticFlipY: true
+                    flipY: false
+                    pointerMoved: false
+                    focused: false
+                  uilayout:
+                    width: 56
+                    height: 18
+                    anchorPointLeft: 0.5
+                    anchorPointTop: 0.5
+                    anchorPointRight: 0.5
+                    anchorPointBottom: 0.5
+                    anchorOffsetLeft: -28
+                    anchorOffsetTop: -9
+                    anchorOffsetRight: 28
+                    anchorOffsetBottom: 9
+                    positionOffset: [0, 0]
+                    pivot: [0, 0]
+                    anchorPreset: CENTER
+                    usingAnchors: true
+                    panel: 0
+                    containerBoxIndex: -1
+                    scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                    ignoreScissor: false
+                    ignoreEvents: true
+                  text:
+                    font: []
+                    text: Opção 3
+                    fontSize: 18
+                    multiline: true
+                    maxTextSize: 200
+                    fixedWidth: false
+                    fixedHeight: false
+                    pivotBaseline: false
+                    pivotCentered: false
+          - type: Entity
+            entity: 1047
+            name: PanelBtn4
+            components:
+              transform:
+                position: [44, 572, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [234, 607, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [44, 572, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [234, 607, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 54
+                aabb:
+                  min: [0, 0, 0]
+                  max: [828, 46, 0]
+                worldAABB:
+                  min: [234, 607, 0]
+                  max: [1062, 653, 0]
+                texture:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              button:
+                label: 1048
+                textureNormal:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                textureHovered:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                texturePressed:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                textureDisabled:
+                  textureType: 2D
+                  source: path
+                  path: ui/panel.png
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
+                colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
+                colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+                scaleHovered: 1
+                scalePressed: 1
+                transitionTime: 0
+                disabled: false
+                focusable: true
+              uilayout:
+                width: 828
+                height: 46
+                anchorPointLeft: 0
+                anchorPointTop: 1
+                anchorPointRight: 0
+                anchorPointBottom: 1
+                anchorOffsetLeft: 0
+                anchorOffsetTop: -46
+                anchorOffsetRight: 828
+                anchorOffsetBottom: 0
+                positionOffset: [36, -24]
+                pivot: [0, 0]
+                anchorPreset: BOTTOM_LEFT
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                ignoreScissor: false
+                ignoreEvents: false
+              image:
+                patchMarginLeft: 6
+                patchMarginRight: 6
+                patchMarginTop: 6
+                patchMarginBottom: 6
+                textureScaleFactor: 0
+            children:
+              - type: Entity
+                entity: 1048
+                name: Label
+                components:
+                  transform:
+                    position: [386, 14, 0]
+                    rotation: [1, 0, 0, 0]
+                    scale: [1, 1, 1]
+                    worldPosition: [620, 621, 0]
+                    worldRotation: [1, 0, 0, 0]
+                    worldScale: [1, 1, 1]
+                    localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [386, 14, 0, 1]]
+                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [620, 621, 0, 1]]
+                    normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                    visible: true
+                    billboardRotation: [1, 0, 0, 0]
+                    billboard: false
+                    fakeBillboard: false
+                    cylindricalBillboard: false
+                  ui:
+                    primitiveType: triangles
+                    vertexCount: 42
+                    aabb:
+                      min: [0, 0, 0]
+                      max: [57, 18.25, 0]
+                    worldAABB:
+                      min: [620, 621, 0]
+                      max: [677, 639.25, 0]
+                    texture:
+                      textureType: 2D
+                      source: id
+                      id: font|18#52
+                      minFilter: linear
+                      magFilter: linear
+                      wrapU: repeat
+                      wrapV: repeat
+                      releaseDataAfterLoad: false
+                    color: [0.9141063, 0.81262666, 0.6120656, 1]
+                    automaticFlipY: true
+                    flipY: false
+                    pointerMoved: false
+                    focused: false
+                  uilayout:
+                    width: 57
+                    height: 18
+                    anchorPointLeft: 0.5
+                    anchorPointTop: 0.5
+                    anchorPointRight: 0.5
+                    anchorPointBottom: 0.5
+                    anchorOffsetLeft: -28
+                    anchorOffsetTop: -9
+                    anchorOffsetRight: 29
+                    anchorOffsetBottom: 9
+                    positionOffset: [0, 0]
+                    pivot: [0, 0]
+                    anchorPreset: CENTER
+                    usingAnchors: true
+                    panel: 0
+                    containerBoxIndex: -1
+                    scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                    ignoreScissor: false
+                    ignoreEvents: true
+                  text:
+                    font: []
+                    text: Opção 4
+                    fontSize: 18
+                    multiline: true
+                    maxTextSize: 200
+                    fixedWidth: false
+                    fixedHeight: false
+                    pivotBaseline: false
+                    pivotCentered: false
+  - type: Entity
+    entity: 1049
+    name: OverlayBg
+    components:
+      transform:
+        position: [0, 0, 0]
+        rotation: [1, 0, 0, 0]
+        scale: [1, 1, 1]
+        worldPosition: [0, 0, 0]
+        worldRotation: [1, 0, 0, 0]
+        worldScale: [1, 1, 1]
+        localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        visible: true
+        billboardRotation: [1, 0, 0, 0]
+        billboard: false
+        fakeBillboard: false
+        cylindricalBillboard: false
+      ui:
+        primitiveType: triangles
+        vertexCount: 54
+        aabb:
+          min: [0, 0, 0]
+          max: [1280, 720, 0]
+        worldAABB:
+          min: [0, 0, 0]
+          max: [1280, 720, 0]
+        texture:
+          textureType: 2D
+          source: path
+          path: ui/white.png
+          minFilter: linear
+          magFilter: linear
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        color: [0.002, 0.002, 0.004, 0.97]
+        automaticFlipY: true
+        flipY: false
+        pointerMoved: false
+        focused: false
+      uilayout:
+        width: 1280
+        height: 720
+        anchorPointLeft: 0
+        anchorPointTop: 0
+        anchorPointRight: 1
+        anchorPointBottom: 1
+        anchorOffsetLeft: 0
+        anchorOffsetTop: 0
+        anchorOffsetRight: 0
+        anchorOffsetBottom: 0
+        positionOffset: [0, 0]
+        pivot: [0, 0]
+        anchorPreset: FULL_LAYOUT
+        usingAnchors: true
+        panel: 0
+        containerBoxIndex: -1
+        scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+        ignoreScissor: false
+        ignoreEvents: false
+      image:
+        patchMarginLeft: 0
+        patchMarginRight: 0
+        patchMarginTop: 0
+        patchMarginBottom: 0
+        textureScaleFactor: 0
+    children:
+      - type: Entity
+        entity: 1050
+        name: OverlayTitle
+        components:
+          transform:
+            position: [474, 120, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [474, 120, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [474, 120, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [474, 120, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 102
+            aabb:
+              min: [0, 0, 0]
+              max: [332, 39, 0]
+            worldAABB:
+              min: [474, 120, 0]
+              max: [806, 159, 0]
+            texture:
+              textureType: 2D
+              source: id
+              id: font|48#14
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: false
+            color: [0.8932889, 0.6814193, 0.30167657, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 333
+            height: 48
+            anchorPointLeft: 0.5
+            anchorPointTop: 0
+            anchorPointRight: 0.5
+            anchorPointBottom: 0
+            anchorOffsetLeft: -166
+            anchorOffsetTop: 0
+            anchorOffsetRight: 167
+            anchorOffsetBottom: 48
+            positionOffset: [0, 120]
+            pivot: [0, 0]
+            anchorPreset: CENTER_TOP
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            ignoreScissor: false
+            ignoreEvents: false
+          text:
+            font: []
+            text: O Coveiro de 1845
+            fontSize: 48
+            multiline: true
+            maxTextSize: 120
+            fixedWidth: false
+            fixedHeight: false
+            pivotBaseline: false
+            pivotCentered: false
+      - type: Entity
+        entity: 1051
+        name: OverlaySubtitle
+        components:
+          transform:
+            position: [546, 186, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [546, 186, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [546, 186, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [546, 186, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 114
+            aabb:
+              min: [0, 0, 0]
+              max: [188, 21.416666, 0]
+            worldAABB:
+              min: [546, 186, 0]
+              max: [734, 207.41667, 0]
+            texture:
+              textureType: 2D
+              source: id
+              id: font|22#14
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: false
+            color: [0.53104925, 0.45626345, 0.32503697, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 188
+            height: 22
+            anchorPointLeft: 0.5
+            anchorPointTop: 0
+            anchorPointRight: 0.5
+            anchorPointBottom: 0
+            anchorOffsetLeft: -94
+            anchorOffsetTop: 0
+            anchorOffsetRight: 94
+            anchorOffsetBottom: 22
+            positionOffset: [0, 186]
+            pivot: [0, 0]
+            anchorPreset: CENTER_TOP
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            ignoreScissor: false
+            ignoreEvents: false
+          text:
+            font: []
+            text: Os Nomes Esquecidos
+            fontSize: 22
+            multiline: true
+            maxTextSize: 200
+            fixedWidth: false
+            fixedHeight: false
+            pivotBaseline: false
+            pivotCentered: false
+      - type: Entity
+        entity: 1052
+        name: OverlayBody
+        components:
+          transform:
+            position: [190, 250, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [190, 250, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [190, 250, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [190, 250, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 3
+            aabb:
+              min: [0, 0, 0]
+              max: [0, 16.625, 0]
+            worldAABB:
+              min: [190, 250, 0]
+              max: [190, 266.625, 0]
+            texture:
+              textureType: 2D
+              source: id
+              id: font|21#40
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: false
+            color: [0.8324022, 0.7931102, 0.7176234, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 900
+            height: 21
+            anchorPointLeft: 0.5
+            anchorPointTop: 0
+            anchorPointRight: 0.5
+            anchorPointBottom: 0
+            anchorOffsetLeft: -450
+            anchorOffsetTop: 0
+            anchorOffsetRight: 450
+            anchorOffsetBottom: 21
+            positionOffset: [0, 250]
+            pivot: [0, 0]
+            anchorPreset: CENTER_TOP
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            ignoreScissor: false
+            ignoreEvents: false
+          text:
+            font: []
+            text: ""
+            fontSize: 21
+            multiline: true
+            maxTextSize: 2400
+            fixedWidth: true
+            fixedHeight: false
+            pivotBaseline: false
+            pivotCentered: false
+      - type: Entity
+        entity: 1053
+        name: OverlayBtn1
+        components:
+          transform:
+            position: [430, 494, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [430, 494, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [430, 494, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [430, 494, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [420, 48, 0]
+            worldAABB:
+              min: [430, 494, 0]
+              max: [850, 542, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          button:
+            label: 1054
+            textureNormal:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            textureHovered:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            texturePressed:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            textureDisabled:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+            colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
+            colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
+            colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+            scaleHovered: 1
+            scalePressed: 1
+            transitionTime: 0
+            disabled: false
+            focusable: true
+          uilayout:
+            width: 420
+            height: 48
+            anchorPointLeft: 0.5
+            anchorPointTop: 1
+            anchorPointRight: 0.5
+            anchorPointBottom: 1
+            anchorOffsetLeft: -210
+            anchorOffsetTop: -48
+            anchorOffsetRight: 210
+            anchorOffsetBottom: 0
+            positionOffset: [0, -178]
+            pivot: [0, 0]
+            anchorPreset: CENTER_BOTTOM
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            ignoreScissor: false
+            ignoreEvents: false
+          image:
+            patchMarginLeft: 6
+            patchMarginRight: 6
+            patchMarginTop: 6
+            patchMarginBottom: 6
+            textureScaleFactor: 0
+        children:
+          - type: Entity
+            entity: 1054
+            name: Label
+            components:
+              transform:
+                position: [187, 14, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [617, 508, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [187, 14, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [617, 508, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 42
+                aabb:
+                  min: [0, 0, 0]
+                  max: [47, 16.833334, 0]
+                worldAABB:
+                  min: [617, 508, 0]
+                  max: [664, 524.8333, 0]
+                texture:
+                  textureType: 2D
+                  source: id
+                  id: font|20#44
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: false
+                color: [0.9141063, 0.81262666, 0.6120656, 1]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              uilayout:
+                width: 47
+                height: 20
+                anchorPointLeft: 0.5
+                anchorPointTop: 0.5
+                anchorPointRight: 0.5
+                anchorPointBottom: 0.5
+                anchorOffsetLeft: -23
+                anchorOffsetTop: -10
+                anchorOffsetRight: 24
+                anchorOffsetBottom: 10
+                positionOffset: [0, 0]
+                pivot: [0, 0]
+                anchorPreset: CENTER
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+                ignoreScissor: false
+                ignoreEvents: true
+              text:
+                font: []
+                text: Iniciar
+                fontSize: 20
+                multiline: true
+                maxTextSize: 200
+                fixedWidth: false
+                fixedHeight: false
+                pivotBaseline: false
+                pivotCentered: false
+      - type: Entity
+        entity: 1055
+        name: OverlayBtn2
+        components:
+          transform:
+            position: [430, 556, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [430, 556, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [430, 556, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [430, 556, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [420, 48, 0]
+            worldAABB:
+              min: [430, 556, 0]
+              max: [850, 604, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          button:
+            label: 1056
+            textureNormal:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            textureHovered:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            texturePressed:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            textureDisabled:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+            colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
+            colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
+            colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+            scaleHovered: 1
+            scalePressed: 1
+            transitionTime: 0
+            disabled: false
+            focusable: true
+          uilayout:
+            width: 420
+            height: 48
+            anchorPointLeft: 0.5
+            anchorPointTop: 1
+            anchorPointRight: 0.5
+            anchorPointBottom: 1
+            anchorOffsetLeft: -210
+            anchorOffsetTop: -48
+            anchorOffsetRight: 210
+            anchorOffsetBottom: 0
+            positionOffset: [0, -116]
+            pivot: [0, 0]
+            anchorPreset: CENTER_BOTTOM
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            ignoreScissor: false
+            ignoreEvents: false
+          image:
+            patchMarginLeft: 6
+            patchMarginRight: 6
+            patchMarginTop: 6
+            patchMarginBottom: 6
+            textureScaleFactor: 0
+        children:
+          - type: Entity
+            entity: 1056
+            name: Label
+            components:
+              transform:
+                position: [174, 14, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [604, 570, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [174, 14, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [604, 570, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 54
+                aabb:
+                  min: [0, 0, 0]
+                  max: [72, 16.833334, 0]
+                worldAABB:
+                  min: [604, 570, 0]
+                  max: [676, 586.8333, 0]
+                texture:
+                  textureType: 2D
+                  source: id
+                  id: font|20#44
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: false
+                color: [0.9141063, 0.81262666, 0.6120656, 1]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              uilayout:
+                width: 73
+                height: 20
+                anchorPointLeft: 0.5
+                anchorPointTop: 0.5
+                anchorPointRight: 0.5
+                anchorPointBottom: 0.5
+                anchorOffsetLeft: -36
+                anchorOffsetTop: -10
+                anchorOffsetRight: 37
+                anchorOffsetBottom: 10
+                positionOffset: [0, 0]
+                pivot: [0, 0]
+                anchorPreset: CENTER
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+                ignoreScissor: false
+                ignoreEvents: true
+              text:
+                font: []
+                text: Controles
+                fontSize: 20
+                multiline: true
+                maxTextSize: 200
+                fixedWidth: false
+                fixedHeight: false
+                pivotBaseline: false
+                pivotCentered: false
+      - type: Entity
+        entity: 1057
+        name: OverlayBtn3
+        components:
+          transform:
+            position: [430, 618, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [430, 618, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [430, 618, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [430, 618, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [420, 48, 0]
+            worldAABB:
+              min: [430, 618, 0]
+              max: [850, 666, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          button:
+            label: 1058
+            textureNormal:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            textureHovered:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            texturePressed:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            textureDisabled:
+              textureType: 2D
+              source: path
+              path: ui/panel.png
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+            colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
+            colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
+            colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+            scaleHovered: 1
+            scalePressed: 1
+            transitionTime: 0
+            disabled: false
+            focusable: true
+          uilayout:
+            width: 420
+            height: 48
+            anchorPointLeft: 0.5
+            anchorPointTop: 1
+            anchorPointRight: 0.5
+            anchorPointBottom: 1
+            anchorOffsetLeft: -210
+            anchorOffsetTop: -48
+            anchorOffsetRight: 210
+            anchorOffsetBottom: 0
+            positionOffset: [0, -54]
+            pivot: [0, 0]
+            anchorPreset: CENTER_BOTTOM
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            ignoreScissor: false
+            ignoreEvents: false
+          image:
+            patchMarginLeft: 6
+            patchMarginRight: 6
+            patchMarginTop: 6
+            patchMarginBottom: 6
+            textureScaleFactor: 0
+        children:
+          - type: Entity
+            entity: 1058
+            name: Label
+            components:
+              transform:
+                position: [179, 14, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [609, 632, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [179, 14, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [609, 632, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 48
+                aabb:
+                  min: [0, 0, 0]
+                  max: [63, 16.833334, 0]
+                worldAABB:
+                  min: [609, 632, 0]
+                  max: [672, 648.8333, 0]
+                texture:
+                  textureType: 2D
+                  source: id
+                  id: font|20#44
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: false
+                color: [0.9141063, 0.81262666, 0.6120656, 1]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              uilayout:
+                width: 63
+                height: 20
+                anchorPointLeft: 0.5
+                anchorPointTop: 0.5
+                anchorPointRight: 0.5
+                anchorPointBottom: 0.5
+                anchorOffsetLeft: -31
+                anchorOffsetTop: -10
+                anchorOffsetRight: 32
+                anchorOffsetBottom: 10
+                positionOffset: [0, 0]
+                pivot: [0, 0]
+                anchorPreset: CENTER
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+                ignoreScissor: false
+                ignoreEvents: true
+              text:
+                font: []
+                text: Créditos
+                fontSize: 20
+                multiline: true
+                maxTextSize: 200
+                fixedWidth: false
+                fixedHeight: false
+                pivotBaseline: false
+                pivotCentered: false
+shaderKeysHash: 40ffd0455b88365a2a71389e33644d46cbe8be51

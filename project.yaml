@@ -8,5 +8,9 @@ windowMode: windowed
 windowWidth: 1280
 windowHeight: 720
 windowResizable: true
-luaDir: .
-scenes: ~
+assetsDir: assets
+luaDir: scripts
+startSceneId: 1203324547
+scenes:
+  - filepath: scenes/world.scene
+  - filepath: scenes/hud.scene
