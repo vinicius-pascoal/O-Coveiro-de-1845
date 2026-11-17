@@ -69,6 +69,74 @@ entities:
                 value: false
                 defaultValue: false
   - type: Entity
+    entity: 1069
+    name: TopBarBg
+    components:
+      transform:
+        position: [10, 8, 0]
+        rotation: [1, 0, 0, 0]
+        scale: [1, 1, 1]
+        worldPosition: [10, 8, 0]
+        worldRotation: [1, 0, 0, 0]
+        worldScale: [1, 1, 1]
+        localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [10, 8, 0, 1]]
+        modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [10, 8, 0, 1]]
+        normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        visible: true
+        billboardRotation: [1, 0, 0, 0]
+        billboard: false
+        fakeBillboard: false
+        cylindricalBillboard: false
+      ui:
+        primitiveType: triangles
+        vertexCount: 54
+        aabb:
+          min: [0, 0, 0]
+          max: [700, 150, 0]
+        worldAABB:
+          min: [10, 8, 0]
+          max: [710, 158, 0]
+        texture:
+          textureType: 2D
+          source: path
+          path: ui/horror/toast.png
+          minFilter: nearest
+          magFilter: nearest
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        color: [1, 1, 1, 0.85]
+        automaticFlipY: true
+        flipY: false
+        pointerMoved: false
+        focused: false
+      uilayout:
+        width: 700
+        height: 150
+        anchorPointLeft: 0
+        anchorPointTop: 0
+        anchorPointRight: 0
+        anchorPointBottom: 0
+        anchorOffsetLeft: 0
+        anchorOffsetTop: 0
+        anchorOffsetRight: 700
+        anchorOffsetBottom: 150
+        positionOffset: [10, 8]
+        pivot: [0, 0]
+        anchorPreset: TOP_LEFT
+        usingAnchors: true
+        panel: 0
+        containerBoxIndex: -1
+        scissor: [97.04941, 97.20913, 382.4635, 59.833244]
+        ignoreScissor: false
+        ignoreEvents: true
+      image:
+        patchMarginLeft: 24
+        patchMarginRight: 24
+        patchMarginTop: 24
+        patchMarginBottom: 24
+        textureScaleFactor: 0
+  - type: Entity
     entity: 1023
     name: NightText
     components:
@@ -171,7 +239,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|18#65
+          id: font|18#66
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -243,13 +311,13 @@ entities:
         texture:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_normal.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
-        color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+        color: [1, 1, 1, 1]
         automaticFlipY: true
         flipY: false
         pointerMoved: false
@@ -259,43 +327,43 @@ entities:
         textureNormal:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_normal.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
         textureHovered:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_hover.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
         texturePressed:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_pressed.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
         textureDisabled:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_disabled.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
-        colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
-        colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
-        colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
-        colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+        colorNormal: [1, 1, 1, 1]
+        colorHovered: [1, 1, 1, 1]
+        colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+        colorDisabled: [1, 1, 1, 0.6]
         scaleHovered: 1.03
         scalePressed: 0.98
         transitionTime: 0.08
@@ -322,10 +390,10 @@ entities:
         ignoreScissor: false
         ignoreEvents: false
       image:
-        patchMarginLeft: 6
-        patchMarginRight: 6
-        patchMarginTop: 6
-        patchMarginBottom: 6
+        patchMarginLeft: 15
+        patchMarginRight: 15
+        patchMarginTop: 15
+        patchMarginBottom: 15
         textureScaleFactor: 0
     children:
       - type: Entity
@@ -359,13 +427,13 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#65
+              id: font|18#66
               minFilter: linear
               magFilter: linear
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: false
-            color: [0.9141063, 0.81262666, 0.6120656, 1]
+            color: [0.8524374, 0.7361094, 0.6120656, 1]
             automaticFlipY: true
             flipY: false
             pointerMoved: false
@@ -431,13 +499,13 @@ entities:
         texture:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_normal.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
-        color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+        color: [1, 1, 1, 1]
         automaticFlipY: true
         flipY: false
         pointerMoved: false
@@ -447,43 +515,43 @@ entities:
         textureNormal:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_normal.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
         textureHovered:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_hover.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
         texturePressed:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_pressed.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
         textureDisabled:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_disabled.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
-        colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
-        colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
-        colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
-        colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+        colorNormal: [1, 1, 1, 1]
+        colorHovered: [1, 1, 1, 1]
+        colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+        colorDisabled: [1, 1, 1, 0.6]
         scaleHovered: 1.03
         scalePressed: 0.98
         transitionTime: 0.08
@@ -510,10 +578,10 @@ entities:
         ignoreScissor: false
         ignoreEvents: false
       image:
-        patchMarginLeft: 6
-        patchMarginRight: 6
-        patchMarginTop: 6
-        patchMarginBottom: 6
+        patchMarginLeft: 15
+        patchMarginRight: 15
+        patchMarginTop: 15
+        patchMarginBottom: 15
         textureScaleFactor: 0
     children:
       - type: Entity
@@ -547,13 +615,13 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#65
+              id: font|18#66
               minFilter: linear
               magFilter: linear
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: false
-            color: [0.9141063, 0.81262666, 0.6120656, 1]
+            color: [0.8524374, 0.7361094, 0.6120656, 1]
             automaticFlipY: true
             flipY: false
             pointerMoved: false
@@ -619,13 +687,13 @@ entities:
         texture:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_normal.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
-        color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+        color: [1, 1, 1, 1]
         automaticFlipY: true
         flipY: false
         pointerMoved: false
@@ -635,43 +703,43 @@ entities:
         textureNormal:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_normal.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
         textureHovered:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_hover.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
         texturePressed:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_pressed.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
         textureDisabled:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/btn_disabled.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
-        colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
-        colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
-        colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
-        colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+        colorNormal: [1, 1, 1, 1]
+        colorHovered: [1, 1, 1, 1]
+        colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+        colorDisabled: [1, 1, 1, 0.6]
         scaleHovered: 1.03
         scalePressed: 0.98
         transitionTime: 0.08
@@ -698,10 +766,10 @@ entities:
         ignoreScissor: false
         ignoreEvents: false
       image:
-        patchMarginLeft: 6
-        patchMarginRight: 6
-        patchMarginTop: 6
-        patchMarginBottom: 6
+        patchMarginLeft: 15
+        patchMarginRight: 15
+        patchMarginTop: 15
+        patchMarginBottom: 15
         textureScaleFactor: 0
     children:
       - type: Entity
@@ -735,13 +803,13 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#65
+              id: font|18#66
               minFilter: linear
               magFilter: linear
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: false
-            color: [0.9141063, 0.81262666, 0.6120656, 1]
+            color: [0.8524374, 0.7361094, 0.6120656, 1]
             automaticFlipY: true
             flipY: false
             pointerMoved: false
@@ -879,13 +947,13 @@ entities:
         texture:
           textureType: 2D
           source: path
-          path: ui/panel.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/toast.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
-        color: [0.003861873, 0.0028788277, 0.0020508445, 0.92]
+        color: [1, 1, 1, 0.96]
         automaticFlipY: true
         flipY: false
         pointerMoved: false
@@ -907,14 +975,14 @@ entities:
         usingAnchors: true
         panel: 0
         containerBoxIndex: -1
-        scissor: [180.34666, 445.64978, 544.36523, 36.369232]
+        scissor: [190.90547, 456.2086, 523.2476, 15.251617]
         ignoreScissor: false
         ignoreEvents: true
       image:
-        patchMarginLeft: 6
-        patchMarginRight: 6
-        patchMarginTop: 6
-        patchMarginBottom: 6
+        patchMarginLeft: 24
+        patchMarginRight: 24
+        patchMarginTop: 24
+        patchMarginBottom: 24
         textureScaleFactor: 0
     children:
       - type: Entity
@@ -922,14 +990,14 @@ entities:
         name: ToastText
         components:
           transform:
-            position: [28, 20, 0]
+            position: [54, 42, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [198, 640, 0]
+            worldPosition: [224, 662, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [28, 20, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [198, 640, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [54, 42, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [224, 662, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -943,12 +1011,12 @@ entities:
               min: [0, 0, 0]
               max: [0, 15.041666, 0]
             worldAABB:
-              min: [198, 640, 0]
-              max: [198, 655.0417, 0]
+              min: [224, 662, 0]
+              max: [224, 677.0417, 0]
             texture:
               textureType: 2D
               source: id
-              id: font|19#35
+              id: font|19#38
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -960,7 +1028,7 @@ entities:
             pointerMoved: false
             focused: false
           uilayout:
-            width: 896
+            width: 836
             height: 19
             anchorPointLeft: 0
             anchorPointTop: 0
@@ -968,15 +1036,15 @@ entities:
             anchorPointBottom: 0
             anchorOffsetLeft: 0
             anchorOffsetTop: 0
-            anchorOffsetRight: 896
+            anchorOffsetRight: 836
             anchorOffsetBottom: 19
-            positionOffset: [22, 14]
+            positionOffset: [30, 18]
             pivot: [0, 0]
             anchorPreset: TOP_LEFT
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [180.34666, 445.64978, 544.36523, 36.369232]
+            scissor: [190.90547, 456.2086, 523.2476, 15.251617]
             ignoreScissor: false
             ignoreEvents: true
           text:
@@ -989,6 +1057,142 @@ entities:
             fixedHeight: false
             pivotBaseline: false
             pivotCentered: false
+      - type: Entity
+        entity: 1067
+        name: ToastGhost
+        components:
+          transform:
+            position: [46, 15, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [216, 635, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [46, 15, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [216, 635, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [33, 44, 0]
+            worldAABB:
+              min: [216, 635, 0]
+              max: [249, 679, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/horror/ghost.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [1, 1, 1, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 33
+            height: 44
+            anchorPointLeft: 0
+            anchorPointTop: 0.5
+            anchorPointRight: 0
+            anchorPointBottom: 0.5
+            anchorOffsetLeft: 0
+            anchorOffsetTop: -22
+            anchorOffsetRight: 33
+            anchorOffsetBottom: 22
+            positionOffset: [22, 0]
+            pivot: [0, 0]
+            anchorPreset: CENTER_LEFT
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [203.8107, 456.2086, 19.357834, 15.251617]
+            ignoreScissor: false
+            ignoreEvents: true
+          image:
+            patchMarginLeft: 0
+            patchMarginRight: 0
+            patchMarginTop: 0
+            patchMarginBottom: 0
+            textureScaleFactor: 0
+      - type: Entity
+        entity: 1068
+        name: ToastCandle
+        components:
+          transform:
+            position: [46, 16, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [216, 636, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [46, 16, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [216, 636, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [34, 38, 0]
+            worldAABB:
+              min: [216, 636, 0]
+              max: [250, 674, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/horror/candle.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [1, 1, 1, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 34
+            height: 38
+            anchorPointLeft: 0
+            anchorPointTop: 0.5
+            anchorPointRight: 0
+            anchorPointBottom: 0.5
+            anchorOffsetLeft: 0
+            anchorOffsetTop: -19
+            anchorOffsetRight: 34
+            anchorOffsetBottom: 19
+            positionOffset: [22, -2]
+            pivot: [0, 0]
+            anchorPreset: CENTER_LEFT
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [203.8107, 456.2086, 19.944412, 15.251617]
+            ignoreScissor: false
+            ignoreEvents: true
+          image:
+            patchMarginLeft: 0
+            patchMarginRight: 0
+            patchMarginTop: 0
+            patchMarginBottom: 0
+            textureScaleFactor: 0
   - type: Entity
     entity: 1034
     name: ModalDim
@@ -1089,13 +1293,13 @@ entities:
             texture:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/panel_dark.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
-            color: [0.0153957475, 0.010308656, 0.0063095735, 0.98]
+            color: [1, 1, 1, 1]
             automaticFlipY: true
             flipY: false
             pointerMoved: false
@@ -1117,29 +1321,97 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+            scissor: [204.3973, 114.807144, 496.26398, 349.6139]
             ignoreScissor: false
             ignoreEvents: false
           image:
-            patchMarginLeft: 8
-            patchMarginRight: 8
-            patchMarginTop: 8
-            patchMarginBottom: 8
+            patchMarginLeft: 27
+            patchMarginRight: 27
+            patchMarginTop: 27
+            patchMarginBottom: 27
             textureScaleFactor: 0
         children:
+          - type: Entity
+            entity: 1066
+            name: PanelPaper
+            components:
+              transform:
+                position: [27, 27, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [217, 62, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [27, 27, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [217, 62, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 54
+                aabb:
+                  min: [0, 0, 0]
+                  max: [846, 596, 0]
+                worldAABB:
+                  min: [217, 62, 0]
+                  max: [1063, 658, 0]
+                texture:
+                  textureType: 2D
+                  source: path
+                  path: ui/horror/panel_paper.png
+                  minFilter: nearest
+                  magFilter: nearest
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                color: [1, 1, 1, 1]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              uilayout:
+                width: 846
+                height: 596
+                anchorPointLeft: 0
+                anchorPointTop: 0
+                anchorPointRight: 1
+                anchorPointBottom: 1
+                anchorOffsetLeft: 0
+                anchorOffsetTop: 0
+                anchorOffsetRight: 0
+                anchorOffsetBottom: 0
+                positionOffset: [0, 0]
+                pivot: [0, 0]
+                anchorPreset: FULL_LAYOUT
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [220.23552, 130.64536, 464.58752, 317.93744]
+                ignoreScissor: false
+                ignoreEvents: true
+              image:
+                patchMarginLeft: 27
+                patchMarginRight: 27
+                patchMarginTop: 27
+                patchMarginBottom: 27
+                textureScaleFactor: 0
           - type: Entity
             entity: 1036
             name: PanelTitle
             components:
               transform:
-                position: [44, 34, 0]
+                position: [63, 53, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [234, 69, 0]
+                worldPosition: [253, 88, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
-                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [44, 34, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [234, 69, 0, 1]]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [63, 53, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [253, 88, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -1153,8 +1425,8 @@ entities:
                   min: [0, 0, 0]
                   max: [64, 24.75, 0]
                 worldAABB:
-                  min: [234, 69, 0]
-                  max: [298, 93.75, 0]
+                  min: [253, 88, 0]
+                  max: [317, 112.75, 0]
                 texture:
                   textureType: 2D
                   source: id
@@ -1186,7 +1458,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                scissor: [204.3973, 114.807144, 496.26398, 349.6139]
                 ignoreScissor: false
                 ignoreEvents: true
               text:
@@ -1204,14 +1476,14 @@ entities:
             name: PanelSubtitle
             components:
               transform:
-                position: [44, 76, 0]
+                position: [63, 95, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [234, 111, 0]
+                worldPosition: [253, 130, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
-                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [44, 76, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [234, 111, 0, 1]]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [63, 95, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [253, 130, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -1225,8 +1497,8 @@ entities:
                   min: [0, 0, 0]
                   max: [57, 14.458334, 0]
                 worldAABB:
-                  min: [234, 111, 0]
-                  max: [291, 125.458336, 0]
+                  min: [253, 130, 0]
+                  max: [310, 144.45833, 0]
                 texture:
                   textureType: 2D
                   source: id
@@ -1258,7 +1530,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                scissor: [204.3973, 114.807144, 496.26398, 349.6139]
                 ignoreScissor: false
                 ignoreEvents: true
               text:
@@ -1276,14 +1548,14 @@ entities:
             name: PanelBody
             components:
               transform:
-                position: [44, 112, 0]
+                position: [63, 131, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [234, 147, 0]
+                worldPosition: [253, 166, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
-                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [44, 112, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [234, 147, 0, 1]]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [63, 131, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [253, 166, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -1297,8 +1569,8 @@ entities:
                   min: [0, 0, 0]
                   max: [45, 19.833334, 0]
                 worldAABB:
-                  min: [234, 147, 0]
-                  max: [279, 166.83333, 0]
+                  min: [253, 166, 0]
+                  max: [298, 185.83333, 0]
                 texture:
                   textureType: 2D
                   source: id
@@ -1330,7 +1602,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                scissor: [204.3973, 114.807144, 496.26398, 349.6139]
                 ignoreScissor: false
                 ignoreEvents: true
               text:
@@ -1348,14 +1620,14 @@ entities:
             name: PanelClose
             components:
               transform:
-                position: [828, 26, 0]
+                position: [809, 45, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [1018, 61, 0]
+                worldPosition: [999, 80, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
-                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [828, 26, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1018, 61, 0, 1]]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [809, 45, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [999, 80, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -1369,18 +1641,18 @@ entities:
                   min: [0, 0, 0]
                   max: [46, 42, 0]
                 worldAABB:
-                  min: [1018, 61, 0]
-                  max: [1064, 103, 0]
+                  min: [999, 80, 0]
+                  max: [1045, 122, 0]
                 texture:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_normal.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
-                color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                color: [1, 1, 1, 1]
                 automaticFlipY: true
                 flipY: false
                 pointerMoved: false
@@ -1390,43 +1662,43 @@ entities:
                 textureNormal:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_normal.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 textureHovered:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_hover.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 texturePressed:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_pressed.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 textureDisabled:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_disabled.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
-                colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
-                colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
-                colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
-                colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+                colorNormal: [1, 1, 1, 1]
+                colorHovered: [1, 1, 1, 1]
+                colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+                colorDisabled: [1, 1, 1, 0.6]
                 scaleHovered: 1.03
                 scalePressed: 0.98
                 transitionTime: 0.08
@@ -1449,14 +1721,14 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                scissor: [204.3973, 114.807144, 496.26398, 349.6139]
                 ignoreScissor: false
                 ignoreEvents: false
               image:
-                patchMarginLeft: 6
-                patchMarginRight: 6
-                patchMarginTop: 6
-                patchMarginBottom: 6
+                patchMarginLeft: 15
+                patchMarginRight: 15
+                patchMarginTop: 15
+                patchMarginBottom: 15
                 textureScaleFactor: 0
             children:
               - type: Entity
@@ -1467,11 +1739,11 @@ entities:
                     position: [18, 11, 0]
                     rotation: [1, 0, 0, 0]
                     scale: [1, 1, 1]
-                    worldPosition: [1036, 72, 0]
+                    worldPosition: [1017, 91, 0]
                     worldRotation: [1, 0, 0, 0]
                     worldScale: [1, 1, 1]
                     localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [18, 11, 0, 1]]
-                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1036, 72, 0, 1]]
+                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1017, 91, 0, 1]]
                     normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                     visible: true
                     billboardRotation: [1, 0, 0, 0]
@@ -1485,8 +1757,8 @@ entities:
                       min: [0, 0, 0]
                       max: [11, 15.833334, 0]
                     worldAABB:
-                      min: [1036, 72, 0]
-                      max: [1047, 87.833336, 0]
+                      min: [1017, 91, 0]
+                      max: [1028, 106.833336, 0]
                     texture:
                       textureType: 2D
                       source: id
@@ -1496,7 +1768,7 @@ entities:
                       wrapU: repeat
                       wrapV: repeat
                       releaseDataAfterLoad: false
-                    color: [0.9141063, 0.81262666, 0.6120656, 1]
+                    color: [0.8524374, 0.7361094, 0.6120656, 1]
                     automaticFlipY: true
                     flipY: false
                     pointerMoved: false
@@ -1518,7 +1790,7 @@ entities:
                     usingAnchors: true
                     panel: 0
                     containerBoxIndex: -1
-                    scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                    scissor: [204.3973, 114.807144, 496.26398, 349.6139]
                     ignoreScissor: false
                     ignoreEvents: true
                   text:
@@ -1536,14 +1808,14 @@ entities:
             name: PanelBtn1
             components:
               transform:
-                position: [44, 410, 0]
+                position: [63, 391, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [234, 445, 0]
+                worldPosition: [253, 426, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
-                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [44, 410, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [234, 445, 0, 1]]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [63, 391, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [253, 426, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -1557,18 +1829,18 @@ entities:
                   min: [0, 0, 0]
                   max: [828, 46, 0]
                 worldAABB:
-                  min: [234, 445, 0]
-                  max: [1062, 491, 0]
+                  min: [253, 426, 0]
+                  max: [1081, 472, 0]
                 texture:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_normal.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
-                color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                color: [1, 1, 1, 1]
                 automaticFlipY: true
                 flipY: false
                 pointerMoved: false
@@ -1578,43 +1850,43 @@ entities:
                 textureNormal:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_normal.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 textureHovered:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_hover.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 texturePressed:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_pressed.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 textureDisabled:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_disabled.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
-                colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
-                colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
-                colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
-                colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+                colorNormal: [1, 1, 1, 1]
+                colorHovered: [1, 1, 1, 1]
+                colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+                colorDisabled: [1, 1, 1, 0.6]
                 scaleHovered: 1.03
                 scalePressed: 0.98
                 transitionTime: 0.08
@@ -1637,14 +1909,14 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                scissor: [204.3973, 114.807144, 496.26398, 349.6139]
                 ignoreScissor: false
                 ignoreEvents: false
               image:
-                patchMarginLeft: 6
-                patchMarginRight: 6
-                patchMarginTop: 6
-                patchMarginBottom: 6
+                patchMarginLeft: 15
+                patchMarginRight: 15
+                patchMarginTop: 15
+                patchMarginBottom: 15
                 textureScaleFactor: 0
             children:
               - type: Entity
@@ -1655,11 +1927,11 @@ entities:
                     position: [386, 14, 0]
                     rotation: [1, 0, 0, 0]
                     scale: [1, 1, 1]
-                    worldPosition: [620, 459, 0]
+                    worldPosition: [639, 440, 0]
                     worldRotation: [1, 0, 0, 0]
                     worldScale: [1, 1, 1]
                     localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [386, 14, 0, 1]]
-                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [620, 459, 0, 1]]
+                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [639, 440, 0, 1]]
                     normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                     visible: true
                     billboardRotation: [1, 0, 0, 0]
@@ -1673,18 +1945,18 @@ entities:
                       min: [0, 0, 0]
                       max: [54, 18.25, 0]
                     worldAABB:
-                      min: [620, 459, 0]
-                      max: [674, 477.25, 0]
+                      min: [639, 440, 0]
+                      max: [693, 458.25, 0]
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#65
+                      id: font|18#66
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
                       wrapV: repeat
                       releaseDataAfterLoad: false
-                    color: [0.9141063, 0.81262666, 0.6120656, 1]
+                    color: [0.8524374, 0.7361094, 0.6120656, 1]
                     automaticFlipY: true
                     flipY: false
                     pointerMoved: false
@@ -1706,7 +1978,7 @@ entities:
                     usingAnchors: true
                     panel: 0
                     containerBoxIndex: -1
-                    scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                    scissor: [204.3973, 114.807144, 496.26398, 349.6139]
                     ignoreScissor: false
                     ignoreEvents: true
                   text:
@@ -1724,14 +1996,14 @@ entities:
             name: PanelBtn2
             components:
               transform:
-                position: [44, 464, 0]
+                position: [63, 445, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [234, 499, 0]
+                worldPosition: [253, 480, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
-                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [44, 464, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [234, 499, 0, 1]]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [63, 445, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [253, 480, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -1745,18 +2017,18 @@ entities:
                   min: [0, 0, 0]
                   max: [828, 46, 0]
                 worldAABB:
-                  min: [234, 499, 0]
-                  max: [1062, 545, 0]
+                  min: [253, 480, 0]
+                  max: [1081, 526, 0]
                 texture:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_normal.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
-                color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                color: [1, 1, 1, 1]
                 automaticFlipY: true
                 flipY: false
                 pointerMoved: false
@@ -1766,43 +2038,43 @@ entities:
                 textureNormal:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_normal.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 textureHovered:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_hover.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 texturePressed:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_pressed.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 textureDisabled:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_disabled.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
-                colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
-                colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
-                colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
-                colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+                colorNormal: [1, 1, 1, 1]
+                colorHovered: [1, 1, 1, 1]
+                colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+                colorDisabled: [1, 1, 1, 0.6]
                 scaleHovered: 1.03
                 scalePressed: 0.98
                 transitionTime: 0.08
@@ -1825,14 +2097,14 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                scissor: [204.3973, 114.807144, 496.26398, 349.6139]
                 ignoreScissor: false
                 ignoreEvents: false
               image:
-                patchMarginLeft: 6
-                patchMarginRight: 6
-                patchMarginTop: 6
-                patchMarginBottom: 6
+                patchMarginLeft: 15
+                patchMarginRight: 15
+                patchMarginTop: 15
+                patchMarginBottom: 15
                 textureScaleFactor: 0
             children:
               - type: Entity
@@ -1843,11 +2115,11 @@ entities:
                     position: [386, 14, 0]
                     rotation: [1, 0, 0, 0]
                     scale: [1, 1, 1]
-                    worldPosition: [620, 513, 0]
+                    worldPosition: [639, 494, 0]
                     worldRotation: [1, 0, 0, 0]
                     worldScale: [1, 1, 1]
                     localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [386, 14, 0, 1]]
-                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [620, 513, 0, 1]]
+                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [639, 494, 0, 1]]
                     normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                     visible: true
                     billboardRotation: [1, 0, 0, 0]
@@ -1861,18 +2133,18 @@ entities:
                       min: [0, 0, 0]
                       max: [57, 18.25, 0]
                     worldAABB:
-                      min: [620, 513, 0]
-                      max: [677, 531.25, 0]
+                      min: [639, 494, 0]
+                      max: [696, 512.25, 0]
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#65
+                      id: font|18#66
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
                       wrapV: repeat
                       releaseDataAfterLoad: false
-                    color: [0.9141063, 0.81262666, 0.6120656, 1]
+                    color: [0.8524374, 0.7361094, 0.6120656, 1]
                     automaticFlipY: true
                     flipY: false
                     pointerMoved: false
@@ -1894,7 +2166,7 @@ entities:
                     usingAnchors: true
                     panel: 0
                     containerBoxIndex: -1
-                    scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                    scissor: [204.3973, 114.807144, 496.26398, 349.6139]
                     ignoreScissor: false
                     ignoreEvents: true
                   text:
@@ -1912,14 +2184,14 @@ entities:
             name: PanelBtn3
             components:
               transform:
-                position: [44, 518, 0]
+                position: [63, 499, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [234, 553, 0]
+                worldPosition: [253, 534, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
-                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [44, 518, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [234, 553, 0, 1]]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [63, 499, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [253, 534, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -1933,18 +2205,18 @@ entities:
                   min: [0, 0, 0]
                   max: [828, 46, 0]
                 worldAABB:
-                  min: [234, 553, 0]
-                  max: [1062, 599, 0]
+                  min: [253, 534, 0]
+                  max: [1081, 580, 0]
                 texture:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_normal.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
-                color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                color: [1, 1, 1, 1]
                 automaticFlipY: true
                 flipY: false
                 pointerMoved: false
@@ -1954,43 +2226,43 @@ entities:
                 textureNormal:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_normal.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 textureHovered:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_hover.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 texturePressed:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_pressed.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 textureDisabled:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_disabled.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
-                colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
-                colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
-                colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
-                colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+                colorNormal: [1, 1, 1, 1]
+                colorHovered: [1, 1, 1, 1]
+                colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+                colorDisabled: [1, 1, 1, 0.6]
                 scaleHovered: 1.03
                 scalePressed: 0.98
                 transitionTime: 0.08
@@ -2013,14 +2285,14 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                scissor: [204.3973, 114.807144, 496.26398, 349.6139]
                 ignoreScissor: false
                 ignoreEvents: false
               image:
-                patchMarginLeft: 6
-                patchMarginRight: 6
-                patchMarginTop: 6
-                patchMarginBottom: 6
+                patchMarginLeft: 15
+                patchMarginRight: 15
+                patchMarginTop: 15
+                patchMarginBottom: 15
                 textureScaleFactor: 0
             children:
               - type: Entity
@@ -2031,11 +2303,11 @@ entities:
                     position: [386, 14, 0]
                     rotation: [1, 0, 0, 0]
                     scale: [1, 1, 1]
-                    worldPosition: [620, 567, 0]
+                    worldPosition: [639, 548, 0]
                     worldRotation: [1, 0, 0, 0]
                     worldScale: [1, 1, 1]
                     localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [386, 14, 0, 1]]
-                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [620, 567, 0, 1]]
+                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [639, 548, 0, 1]]
                     normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                     visible: true
                     billboardRotation: [1, 0, 0, 0]
@@ -2049,18 +2321,18 @@ entities:
                       min: [0, 0, 0]
                       max: [56, 18.25, 0]
                     worldAABB:
-                      min: [620, 567, 0]
-                      max: [676, 585.25, 0]
+                      min: [639, 548, 0]
+                      max: [695, 566.25, 0]
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#65
+                      id: font|18#66
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
                       wrapV: repeat
                       releaseDataAfterLoad: false
-                    color: [0.9141063, 0.81262666, 0.6120656, 1]
+                    color: [0.8524374, 0.7361094, 0.6120656, 1]
                     automaticFlipY: true
                     flipY: false
                     pointerMoved: false
@@ -2082,7 +2354,7 @@ entities:
                     usingAnchors: true
                     panel: 0
                     containerBoxIndex: -1
-                    scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                    scissor: [204.3973, 114.807144, 496.26398, 349.6139]
                     ignoreScissor: false
                     ignoreEvents: true
                   text:
@@ -2100,14 +2372,14 @@ entities:
             name: PanelBtn4
             components:
               transform:
-                position: [44, 572, 0]
+                position: [63, 553, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [234, 607, 0]
+                worldPosition: [253, 588, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
-                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [44, 572, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [234, 607, 0, 1]]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [63, 553, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [253, 588, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -2121,18 +2393,18 @@ entities:
                   min: [0, 0, 0]
                   max: [828, 46, 0]
                 worldAABB:
-                  min: [234, 607, 0]
-                  max: [1062, 653, 0]
+                  min: [253, 588, 0]
+                  max: [1081, 634, 0]
                 texture:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_normal.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
-                color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+                color: [1, 1, 1, 1]
                 automaticFlipY: true
                 flipY: false
                 pointerMoved: false
@@ -2142,43 +2414,43 @@ entities:
                 textureNormal:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_normal.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 textureHovered:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_hover.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 texturePressed:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_pressed.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
                 textureDisabled:
                   textureType: 2D
                   source: path
-                  path: ui/panel.png
-                  minFilter: linear
-                  magFilter: linear
+                  path: ui/horror/btn_disabled.png
+                  minFilter: nearest
+                  magFilter: nearest
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: true
-                colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
-                colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
-                colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
-                colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+                colorNormal: [1, 1, 1, 1]
+                colorHovered: [1, 1, 1, 1]
+                colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+                colorDisabled: [1, 1, 1, 0.6]
                 scaleHovered: 1.03
                 scalePressed: 0.98
                 transitionTime: 0.08
@@ -2201,14 +2473,14 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                scissor: [204.3973, 114.807144, 496.26398, 349.6139]
                 ignoreScissor: false
                 ignoreEvents: false
               image:
-                patchMarginLeft: 6
-                patchMarginRight: 6
-                patchMarginTop: 6
-                patchMarginBottom: 6
+                patchMarginLeft: 15
+                patchMarginRight: 15
+                patchMarginTop: 15
+                patchMarginBottom: 15
                 textureScaleFactor: 0
             children:
               - type: Entity
@@ -2219,11 +2491,11 @@ entities:
                     position: [386, 14, 0]
                     rotation: [1, 0, 0, 0]
                     scale: [1, 1, 1]
-                    worldPosition: [620, 621, 0]
+                    worldPosition: [639, 602, 0]
                     worldRotation: [1, 0, 0, 0]
                     worldScale: [1, 1, 1]
                     localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [386, 14, 0, 1]]
-                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [620, 621, 0, 1]]
+                    modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [639, 602, 0, 1]]
                     normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                     visible: true
                     billboardRotation: [1, 0, 0, 0]
@@ -2237,18 +2509,18 @@ entities:
                       min: [0, 0, 0]
                       max: [57, 18.25, 0]
                     worldAABB:
-                      min: [620, 621, 0]
-                      max: [677, 639.25, 0]
+                      min: [639, 602, 0]
+                      max: [696, 620.25, 0]
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#65
+                      id: font|18#66
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
                       wrapV: repeat
                       releaseDataAfterLoad: false
-                    color: [0.9141063, 0.81262666, 0.6120656, 1]
+                    color: [0.8524374, 0.7361094, 0.6120656, 1]
                     automaticFlipY: true
                     flipY: false
                     pointerMoved: false
@@ -2270,7 +2542,7 @@ entities:
                     usingAnchors: true
                     panel: 0
                     containerBoxIndex: -1
-                    scissor: [193.25189, 103.661736, 518.5548, 371.9047]
+                    scissor: [204.3973, 114.807144, 496.26398, 349.6139]
                     ignoreScissor: false
                     ignoreEvents: true
                   text:
@@ -2314,9 +2586,9 @@ entities:
         texture:
           textureType: 2D
           source: path
-          path: ui/white.png
-          minFilter: linear
-          magFilter: linear
+          path: ui/horror/panel_frame.png
+          minFilter: nearest
+          magFilter: nearest
           wrapU: repeat
           wrapV: repeat
           releaseDataAfterLoad: true
@@ -2342,14 +2614,14 @@ entities:
         usingAnchors: true
         panel: 0
         containerBoxIndex: -1
-        scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+        scissor: [92.94321, 94.27612, 719.17224, 390.6759]
         ignoreScissor: false
         ignoreEvents: false
       image:
-        patchMarginLeft: 0
-        patchMarginRight: 0
-        patchMarginTop: 0
-        patchMarginBottom: 0
+        patchMarginLeft: 27
+        patchMarginRight: 27
+        patchMarginTop: 27
+        patchMarginBottom: 27
         textureScaleFactor: 0
     children:
       - type: Entity
@@ -2357,14 +2629,14 @@ entities:
         name: OverlayTitle
         components:
           transform:
-            position: [474, 96, 0]
+            position: [474, 123, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [474, 96, 0]
+            worldPosition: [474, 123, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [474, 96, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [474, 96, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [474, 123, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [474, 123, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -2378,12 +2650,12 @@ entities:
               min: [0, 0, 0]
               max: [332, 39, 0]
             worldAABB:
-              min: [474, 96, 0]
-              max: [806, 135, 0]
+              min: [474, 123, 0]
+              max: [806, 162, 0]
             texture:
               textureType: 2D
               source: id
-              id: font|48#22
+              id: font|48#34
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -2411,7 +2683,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [92.94321, 94.27612, 719.17224, 390.6759]
             ignoreScissor: false
             ignoreEvents: true
           text:
@@ -2429,14 +2701,14 @@ entities:
         name: OverlaySubtitle
         components:
           transform:
-            position: [546, 162, 0]
+            position: [546, 189, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [546, 162, 0]
+            worldPosition: [546, 189, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [546, 162, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [546, 162, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [546, 189, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [546, 189, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -2450,12 +2722,12 @@ entities:
               min: [0, 0, 0]
               max: [188, 21.416666, 0]
             worldAABB:
-              min: [546, 162, 0]
-              max: [734, 183.41667, 0]
+              min: [546, 189, 0]
+              max: [734, 210.41667, 0]
             texture:
               textureType: 2D
               source: id
-              id: font|22#29
+              id: font|22#40
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -2483,7 +2755,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [92.94321, 94.27612, 719.17224, 390.6759]
             ignoreScissor: false
             ignoreEvents: true
           text:
@@ -2501,14 +2773,14 @@ entities:
         name: OverlayBody
         components:
           transform:
-            position: [190, 250, 0]
+            position: [190, 277, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [190, 250, 0]
+            worldPosition: [190, 277, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [190, 250, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [190, 250, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [190, 277, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [190, 277, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -2522,12 +2794,12 @@ entities:
               min: [0, 0, 0]
               max: [0, 16.625, 0]
             worldAABB:
-              min: [190, 250, 0]
-              max: [190, 266.625, 0]
+              min: [190, 277, 0]
+              max: [190, 293.625, 0]
             texture:
               textureType: 2D
               source: id
-              id: font|21#70
+              id: font|21#73
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -2555,7 +2827,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [92.94321, 94.27612, 719.17224, 390.6759]
             ignoreScissor: false
             ignoreEvents: true
           text:
@@ -2573,14 +2845,14 @@ entities:
         name: OverlayBtn1
         components:
           transform:
-            position: [420, 360, 0]
+            position: [420, 333, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [420, 360, 0]
+            worldPosition: [420, 333, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 360, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 360, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 333, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 333, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -2594,18 +2866,18 @@ entities:
               min: [0, 0, 0]
               max: [440, 50, 0]
             worldAABB:
-              min: [420, 360, 0]
-              max: [860, 410, 0]
+              min: [420, 333, 0]
+              max: [860, 383, 0]
             texture:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_normal.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
-            color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+            color: [1, 1, 1, 1]
             automaticFlipY: true
             flipY: false
             pointerMoved: false
@@ -2615,43 +2887,43 @@ entities:
             textureNormal:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_normal.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             textureHovered:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_hover.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             texturePressed:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_pressed.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             textureDisabled:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_disabled.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
-            colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
-            colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
-            colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
-            colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+            colorNormal: [1, 1, 1, 1]
+            colorHovered: [1, 1, 1, 1]
+            colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+            colorDisabled: [1, 1, 1, 0.6]
             scaleHovered: 1.03
             scalePressed: 0.98
             transitionTime: 0.08
@@ -2674,14 +2946,14 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [92.94321, 94.27612, 719.17224, 390.6759]
             ignoreScissor: false
             ignoreEvents: false
           image:
-            patchMarginLeft: 6
-            patchMarginRight: 6
-            patchMarginTop: 6
-            patchMarginBottom: 6
+            patchMarginLeft: 15
+            patchMarginRight: 15
+            patchMarginTop: 15
+            patchMarginBottom: 15
             textureScaleFactor: 0
         children:
           - type: Entity
@@ -2692,11 +2964,11 @@ entities:
                 position: [197, 15, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [617, 375, 0]
+                worldPosition: [617, 348, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
                 localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [197, 15, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [617, 375, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [617, 348, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -2710,8 +2982,8 @@ entities:
                   min: [0, 0, 0]
                   max: [47, 16.833334, 0]
                 worldAABB:
-                  min: [617, 375, 0]
-                  max: [664, 391.83334, 0]
+                  min: [617, 348, 0]
+                  max: [664, 364.83334, 0]
                 texture:
                   textureType: 2D
                   source: id
@@ -2721,7 +2993,7 @@ entities:
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: false
-                color: [0.9141063, 0.81262666, 0.6120656, 1]
+                color: [0.8524374, 0.7361094, 0.6120656, 1]
                 automaticFlipY: true
                 flipY: false
                 pointerMoved: false
@@ -2743,7 +3015,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+                scissor: [92.94321, 94.27612, 719.17224, 390.6759]
                 ignoreScissor: false
                 ignoreEvents: true
               text:
@@ -2761,14 +3033,14 @@ entities:
         name: OverlayBtn2
         components:
           transform:
-            position: [420, 420, 0]
+            position: [420, 393, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [420, 420, 0]
+            worldPosition: [420, 393, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 420, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 420, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 393, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 393, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -2782,18 +3054,18 @@ entities:
               min: [0, 0, 0]
               max: [440, 50, 0]
             worldAABB:
-              min: [420, 420, 0]
-              max: [860, 470, 0]
+              min: [420, 393, 0]
+              max: [860, 443, 0]
             texture:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_normal.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
-            color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+            color: [1, 1, 1, 1]
             automaticFlipY: true
             flipY: false
             pointerMoved: false
@@ -2803,43 +3075,43 @@ entities:
             textureNormal:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_normal.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             textureHovered:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_hover.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             texturePressed:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_pressed.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             textureDisabled:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_disabled.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
-            colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
-            colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
-            colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
-            colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+            colorNormal: [1, 1, 1, 1]
+            colorHovered: [1, 1, 1, 1]
+            colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+            colorDisabled: [1, 1, 1, 0.6]
             scaleHovered: 1.03
             scalePressed: 0.98
             transitionTime: 0.08
@@ -2862,14 +3134,14 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [92.94321, 94.27612, 719.17224, 390.6759]
             ignoreScissor: false
             ignoreEvents: false
           image:
-            patchMarginLeft: 6
-            patchMarginRight: 6
-            patchMarginTop: 6
-            patchMarginBottom: 6
+            patchMarginLeft: 15
+            patchMarginRight: 15
+            patchMarginTop: 15
+            patchMarginBottom: 15
             textureScaleFactor: 0
         children:
           - type: Entity
@@ -2880,11 +3152,11 @@ entities:
                 position: [184, 15, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [604, 435, 0]
+                worldPosition: [604, 408, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
                 localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [184, 15, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [604, 435, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [604, 408, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -2898,8 +3170,8 @@ entities:
                   min: [0, 0, 0]
                   max: [72, 16.833334, 0]
                 worldAABB:
-                  min: [604, 435, 0]
-                  max: [676, 451.83334, 0]
+                  min: [604, 408, 0]
+                  max: [676, 424.83334, 0]
                 texture:
                   textureType: 2D
                   source: id
@@ -2909,7 +3181,7 @@ entities:
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: false
-                color: [0.9141063, 0.81262666, 0.6120656, 1]
+                color: [0.8524374, 0.7361094, 0.6120656, 1]
                 automaticFlipY: true
                 flipY: false
                 pointerMoved: false
@@ -2931,7 +3203,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+                scissor: [92.94321, 94.27612, 719.17224, 390.6759]
                 ignoreScissor: false
                 ignoreEvents: true
               text:
@@ -2949,14 +3221,14 @@ entities:
         name: OverlayBtn3
         components:
           transform:
-            position: [420, 480, 0]
+            position: [420, 453, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [420, 480, 0]
+            worldPosition: [420, 453, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 480, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 480, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 453, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 453, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -2970,18 +3242,18 @@ entities:
               min: [0, 0, 0]
               max: [440, 50, 0]
             worldAABB:
-              min: [420, 480, 0]
-              max: [860, 530, 0]
+              min: [420, 453, 0]
+              max: [860, 503, 0]
             texture:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_normal.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
-            color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+            color: [1, 1, 1, 1]
             automaticFlipY: true
             flipY: false
             pointerMoved: false
@@ -2991,43 +3263,43 @@ entities:
             textureNormal:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_normal.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             textureHovered:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_hover.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             texturePressed:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_pressed.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             textureDisabled:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_disabled.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
-            colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
-            colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
-            colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
-            colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+            colorNormal: [1, 1, 1, 1]
+            colorHovered: [1, 1, 1, 1]
+            colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+            colorDisabled: [1, 1, 1, 0.6]
             scaleHovered: 1.03
             scalePressed: 0.98
             transitionTime: 0.08
@@ -3050,14 +3322,14 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [92.94321, 94.27612, 719.17224, 390.6759]
             ignoreScissor: false
             ignoreEvents: false
           image:
-            patchMarginLeft: 6
-            patchMarginRight: 6
-            patchMarginTop: 6
-            patchMarginBottom: 6
+            patchMarginLeft: 15
+            patchMarginRight: 15
+            patchMarginTop: 15
+            patchMarginBottom: 15
             textureScaleFactor: 0
         children:
           - type: Entity
@@ -3068,11 +3340,11 @@ entities:
                 position: [189, 15, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [609, 495, 0]
+                worldPosition: [609, 468, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
                 localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [189, 15, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [609, 495, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [609, 468, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -3086,8 +3358,8 @@ entities:
                   min: [0, 0, 0]
                   max: [63, 16.833334, 0]
                 worldAABB:
-                  min: [609, 495, 0]
-                  max: [672, 511.83334, 0]
+                  min: [609, 468, 0]
+                  max: [672, 484.83334, 0]
                 texture:
                   textureType: 2D
                   source: id
@@ -3097,7 +3369,7 @@ entities:
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: false
-                color: [0.9141063, 0.81262666, 0.6120656, 1]
+                color: [0.8524374, 0.7361094, 0.6120656, 1]
                 automaticFlipY: true
                 flipY: false
                 pointerMoved: false
@@ -3119,7 +3391,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+                scissor: [92.94321, 94.27612, 719.17224, 390.6759]
                 ignoreScissor: false
                 ignoreEvents: true
               text:
@@ -3137,14 +3409,14 @@ entities:
         name: OverlayBtn4
         components:
           transform:
-            position: [420, 540, 0]
+            position: [420, 513, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [420, 540, 0]
+            worldPosition: [420, 513, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 540, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 540, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 513, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 513, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -3158,18 +3430,18 @@ entities:
               min: [0, 0, 0]
               max: [440, 50, 0]
             worldAABB:
-              min: [420, 540, 0]
-              max: [860, 590, 0]
+              min: [420, 513, 0]
+              max: [860, 563, 0]
             texture:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_normal.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
-            color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+            color: [1, 1, 1, 1]
             automaticFlipY: true
             flipY: false
             pointerMoved: false
@@ -3179,43 +3451,43 @@ entities:
             textureNormal:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_normal.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             textureHovered:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_hover.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             texturePressed:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_pressed.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             textureDisabled:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_disabled.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
-            colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
-            colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
-            colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
-            colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+            colorNormal: [1, 1, 1, 1]
+            colorHovered: [1, 1, 1, 1]
+            colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+            colorDisabled: [1, 1, 1, 0.6]
             scaleHovered: 1.03
             scalePressed: 0.98
             transitionTime: 0.08
@@ -3238,14 +3510,14 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [92.94321, 94.27612, 719.17224, 390.6759]
             ignoreScissor: false
             ignoreEvents: false
           image:
-            patchMarginLeft: 6
-            patchMarginRight: 6
-            patchMarginTop: 6
-            patchMarginBottom: 6
+            patchMarginLeft: 15
+            patchMarginRight: 15
+            patchMarginTop: 15
+            patchMarginBottom: 15
             textureScaleFactor: 0
         children:
           - type: Entity
@@ -3256,11 +3528,11 @@ entities:
                 position: [189, 15, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [609, 555, 0]
+                worldPosition: [609, 528, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
                 localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [189, 15, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [609, 555, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [609, 528, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -3274,8 +3546,8 @@ entities:
                   min: [0, 0, 0]
                   max: [63, 16.833334, 0]
                 worldAABB:
-                  min: [609, 555, 0]
-                  max: [672, 571.8333, 0]
+                  min: [609, 528, 0]
+                  max: [672, 544.8333, 0]
                 texture:
                   textureType: 2D
                   source: id
@@ -3285,7 +3557,7 @@ entities:
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: false
-                color: [0.9141063, 0.81262666, 0.6120656, 1]
+                color: [0.8524374, 0.7361094, 0.6120656, 1]
                 automaticFlipY: true
                 flipY: false
                 pointerMoved: false
@@ -3307,7 +3579,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+                scissor: [92.94321, 94.27612, 719.17224, 390.6759]
                 ignoreScissor: false
                 ignoreEvents: true
               text:
@@ -3325,14 +3597,14 @@ entities:
         name: OverlayRule
         components:
           transform:
-            position: [410, 226, 0]
+            position: [380, 253, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [410, 226, 0]
+            worldPosition: [380, 253, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [410, 226, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [410, 226, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [380, 253, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [380, 253, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -3344,42 +3616,42 @@ entities:
             vertexCount: 54
             aabb:
               min: [0, 0, 0]
-              max: [460, 2, 0]
+              max: [520, 6, 0]
             worldAABB:
-              min: [410, 226, 0]
-              max: [870, 228, 0]
+              min: [380, 253, 0]
+              max: [900, 259, 0]
             texture:
               textureType: 2D
               source: path
-              path: ui/white.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/divider.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
-            color: [0.8932889, 0.6814193, 0.30167657, 0.55]
+            color: [1, 1, 1, 0.8]
             automaticFlipY: true
             flipY: false
             pointerMoved: false
             focused: false
           uilayout:
-            width: 460
-            height: 2
+            width: 520
+            height: 6
             anchorPointLeft: 0.5
             anchorPointTop: 0
             anchorPointRight: 0.5
             anchorPointBottom: 0
-            anchorOffsetLeft: -230
+            anchorOffsetLeft: -260
             anchorOffsetTop: 0
-            anchorOffsetRight: 230
-            anchorOffsetBottom: 2
+            anchorOffsetRight: 260
+            anchorOffsetBottom: 6
             positionOffset: [0, 226]
             pivot: [0, 0]
             anchorPreset: CENTER_TOP
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [317.61118, 211.0096, 269.8362, 1.1732025]
+            scissor: [300.01318, 226.84782, 305.03223, 3.5195923]
             ignoreScissor: false
             ignoreEvents: true
           image:
@@ -3393,14 +3665,14 @@ entities:
         name: OverlayFooter
         components:
           transform:
-            position: [24, 687, 0]
+            position: [71, 644, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [24, 687, 0]
+            worldPosition: [71, 644, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [24, 687, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [24, 687, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [71, 644, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [71, 644, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -3414,12 +3686,12 @@ entities:
               min: [0, 0, 0]
               max: [131, 12.875, 0]
             worldAABB:
-              min: [24, 687, 0]
-              max: [155, 699.875, 0]
+              min: [71, 644, 0]
+              max: [202, 656.875, 0]
             texture:
               textureType: 2D
               source: id
-              id: font|15#33
+              id: font|15#38
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -3441,13 +3713,13 @@ entities:
             anchorOffsetTop: -15
             anchorOffsetRight: 131
             anchorOffsetBottom: 0
-            positionOffset: [24, -18]
+            positionOffset: [44, -34]
             pivot: [0, 0]
             anchorPreset: BOTTOM_LEFT
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [92.94321, 94.27612, 719.17224, 390.6759]
             ignoreScissor: false
             ignoreEvents: true
           text:
@@ -3465,14 +3737,14 @@ entities:
         name: OverlayBtn5
         components:
           transform:
-            position: [420, 600, 0]
+            position: [420, 573, 0]
             rotation: [1, 0, 0, 0]
             scale: [1, 1, 1]
-            worldPosition: [420, 600, 0]
+            worldPosition: [420, 573, 0]
             worldRotation: [1, 0, 0, 0]
             worldScale: [1, 1, 1]
-            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 600, 0, 1]]
-            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 600, 0, 1]]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 573, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 573, 0, 1]]
             normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
             visible: true
             billboardRotation: [1, 0, 0, 0]
@@ -3486,18 +3758,18 @@ entities:
               min: [0, 0, 0]
               max: [440, 50, 0]
             worldAABB:
-              min: [420, 600, 0]
-              max: [860, 650, 0]
+              min: [420, 573, 0]
+              max: [860, 623, 0]
             texture:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_normal.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
-            color: [0.028991187, 0.017744508, 0.0094232075, 0.96]
+            color: [1, 1, 1, 1]
             automaticFlipY: true
             flipY: false
             pointerMoved: false
@@ -3507,43 +3779,43 @@ entities:
             textureNormal:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_normal.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             textureHovered:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_hover.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             texturePressed:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_pressed.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
             textureDisabled:
               textureType: 2D
               source: path
-              path: ui/panel.png
-              minFilter: linear
-              magFilter: linear
+              path: ui/horror/btn_disabled.png
+              minFilter: nearest
+              magFilter: nearest
               wrapU: repeat
               wrapV: repeat
               releaseDataAfterLoad: true
-            colorNormal: [0.028991187, 0.017744508, 0.0094232075, 0.96]
-            colorHovered: [0.1483025, 0.07603188, 0.02027625, 1]
-            colorPressed: [0.30167657, 0.15618186, 0.035754435, 1]
-            colorDisabled: [0.017744508, 0.017744508, 0.017744508, 0.55]
+            colorNormal: [1, 1, 1, 1]
+            colorHovered: [1, 1, 1, 1]
+            colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+            colorDisabled: [1, 1, 1, 0.6]
             scaleHovered: 1.03
             scalePressed: 0.98
             transitionTime: 0.08
@@ -3566,14 +3838,14 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [92.94321, 94.27612, 719.17224, 390.6759]
             ignoreScissor: false
             ignoreEvents: false
           image:
-            patchMarginLeft: 6
-            patchMarginRight: 6
-            patchMarginTop: 6
-            patchMarginBottom: 6
+            patchMarginLeft: 15
+            patchMarginRight: 15
+            patchMarginTop: 15
+            patchMarginBottom: 15
             textureScaleFactor: 0
         children:
           - type: Entity
@@ -3584,11 +3856,11 @@ entities:
                 position: [189, 15, 0]
                 rotation: [1, 0, 0, 0]
                 scale: [1, 1, 1]
-                worldPosition: [609, 615, 0]
+                worldPosition: [609, 588, 0]
                 worldRotation: [1, 0, 0, 0]
                 worldScale: [1, 1, 1]
                 localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [189, 15, 0, 1]]
-                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [609, 615, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [609, 588, 0, 1]]
                 normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
                 visible: true
                 billboardRotation: [1, 0, 0, 0]
@@ -3602,8 +3874,8 @@ entities:
                   min: [0, 0, 0]
                   max: [63, 16.833334, 0]
                 worldAABB:
-                  min: [609, 615, 0]
-                  max: [672, 631.8333, 0]
+                  min: [609, 588, 0]
+                  max: [672, 604.8333, 0]
                 texture:
                   textureType: 2D
                   source: id
@@ -3613,7 +3885,7 @@ entities:
                   wrapU: repeat
                   wrapV: repeat
                   releaseDataAfterLoad: false
-                color: [0.9141063, 0.81262666, 0.6120656, 1]
+                color: [0.8524374, 0.7361094, 0.6120656, 1]
                 automaticFlipY: true
                 flipY: false
                 pointerMoved: false
@@ -3635,7 +3907,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+                scissor: [92.94321, 94.27612, 719.17224, 390.6759]
                 ignoreScissor: false
                 ignoreEvents: true
               text:
@@ -3648,6 +3920,278 @@ entities:
                 fixedHeight: false
                 pivotBaseline: false
                 pivotCentered: false
+      - type: Entity
+        entity: 1070
+        name: OverlayCandleL
+        components:
+          transform:
+            position: [198, 91, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [198, 91, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [198, 91, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [198, 91, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [45, 93, 0]
+            worldAABB:
+              min: [198, 91, 0]
+              max: [243, 184, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/horror/candlestick.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [1, 1, 1, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 45
+            height: 93
+            anchorPointLeft: 0.5
+            anchorPointTop: 0
+            anchorPointRight: 0.5
+            anchorPointBottom: 0
+            anchorOffsetLeft: -22
+            anchorOffsetTop: 0
+            anchorOffsetRight: 23
+            anchorOffsetBottom: 93
+            positionOffset: [-420, 64]
+            pivot: [0, 0]
+            anchorPreset: CENTER_TOP
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [193.25189, 131.81854, 26.397018, 54.553833]
+            ignoreScissor: false
+            ignoreEvents: true
+          image:
+            patchMarginLeft: 0
+            patchMarginRight: 0
+            patchMarginTop: 0
+            patchMarginBottom: 0
+            textureScaleFactor: 0
+      - type: Entity
+        entity: 1071
+        name: OverlayCandleR
+        components:
+          transform:
+            position: [1038, 91, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [1038, 91, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1038, 91, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1038, 91, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [45, 93, 0]
+            worldAABB:
+              min: [1038, 91, 0]
+              max: [1083, 184, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/horror/candlestick.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [1, 1, 1, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 45
+            height: 93
+            anchorPointLeft: 0.5
+            anchorPointTop: 0
+            anchorPointRight: 0.5
+            anchorPointBottom: 0
+            anchorOffsetLeft: -22
+            anchorOffsetTop: 0
+            anchorOffsetRight: 23
+            anchorOffsetBottom: 93
+            positionOffset: [420, 64]
+            pivot: [0, 0]
+            anchorPreset: CENTER_TOP
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [685.9962, 131.81854, 26.397095, 54.553833]
+            ignoreScissor: false
+            ignoreEvents: true
+          image:
+            patchMarginLeft: 0
+            patchMarginRight: 0
+            patchMarginTop: 0
+            patchMarginBottom: 0
+            textureScaleFactor: 0
+      - type: Entity
+        entity: 1072
+        name: OverlaySkull
+        components:
+          transform:
+            position: [619, 234, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [619, 234, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [619, 234, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [619, 234, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [42, 44, 0]
+            worldAABB:
+              min: [619, 234, 0]
+              max: [661, 278, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/horror/skull.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [1, 1, 1, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 42
+            height: 44
+            anchorPointLeft: 0.5
+            anchorPointTop: 0
+            anchorPointRight: 0.5
+            anchorPointBottom: 0
+            anchorOffsetLeft: -21
+            anchorOffsetTop: 0
+            anchorOffsetRight: 21
+            anchorOffsetBottom: 44
+            positionOffset: [0, 207]
+            pivot: [0, 0]
+            anchorPreset: CENTER_TOP
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [440.2107, 215.70241, 24.637238, 25.810425]
+            ignoreScissor: false
+            ignoreEvents: true
+          image:
+            patchMarginLeft: 0
+            patchMarginRight: 0
+            patchMarginTop: 0
+            patchMarginBottom: 0
+            textureScaleFactor: 0
+      - type: Entity
+        entity: 1073
+        name: OverlayTomb
+        components:
+          transform:
+            position: [1064, 523, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [1064, 523, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1064, 523, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [1064, 523, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [129, 126, 0]
+            worldAABB:
+              min: [1064, 523, 0]
+              max: [1193, 649, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/horror/tombstone.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [1, 1, 1, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 129
+            height: 126
+            anchorPointLeft: 1
+            anchorPointTop: 1
+            anchorPointRight: 1
+            anchorPointBottom: 1
+            anchorOffsetLeft: -129
+            anchorOffsetTop: -126
+            anchorOffsetRight: 0
+            anchorOffsetBottom: 0
+            positionOffset: [-60, -44]
+            pivot: [0, 0]
+            anchorPreset: BOTTOM_RIGHT
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [701.2479, 385.22992, 75.67151, 73.91165]
+            ignoreScissor: false
+            ignoreEvents: true
+          image:
+            patchMarginLeft: 0
+            patchMarginRight: 0
+            patchMarginTop: 0
+            patchMarginBottom: 0
+            textureScaleFactor: 0
   - type: Entity
     entity: 1059
     name: Crosshair
@@ -3720,4 +4264,4 @@ entities:
         fixedHeight: false
         pivotBaseline: false
         pivotCentered: false
-shaderKeysHash: 2fdc157e96e5e9ecf81f8c3dc158d2ef386f32cc
+shaderKeysHash: 2e860d779fbd8ad07b728eee376a2e720706bfe4

@@ -22,21 +22,28 @@ local BUTTONS = {
     "OverlayBtn1", "OverlayBtn2", "OverlayBtn3", "OverlayBtn4", "OverlayBtn5",
 }
 
--- Papéis: cada tipo de documento aparece num papel e tinta próprios (cores sRGB)
+-- Papéis: o painel padrão usa a moldura escura da spritesheet (assets/ui/horror);
+-- documentos mostram por cima a folha clara (PanelPaper) tingida com a cor do papel (sRGB).
 local PAPER = {
-    default   = { bg = { 0.15, 0.125, 0.10, 0.98 }, title = { 0.95, 0.84, 0.58 }, sub = { 0.72, 0.66, 0.55 }, body = { 0.93, 0.91, 0.86 } },
-    letter    = { bg = { 0.86, 0.80, 0.66, 1.0 }, title = { 0.40, 0.16, 0.08 }, sub = { 0.38, 0.30, 0.22 }, body = { 0.16, 0.12, 0.08 } },
-    book      = { bg = { 0.70, 0.64, 0.50, 1.0 }, title = { 0.30, 0.12, 0.06 }, sub = { 0.30, 0.24, 0.18 }, body = { 0.12, 0.09, 0.06 } },
-    record    = { bg = { 0.78, 0.77, 0.72, 1.0 }, title = { 0.22, 0.20, 0.30 }, sub = { 0.32, 0.30, 0.30 }, body = { 0.12, 0.12, 0.14 } },
-    testimony = { bg = { 0.78, 0.77, 0.72, 1.0 }, title = { 0.22, 0.20, 0.30 }, sub = { 0.32, 0.30, 0.30 }, body = { 0.12, 0.12, 0.14 } },
+    default   = { title = { 0.95, 0.80, 0.55 }, sub = { 0.74, 0.62, 0.56 }, body = { 0.93, 0.90, 0.86 } },
+    letter    = { bg = { 0.92, 0.84, 0.66, 1.0 }, title = { 0.42, 0.10, 0.06 }, sub = { 0.38, 0.28, 0.20 }, body = { 0.16, 0.11, 0.07 } },
+    book      = { bg = { 0.80, 0.70, 0.52, 1.0 }, title = { 0.34, 0.08, 0.05 }, sub = { 0.30, 0.22, 0.16 }, body = { 0.12, 0.08, 0.05 } },
+    record    = { bg = { 0.84, 0.82, 0.78, 1.0 }, title = { 0.30, 0.10, 0.12 }, sub = { 0.32, 0.28, 0.28 }, body = { 0.12, 0.11, 0.12 } },
+    testimony = { bg = { 0.84, 0.82, 0.78, 1.0 }, title = { 0.30, 0.10, 0.12 }, sub = { 0.32, 0.28, 0.28 }, body = { 0.12, 0.11, 0.12 } },
 }
 
--- Legendas: pensamentos de Severino, sussurros e avisos
+-- Legendas: pensamentos de Severino (vela), sussurros (fantasma) e avisos
 local SAY_STYLE = {
-    thought = { color = { 0.98, 0.90, 0.72 }, prefix = "Severino: " },
-    whisper = { color = { 0.66, 0.90, 0.92 }, prefix = "" },
-    info    = { color = { 0.95, 0.92, 0.86 }, prefix = "" },
+    thought = { color = { 0.98, 0.88, 0.70 }, prefix = "Severino: ", icon = "candle" },
+    whisper = { color = { 0.70, 0.88, 0.92 }, prefix = "", icon = "ghost" },
+    info    = { color = { 0.93, 0.89, 0.84 }, prefix = "" },
 }
+local TOAST_TEXT_X = 30       -- margem do texto sem ícone
+local TOAST_TEXT_X_ICON = 74  -- margem do texto quando há ícone à esquerda
+local TOAST_TEXT_Y = 18
+
+-- Lápide decorativa só nas telas "de capa"
+local TOMB_MODES = { menu = true, credits = true, options = true, info = true }
 
 local REVEAL_CHARS_PER_SECOND = 70
 local TOP_BAR = { "NightText", "ObjectiveText" }
@@ -128,6 +135,13 @@ function HUDController:init()
         [Input.KEY_KP_1] = 1, [Input.KEY_KP_2] = 2, [Input.KEY_KP_3] = 3, [Input.KEY_KP_4] = 4, [Input.KEY_KP_5] = 5,
     }
     self.panelBg = Image(s, findEntity(s, "PanelBg"))
+    self.panelPaper = Image(s, findEntity(s, "PanelPaper"))
+    self.toastIcon = {
+        ghost = Image(s, findEntity(s, "ToastGhost")),
+        candle = Image(s, findEntity(s, "ToastCandle")),
+    }
+    self.topBarBg = Image(s, findEntity(s, "TopBarBg"))
+    self.overlayTomb = Image(s, findEntity(s, "OverlayTomb"))
     self.sayQueue = {}
     self.reveal = nil
 
@@ -168,6 +182,7 @@ function HUDController:setTopBarVisible(visible)
     for _, name in ipairs(TOP_BAR) do
         setVisible(self.text[name], visible)
     end
+    setVisible(self.topBarBg, visible)
     self:refreshExploreUI()
 end
 
@@ -266,7 +281,12 @@ end
 
 function HUDController:applyPaper(kind)
     local p = PAPER[kind] or PAPER.default
-    self.panelBg:setColor(p.bg[1], p.bg[2], p.bg[3], p.bg[4])
+    if p.bg then
+        self.panelPaper:setColor(p.bg[1], p.bg[2], p.bg[3], p.bg[4])
+        self.panelPaper.visible = true
+    else
+        self.panelPaper.visible = false
+    end
     applyColor(self.text.PanelTitle, p.title)
     applyColor(self.text.PanelSubtitle, p.sub)
     applyColor(self.text.PanelBody, p.body)
@@ -303,8 +323,10 @@ function HUDController:showOverlay(spec)
     self:setRevealText(self.text.OverlayBody, spec.body or "", spec.reveal)
     self.text.OverlayFooter.text = spec.footer or (spec.back and FOOTER_BACK or FOOTER_DEFAULT)
     assignButtons(self, "OverlayBtn", OVERLAY_SLOTS, spec.buttons)
-    self.overlayBg:setColor(0.01, 0.012, 0.02, OVERLAY_ALPHA[spec.mode] or OVERLAY_ALPHA_DEFAULT)
+    -- moldura da spritesheet; o tom escurece um pouco a textura e o alfa deixa ver o cemitério nos menus
+    self.overlayBg:setColor(0.78, 0.74, 0.74, OVERLAY_ALPHA[spec.mode] or OVERLAY_ALPHA_DEFAULT)
     self.overlayBg.visible = true
+    self.overlayTomb.visible = TOMB_MODES[spec.mode] == true
     self.overlayOpen = true
     self:setTopBarVisible(false)
     self:hideToast()
@@ -328,6 +350,10 @@ function HUDController:showSay(message, style)
     self.text.ToastText.text = st.prefix .. message
     applyColor(self.text.ToastText, st.color)
     self.toastBg.visible = true
+    for kind, icon in pairs(self.toastIcon) do
+        icon.visible = (kind == st.icon)
+    end
+    self.text.ToastText.positionOffset = Vector2(st.icon and TOAST_TEXT_X_ICON or TOAST_TEXT_X, TOAST_TEXT_Y)
     -- tempo de leitura proporcional ao tamanho do texto
     local len = (utf8 and utf8.len(message)) or #message
     self.toastTime = math.max(TOAST_SECONDS, 2.5 + len / 14)
