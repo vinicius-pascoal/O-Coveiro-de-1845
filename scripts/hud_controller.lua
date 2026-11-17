@@ -12,10 +12,50 @@ local HUDController = {
 }
 
 local TEXTS = {
-    "NightText", "ObjectiveText", "HoverLabel", "Crosshair", "ToastText",
+    "NightText", "ObjectiveText", "ProgressLabel", "KeysText", "HoverLabel", "Crosshair", "ToastText",
     "PanelTitle", "PanelSubtitle", "PanelBody",
     "OverlayTitle", "OverlaySubtitle", "OverlayBody", "OverlayFooter",
 }
+local PROGRESS_ICONS = 6
+
+-- Ícones recortados da spritesheet (assets/ui/horror). Botões e títulos escolhem pelo nome.
+local ICONS = {
+    play = "ui/horror/icon_play.png", gear = "ui/horror/icon_gear.png", question = "ui/horror/icon_question.png",
+    home = "ui/horror/icon_home.png", x = "ui/horror/icon_x.png", check = "ui/horror/icon_check.png",
+    plus = "ui/horror/icon_plus.png", minus = "ui/horror/icon_minus.png", pause = "ui/horror/icon_pause.png",
+    candle = "ui/horror/candle.png", skull = "ui/horror/skull.png", tomb = "ui/horror/tombstone.png",
+    correct = "ui/horror/tile_check_on.png", wrong = "ui/horror/tile_x_on.png", help = "ui/horror/tile_help_hover.png",
+}
+local PROGRESS_ON = "ui/horror/tile_check_on.png"
+local PROGRESS_OFF = "ui/horror/tile_check_off.png"
+
+-- Medidas da diagramação responsiva (pixels do canvas)
+local SCREEN_MARGIN = 16
+local CARD_PAD_X = 56
+local OVERLAY_BUTTON_W, OVERLAY_BUTTON_H, OVERLAY_BUTTON_GAP = 440, 50, 10
+local OVERLAY_BODY_WIDTH = { menu = 560, options = 640, info = 620, pause = 620, confirm = 520, credits = 620 }
+local OVERLAY_BODY_WIDTH_DEFAULT = 780   -- prólogo, noites e epílogos
+local PANEL_MIN_W, PANEL_MAX_W = 560, 960
+local PANEL_PAD = 36
+local TOAST_MAX_TEXT_W = 720
+local OBJECTIVE_MAX_W = 600
+local MIN_BODY_FONT = 14
+
+-- Largura aproximada da linha mais longa (antes de o motor medir o texto de verdade)
+local function estimateWidth(s, size)
+    local longest = 0
+    for line in ((s or "") .. "\n"):gmatch("(.-)\n") do
+        local n = (utf8 and utf8.len(line)) or #line
+        if n > longest then longest = n end
+    end
+    return longest * size * 0.5
+end
+
+local function clamp(v, lo, hi)
+    if v < lo then return lo end
+    if v > hi then return hi end
+    return v
+end
 local BUTTONS = {
     "BtnBook", "BtnHelp", "BtnPause", "PanelClose",
     "PanelBtn1", "PanelBtn2", "PanelBtn3", "PanelBtn4",
@@ -43,14 +83,14 @@ local TOAST_TEXT_X_ICON = 74  -- margem do texto quando há ícone à esquerda
 local TOAST_TEXT_Y = 18
 
 -- Lápide decorativa só nas telas "de capa"
-local TOMB_MODES = { menu = true, credits = true, options = true, info = true }
+local TOMB_MODES = { menu = true, credits = true }
 
 local REVEAL_CHARS_PER_SECOND = 70
-local TOP_BAR = { "NightText", "ObjectiveText" }
 -- Botões do topo só aparecem com o cursor livre (painel aberto); na exploração o
 -- mouse fica preso e os atalhos L / H / Esc fazem o mesmo papel.
 local TOP_BUTTONS = { "BtnBook", "BtnHelp", "BtnPause" }
-local KEY_HINTS = "E ou clique: examinar   ·   L: livro   ·   H: ajuda   ·   Esc: menu"
+-- Atalhos aparecem na barra só durante a primeira noite; depois ficam na Pausa > Controles
+local KEY_HINTS = "E examinar  ·  L livro  ·  H ajuda  ·  Esc pausa"
 
 local PANEL_SLOTS = 4
 local OVERLAY_SLOTS = 5
@@ -69,9 +109,9 @@ local function fontSize(kind)
     return FONT[kind][Settings.largeText and 2 or 1]
 end
 
--- Transparência do fundo de tela cheia: menus deixam ver o cemitério, histórias cobrem a tela
-local OVERLAY_ALPHA = { menu = 0.72, options = 0.80, info = 0.86, pause = 0.78, confirm = 0.82 }
-local OVERLAY_ALPHA_DEFAULT = 0.95
+-- Escurecimento atrás do cartão: menus deixam ver o cemitério, histórias isolam o texto
+local OVERLAY_ALPHA = { menu = 0.30, options = 0.45, info = 0.50, pause = 0.45, confirm = 0.55, credits = 0.55 }
+local OVERLAY_ALPHA_DEFAULT = 0.78
 
 local FOOTER_DEFAULT = "1–4 ou clique para escolher   ·   Enter: primeira opção"
 local FOOTER_BACK = "1–4 ou clique para escolher   ·   Esc: voltar"
@@ -142,6 +182,26 @@ function HUDController:init()
     }
     self.topBarBg = Image(s, findEntity(s, "TopBarBg"))
     self.overlayTomb = Image(s, findEntity(s, "OverlayTomb"))
+    self.overlayCard = Image(s, findEntity(s, "OverlayCard"))
+    self.overlayRule = Image(s, findEntity(s, "OverlayRule"))
+    self.overlaySkull = Image(s, findEntity(s, "OverlaySkull"))
+    self.overlayCandles = { Image(s, findEntity(s, "OverlayCandleL")), Image(s, findEntity(s, "OverlayCandleR")) }
+    self.panelIcon = Image(s, findEntity(s, "PanelIcon"))
+    self.btnIcon = {}
+    for i = 1, PANEL_SLOTS do
+        self.btnIcon["PanelBtn" .. i] = Image(s, findEntity(s, "PanelBtn" .. i .. "Icon"))
+    end
+    for i = 1, OVERLAY_SLOTS do
+        self.btnIcon["OverlayBtn" .. i] = Image(s, findEntity(s, "OverlayBtn" .. i .. "Icon"))
+    end
+    self.progressIcons = {}
+    for i = 1, PROGRESS_ICONS do
+        self.progressIcons[i] = Image(s, findEntity(s, "ProgressIcon" .. i))
+    end
+    self.iconPaths = {}      -- imagem -> textura atual (evita recarregar a cada frame)
+    self.placed = {}         -- objeto -> "x,y" já aplicado
+    self.topBarShown = false
+    self.shrinkWait = 0
     self.sayQueue = {}
     self.reveal = nil
 
@@ -179,11 +239,64 @@ local function setVisible(obj, visible)
 end
 
 function HUDController:setTopBarVisible(visible)
-    for _, name in ipairs(TOP_BAR) do
-        setVisible(self.text[name], visible)
-    end
-    setVisible(self.topBarBg, visible)
+    self.topBarShown = visible
+    self:refreshObjective()
     self:refreshExploreUI()
+end
+
+-- Troca a textura de uma imagem só quando muda; nil esconde
+function HUDController:setIcon(img, name, path)
+    path = path or (name and ICONS[name])
+    if not img then return end
+    if not path then
+        img.visible = false
+        return
+    end
+    if self.iconPaths[img] ~= path then
+        img:setTexture(path)
+        self.iconPaths[img] = path
+    end
+    img.visible = true
+end
+
+-- Posiciona (positionOffset) só quando o valor muda
+function HUDController:place(obj, x, y)
+    x, y = math.floor(x + 0.5), math.floor(y + 0.5)
+    local key = x .. "," .. y
+    if self.placed[obj] ~= key then
+        obj.positionOffset = Vector2(x, y)
+        self.placed[obj] = key
+    end
+end
+
+local function setSize(obj, w, h)
+    w = math.max(1, math.floor(w + 0.5))
+    if obj.width ~= w then obj.width = w end
+    if h then
+        h = math.max(1, math.floor(h + 0.5))
+        if obj.height ~= h then obj.height = h end
+    end
+end
+
+-- Muda a largura de um texto com quebra de linha e força o motor a quebrar de novo
+local function setTextWidth(textObj, w)
+    w = math.floor(w + 0.5)
+    if textObj.width ~= w then
+        textObj.width = w
+        local t = textObj.text
+        textObj.text = t .. " "
+        textObj.text = t
+    end
+end
+
+-- Texto de uma linha só ocupa a própria largura; texto longo quebra em maxW
+local function fitTextWidth(textObj, message, size, maxW)
+    if estimateWidth(message, size) <= maxW then
+        if textObj.fixedWidth then textObj.fixedWidth = false end
+    else
+        if not textObj.fixedWidth then textObj.fixedWidth = true end
+        setTextWidth(textObj, maxW)
+    end
 end
 
 -- Mira, aviso de interação e botões do topo conforme o estado
@@ -222,11 +335,13 @@ local function assignButtons(self, prefix, slots, list)
             btn.label = string.format("%d   %s", index, spec.label)
             btn.labelFontSize = fontSize("button")
             btn.disabled = spec.disabled and true or false
+            self:setIcon(self.btnIcon[name], spec.icon)
             self.slotLabels[name] = spec.label
             self.actions[name] = (not spec.disabled) and spec.action or nil
             keys[index] = name
         else
             btn.visible = false
+            setVisible(self.btnIcon[name], false)
             self.slotLabels[name] = nil
             self.actions[name] = nil
         end
@@ -245,27 +360,65 @@ end
 ----------------------------------------------------------------------
 -- Texto que se escreve aos poucos (respeita UTF-8; Espaço completa)
 ----------------------------------------------------------------------
+-- Antes de escrever, o texto completo fica alguns frames invisível para o motor medir
+-- a altura final: assim o painel já nasce do tamanho certo e não cresce durante a animação.
+local MEASURE_FRAMES = 2
+
 function HUDController:setRevealText(textObj, full, animate)
     if self.reveal and self.reveal.obj == textObj then self.reveal = nil end
+    textObj.visible = true
     local len = utf8 and utf8.len(full)
     if not animate or not Settings.animateText or not len or len < 2 then
         textObj.text = full
         return
     end
-    textObj.text = ""
-    self.reveal = { obj = textObj, full = full, len = len, shown = 0 }
+    textObj.text = full
+    textObj.visible = false
+    self.reveal = { obj = textObj, full = full, len = len, shown = 0, measuring = MEASURE_FRAMES }
+end
+
+-- Recomeça a medição (ex.: a fonte diminuiu para caber na tela)
+function HUDController:remeasureReveal(textObj)
+    local r = self.reveal
+    if not r or r.obj ~= textObj then return end
+    r.obj.text = r.full
+    r.obj.visible = false
+    r.height = nil
+    r.shown = 0
+    r.measuring = MEASURE_FRAMES
 end
 
 function HUDController:finishReveal()
     if not self.reveal then return false end
     self.reveal.obj.text = self.reveal.full
+    self.reveal.obj.visible = true
     self.reveal = nil
     return true
+end
+
+-- Altura final do texto, mesmo enquanto ele ainda está sendo escrito
+function HUDController:textHeight(textObj)
+    local r = self.reveal
+    if r and r.obj == textObj then
+        if r.height then return r.height end
+        return textObj.height
+    end
+    if textObj.text == "" then return 0 end
+    return textObj.height
 end
 
 function HUDController:updateReveal(dt)
     local r = self.reveal
     if not r then return end
+    if r.measuring > 0 then
+        r.measuring = r.measuring - 1
+        if r.measuring == 0 then
+            r.height = r.obj.height
+            r.obj.text = ""
+            r.obj.visible = true
+        end
+        return
+    end
     r.shown = r.shown + dt * REVEAL_CHARS_PER_SECOND
     local n = math.floor(r.shown)
     if n >= r.len then
@@ -292,17 +445,73 @@ function HUDController:applyPaper(kind)
     applyColor(self.text.PanelBody, p.body)
 end
 
--- spec = { title, subtitle, body, small, paper, reveal, buttons = { {label, action, disabled}, ... } }
+-- Largura do painel conforme o conteúdo: documentos ganham folha larga, avisos curtos ficam estreitos
+local function panelWidthFor(spec, bodySize)
+    local need = PANEL_MIN_W
+    if spec.paper and spec.paper ~= "default" then need = 820 end
+    need = math.max(need, math.min(estimateWidth(spec.body, bodySize), 860) + 2 * PANEL_PAD)
+    need = math.max(need, estimateWidth(spec.title, 30) + 2 * PANEL_PAD + 140)
+    for i, b in ipairs(spec.buttons or {}) do
+        need = math.max(need, estimateWidth(i .. "   " .. b.label, fontSize("button")) + 2 * PANEL_PAD + 130)
+    end
+    return clamp(need, PANEL_MIN_W, math.min(PANEL_MAX_W, Engine.canvasWidth - 2 * SCREEN_MARGIN))
+end
+
+-- spec = { title, subtitle, body, small, paper, icon, reveal, buttons = { {label, action, disabled, icon}, ... } }
 function HUDController:showPanel(spec)
+    local t = self.text
+    local bodySize = fontSize(spec.small and "bodySmall" or "body")
+    local w = panelWidthFor(spec, bodySize)
+    self.panelWidth = w
+    setSize(self.panelBg, w)
+    local titleX = spec.icon and (PANEL_PAD + 52) or PANEL_PAD
+    self.panelTitleX = titleX
+    setTextWidth(t.PanelTitle, w - titleX - 76)
+    setTextWidth(t.PanelSubtitle, w - 2 * PANEL_PAD)
+    setTextWidth(t.PanelBody, w - 2 * PANEL_PAD)
+    for i = 1, PANEL_SLOTS do
+        setSize(self.button["PanelBtn" .. i], w - 2 * PANEL_PAD)
+    end
+
     self:applyPaper(spec.paper)
-    self.text.PanelTitle.text = spec.title or ""
-    self.text.PanelSubtitle.text = spec.subtitle or ""
-    self.text.PanelBody.fontSize = fontSize(spec.small and "bodySmall" or "body")
-    self:setRevealText(self.text.PanelBody, spec.body or "", spec.reveal)
+    t.PanelTitle.text = spec.title or ""
+    t.PanelSubtitle.text = spec.subtitle or ""
+    t.PanelBody.fontSize = bodySize
+    self:setRevealText(t.PanelBody, spec.body or "", spec.reveal)
     assignButtons(self, "PanelBtn", PANEL_SLOTS, spec.buttons)
     self.modalDim.visible = true
+    self:setIcon(self.panelIcon, spec.icon)
     self.panelOpen = true
+    self:layoutPanel()
     self:updateModalFlag()
+end
+
+-- Altura do painel = título + subtítulo + texto + botões; o texto encolhe se não couber na tela
+function HUDController:layoutPanel()
+    local t = self.text
+    local y = 26
+    local titleH = math.max(self:textHeight(t.PanelTitle), self.panelIcon.visible and 44 or 0)
+    self:place(t.PanelTitle, self.panelTitleX or PANEL_PAD, y + (self.panelIcon.visible and math.max(0, (44 - self:textHeight(t.PanelTitle)) / 2) or 0))
+    y = y + titleH + 6
+    if t.PanelSubtitle.text ~= "" then
+        self:place(t.PanelSubtitle, PANEL_PAD, y)
+        y = y + self:textHeight(t.PanelSubtitle) + 16
+    else
+        y = y + 10
+    end
+    self:place(t.PanelBody, PANEL_PAD, y)
+    local bodyH = self:textHeight(t.PanelBody)
+    y = y + bodyH + 28
+    local n = #self.keySlots.PanelBtn
+    y = y + (n > 0 and (n * 54 + 16) or 8)
+
+    local maxH = Engine.canvasHeight - 2 * SCREEN_MARGIN
+    if y > maxH and t.PanelBody.fontSize > MIN_BODY_FONT and self.shrinkWait <= 0 then
+        t.PanelBody.fontSize = t.PanelBody.fontSize - 1
+        self:remeasureReveal(t.PanelBody)
+        self.shrinkWait = MEASURE_FRAMES + 1
+    end
+    setSize(self.panelBg, self.panelWidth or 900, math.min(y, maxH))
 end
 
 function HUDController:closePanel()
@@ -318,15 +527,21 @@ function HUDController:showOverlay(spec)
     self:closePanel()
     self.overlayMode = spec.mode
     self.overlayBack = spec.back
-    self.text.OverlayTitle.text = spec.title or ""
-    self.text.OverlaySubtitle.text = spec.subtitle or ""
-    self:setRevealText(self.text.OverlayBody, spec.body or "", spec.reveal)
-    self.text.OverlayFooter.text = spec.footer or (spec.back and FOOTER_BACK or FOOTER_DEFAULT)
-    assignButtons(self, "OverlayBtn", OVERLAY_SLOTS, spec.buttons)
-    -- moldura da spritesheet; o tom escurece um pouco a textura e o alfa deixa ver o cemitério nos menus
-    self.overlayBg:setColor(0.78, 0.74, 0.74, OVERLAY_ALPHA[spec.mode] or OVERLAY_ALPHA_DEFAULT)
+    local t = self.text
+    self.overlayBodyWidth = math.min(OVERLAY_BODY_WIDTH[spec.mode] or OVERLAY_BODY_WIDTH_DEFAULT,
+        Engine.canvasWidth - 2 * (SCREEN_MARGIN + CARD_PAD_X))
+    setTextWidth(t.OverlayBody, self.overlayBodyWidth)
+    t.OverlayBody.fontSize = fontSize("overlay")
+    t.OverlayTitle.text = spec.title or ""
+    t.OverlaySubtitle.text = spec.subtitle or ""
+    self:setRevealText(t.OverlayBody, spec.body or "", spec.reveal)
+    t.OverlayFooter.text = spec.footer or (spec.back and FOOTER_BACK or FOOTER_DEFAULT)
+    -- só a cena escurece; o conteúdo fica num cartão do tamanho dele (OverlayCard)
+    self.overlayBg:setColor(0, 0, 0, OVERLAY_ALPHA[spec.mode] or OVERLAY_ALPHA_DEFAULT)
     self.overlayBg.visible = true
+    assignButtons(self, "OverlayBtn", OVERLAY_SLOTS, spec.buttons)
     self.overlayTomb.visible = TOMB_MODES[spec.mode] == true
+    self:layoutOverlay()
     self.overlayOpen = true
     self:setTopBarVisible(false)
     self:hideToast()
@@ -344,16 +559,120 @@ function HUDController:closeOverlay()
     self:updateModalFlag()
 end
 
+-- Cartão central: empilha título, subtítulo, divisor, texto, botões e rodapé e
+-- centraliza tudo na altura da tela. O texto encolhe se a história não couber.
+function HUDController:layoutOverlay()
+    local t = self.text
+    local canvasW, canvasH = Engine.canvasWidth, Engine.canvasHeight
+    local titleH = self:textHeight(t.OverlayTitle)
+    local hasSub = t.OverlaySubtitle.text ~= ""
+    local bodyH = self:textHeight(t.OverlayBody)
+    local footerH = t.OverlayFooter.text ~= "" and self:textHeight(t.OverlayFooter) or 0
+    local slots = self.keySlots.OverlayBtn
+    local n = #slots
+
+    -- posições relativas ao topo do cartão
+    local y = 34
+    local titleY = y
+    y = y + titleH + 8
+    local subY = y
+    if hasSub then y = y + self:textHeight(t.OverlaySubtitle) + 14 end
+    local ruleY = y + 8
+    y = ruleY + 32
+    local bodyY = y
+    if bodyH > 0 then y = y + bodyH + 26 end
+    local btnY = y
+    if n > 0 then y = y + n * (OVERLAY_BUTTON_H + OVERLAY_BUTTON_GAP) - OVERLAY_BUTTON_GAP + 20 end
+    local footY = y
+    y = y + footerH + 28
+    local cardH = y
+
+    local maxH = canvasH - 2 * SCREEN_MARGIN
+    if cardH > maxH and t.OverlayBody.fontSize > MIN_BODY_FONT and self.shrinkWait <= 0 then
+        t.OverlayBody.fontSize = t.OverlayBody.fontSize - 1
+        self:remeasureReveal(t.OverlayBody)
+        self.shrinkWait = MEASURE_FRAMES + 1
+    end
+
+    local contentW = math.max(self.overlayBodyWidth or 600, OVERLAY_BUTTON_W, t.OverlayTitle.width + 170,
+        hasSub and t.OverlaySubtitle.width or 0, t.OverlayFooter.width)
+    local cardW = math.min(contentW + 2 * CARD_PAD_X, canvasW - 2 * SCREEN_MARGIN)
+    local top = math.max(SCREEN_MARGIN, math.floor((canvasH - cardH) / 2))
+
+    setSize(self.overlayCard, cardW, cardH)
+    self:place(self.overlayCard, 0, top)
+    self:place(t.OverlayTitle, 0, top + titleY)
+    self:place(t.OverlaySubtitle, 0, top + subY)
+    setSize(self.overlayRule, math.min(520, cardW - 2 * CARD_PAD_X), 6)
+    self:place(self.overlayRule, 0, top + ruleY)
+    self:place(self.overlaySkull, 0, top + ruleY - 19)
+    local candleY = math.max(top + 24, top + titleY + titleH / 2 - 47)
+    self:place(self.overlayCandles[1], -(cardW / 2 - 72), candleY)
+    self:place(self.overlayCandles[2], cardW / 2 - 72, candleY)
+    self:place(t.OverlayBody, 0, top + bodyY)
+    for i, name in ipairs(slots) do
+        self:place(self.button[name], 0, top + btnY + (i - 1) * (OVERLAY_BUTTON_H + OVERLAY_BUTTON_GAP))
+    end
+    self:place(t.OverlayFooter, 0, top + footY)
+end
+
+-- Legenda: largura do texto (até TOAST_MAX_TEXT_W) + ícone + margens
+function HUDController:layoutToast()
+    local t = self.text.ToastText
+    local x = self.toastTextX or TOAST_TEXT_X
+    local w = x + t.width + 30
+    local h = math.max(60, self:textHeight(t) + 2 * TOAST_TEXT_Y)
+    setSize(self.toastBg, w, h)
+end
+
+-- Barra superior: noite, objetivo, fontes (ícones) e atalhos — só o espaço que o conteúdo pede
+function HUDController:layoutTopBar()
+    local t = self.text
+    local x, y = 26, 18
+    self:place(t.NightText, x, y)
+    local w = t.NightText.width
+    y = y + self:textHeight(t.NightText) + 6
+    if t.ObjectiveText.text ~= "" then
+        self:place(t.ObjectiveText, x, y)
+        w = math.max(w, t.ObjectiveText.width)
+        y = y + self:textHeight(t.ObjectiveText) + 10
+    end
+    if t.ProgressLabel.visible then
+        self:place(t.ProgressLabel, x, y + 3)
+        local ix = x + t.ProgressLabel.width + 10
+        for _, icon in ipairs(self.progressIcons) do
+            if icon.visible then
+                self:place(icon, ix, y)
+                ix = ix + 28
+            end
+        end
+        w = math.max(w, ix - x)
+        y = y + 30
+    end
+    if t.KeysText.visible then
+        self:place(t.KeysText, x, y)
+        w = math.max(w, t.KeysText.width)
+        y = y + self:textHeight(t.KeysText) + 4
+    end
+    self:place(self.topBarBg, 10, 8)
+    setSize(self.topBarBg, w + 2 * (x - 10), y + 12 - 8)
+end
+
 -- Mostra uma legenda agora (substitui a atual)
 function HUDController:showSay(message, style)
     local st = SAY_STYLE[style] or SAY_STYLE.info
-    self.text.ToastText.text = st.prefix .. message
-    applyColor(self.text.ToastText, st.color)
+    local text = st.prefix .. message
+    local toastText = self.text.ToastText
+    fitTextWidth(toastText, text, toastText.fontSize, TOAST_MAX_TEXT_W)
+    toastText.text = text
+    applyColor(toastText, st.color)
     self.toastBg.visible = true
     for kind, icon in pairs(self.toastIcon) do
         icon.visible = (kind == st.icon)
     end
-    self.text.ToastText.positionOffset = Vector2(st.icon and TOAST_TEXT_X_ICON or TOAST_TEXT_X, TOAST_TEXT_Y)
+    self.toastTextX = st.icon and TOAST_TEXT_X_ICON or TOAST_TEXT_X
+    self:place(toastText, self.toastTextX, TOAST_TEXT_Y)
+    self:layoutToast()
     -- tempo de leitura proporcional ao tamanho do texto
     local len = (utf8 and utf8.len(message)) or #message
     self.toastTime = math.max(TOAST_SECONDS, 2.5 + len / 14)
@@ -382,26 +701,43 @@ end
 -- Barra superior
 ----------------------------------------------------------------------
 function HUDController:refreshObjective()
-    local case = Flow.currentCase()
+    local t = self.text
+    local shown = self.topBarShown
+    local case = shown and Flow.currentCase() or nil
     local night = N.nights[Flow.state.night]
-    self.text.NightText.text = string.format("Noite %d/%d — %s", Flow.state.night, N.nightCount, night and night.subtitle or "")
-    if case then
-        local readCount, total = Flow.progress(case)
-        self.text.ObjectiveText.text = string.format("%s\nFontes consultadas: %d/%d\n%s", case.objective, readCount, total, KEY_HINTS)
-    else
-        self.text.ObjectiveText.text = ""
+    t.NightText.text = string.format("Noite %d/%d — %s", Flow.state.night, N.nightCount, night and night.subtitle or "")
+
+    local objective = case and case.objective or ""
+    fitTextWidth(t.ObjectiveText, objective, t.ObjectiveText.fontSize, OBJECTIVE_MAX_W)
+    t.ObjectiveText.text = objective
+
+    -- uma marca da spritesheet por fonte do caso: acesa quando já foi lida
+    local sources = case and Flow.requiredSources(case) or {}
+    for i, icon in ipairs(self.progressIcons) do
+        local id = sources[i]
+        if id then
+            self:setIcon(icon, nil, Flow.isRead(id) and PROGRESS_ON or PROGRESS_OFF)
+        else
+            icon.visible = false
+        end
     end
+    t.ProgressLabel.visible = #sources > 0
+    t.KeysText.text = KEY_HINTS
+    t.KeysText.visible = shown and Flow.state.night == 1
+
+    setVisible(t.NightText, shown)
+    setVisible(t.ObjectiveText, shown and objective ~= "")
+    setVisible(self.topBarBg, shown)
+    if shown then self:layoutTopBar() end
 end
 
 function HUDController:onCaseStarted(case)
-    self.button.BtnHelp.label = "Ajuda"
     self:refreshObjective()
     self:say(N.caseThoughts[case.id], "thought")
     self:say("Novo registro a conferir: sepultura " .. N.graves[case.grave].number .. " — " .. case.title .. ". Procure a luz fria.", "info")
 end
 
 function HUDController:onIdleHint()
-    self.button.BtnHelp.label = "Ajuda (!)"
     if not self.panelOpen and not self.overlayOpen then
         self:toast(N.toasts.idleHint)
     end
@@ -438,6 +774,11 @@ local function readMark(id)
     return Flow.isRead(id) and "  (lido)" or ""
 end
 
+-- Fonte já lida mostra o visto; fonte nova mostra o "+"
+local function readIcon(id)
+    return Flow.isRead(id) and "check" or "plus"
+end
+
 function HUDController:onWorldClick(h)
     if h.kind == "grave" then
         self:openGrave(h.grave)
@@ -464,8 +805,9 @@ function HUDController:openGrave(g)
         self:showPanel({
             title = "Sepultura " .. grave.number,
             subtitle = "Inscrição da lápide",
+            icon = "tomb",
             body = Flow.inscription(g) .. "\n\n" .. note,
-            buttons = { { label = "Fechar", action = function() self:closePanel() end } },
+            buttons = { { label = "Fechar", icon = "x", action = function() self:closePanel() end } },
         })
         return
     end
@@ -481,7 +823,7 @@ function HUDController:openGrave(g)
         else
             label = "Ler: " .. ev.title .. readMark(id)
         end
-        buttons[#buttons + 1] = { label = label, action = function() self:openEvidence(id, back) end }
+        buttons[#buttons + 1] = { label = label, icon = readIcon(id), action = function() self:openEvidence(id, back) end }
     end
     local readCount, total = Flow.progress(case)
     local can = Flow.canConfront(case)
@@ -489,11 +831,12 @@ function HUDController:openGrave(g)
     if not can then
         confrontLabel = confrontLabel .. string.format("  (%d/%d fontes lidas)", readCount, total)
     end
-    buttons[#buttons + 1] = { label = confrontLabel, disabled = not can, action = function() self:openConfront() end }
+    buttons[#buttons + 1] = { label = confrontLabel, icon = can and "question" or "minus", disabled = not can, action = function() self:openConfront() end }
 
     self:showPanel({
         title = "Sepultura " .. grave.number .. " — " .. case.title,
         subtitle = "Inscrição da lápide",
+        icon = "tomb",
         body = Flow.inscription(g) .. "\n\n" .. case.objective,
         buttons = buttons,
     })
@@ -514,8 +857,8 @@ function HUDController:openEvidence(id, back)
         paper = ev.kind,
         reveal = firstTime,
         buttons = {
-            { label = "Voltar", action = back },
-            { label = "Fechar", action = function() self:closePanel() end },
+            { label = "Voltar", icon = "home", action = back },
+            { label = "Fechar", icon = "x", action = function() self:closePanel() end },
         },
     })
 end
@@ -534,25 +877,25 @@ function HUDController:openBook()
         for _, id in ipairs(case.evidence) do
             if id:sub(1, 5) == "book:" then
                 buttons[#buttons + 1] = {
-                    label = "Ler o registro nº " .. N.graves[case.grave].number .. readMark(id),
+                    label = "Ler o registro nº " .. N.graves[case.grave].number .. readMark(id), icon = readIcon(id),
                     action = function() self:openEvidence(id, function() self:openBook() end) end,
                 }
             end
         end
         buttons[#buttons + 1] = {
-            label = "Ir para a sepultura " .. N.graves[case.grave].number,
+            label = "Ir para a sepultura " .. N.graves[case.grave].number, icon = "play",
             action = function() self:openGrave(case.grave) end,
         }
     else
         body = "Nenhum caso aberto."
     end
     buttons[#buttons + 1] = {
-        label = string.format("Anotações do coveiro (%d)", #Flow.state.notes),
+        label = string.format("Anotações do coveiro (%d)", #Flow.state.notes), icon = "candle",
         action = function() self:openNotes() end,
     }
     if Flow.state.flags.night1_event then
         buttons[#buttons + 1] = {
-            label = "Página rasgada" .. readMark("pagina_rasgada"),
+            label = "Página rasgada" .. readMark("pagina_rasgada"), icon = readIcon("pagina_rasgada"),
             action = function() self:openEvidence("pagina_rasgada", function() self:openBook() end) end,
         }
     end
@@ -560,6 +903,7 @@ function HUDController:openBook()
     self:showPanel({
         title = "Livro de registros",
         subtitle = N.town .. " — 1845",
+        icon = "candle",
         body = body,
         buttons = buttons,
     })
@@ -578,16 +922,17 @@ function HUDController:openNotes()
     if Flow.state.flags.night2_event then
         body = body .. "\n\nVocê pode reler o testemunho do Padre Inácio abaixo."
     end
-    local buttons = { { label = "Voltar ao livro", action = function() self:openBook() end } }
+    local buttons = { { label = "Voltar ao livro", icon = "home", action = function() self:openBook() end } }
     if Flow.state.flags.night2_event then
         table.insert(buttons, 1, {
-            label = "Reler o testemunho do Padre Inácio",
+            label = "Reler o testemunho do Padre Inácio", icon = "check",
             action = function() self:openEvidence("testemunho_vigario", function() self:openNotes() end) end,
         })
     end
-    buttons[#buttons + 1] = { label = "Fechar", action = function() self:closePanel() end }
+    buttons[#buttons + 1] = { label = "Fechar", icon = "x", action = function() self:closePanel() end }
     self:showPanel({
         title = "Anotações do coveiro",
+        icon = "candle",
         subtitle = "Histórico das descobertas",
         body = body,
         small = true,
@@ -607,11 +952,12 @@ function HUDController:openConfront()
         buttons[#buttons + 1] = { label = h.text, action = function() self:choose(i) end }
     end
     if not case.decision then
-        buttons[#buttons + 1] = { label = "Voltar à sepultura", action = function() self:openGrave(case.grave) end }
+        buttons[#buttons + 1] = { label = "Voltar à sepultura", icon = "home", action = function() self:openGrave(case.grave) end }
     end
     self:showPanel({
         title = case.decision and "A última página" or ("Confrontar registros — sepultura " .. N.graves[case.grave].number),
         subtitle = case.title,
+        icon = "skull",
         body = table.concat(lines, "\n"),
         buttons = buttons,
     })
@@ -627,10 +973,11 @@ function HUDController:choose(index)
         self:refreshObjective()
         self:showPanel({
             title = "Registro corrigido",
+            icon = "correct",
             subtitle = "Sepultura " .. N.graves[case.grave].number .. " — " .. case.title,
             body = result.text,
             reveal = true,
-            buttons = { { label = "Continuar", action = function()
+            buttons = { { label = "Continuar", icon = "play", action = function()
                 self:closePanel()
                 Flow.advance()
             end } },
@@ -638,11 +985,12 @@ function HUDController:choose(index)
     elseif result.kind == "wrong" then
         self:showPanel({
             title = "As provas não sustentam isso",
+            icon = "wrong",
             subtitle = "O registro continua aberto",
             body = result.text .. "\n\nA névoa sobre o cemitério fica um pouco mais densa.",
             buttons = {
-                { label = "Tentar outra conclusão", action = function() self:openConfront() end },
-                { label = "Rever os documentos", action = function() self:openGrave(case.grave) end },
+                { label = "Tentar outra conclusão", icon = "question", action = function() self:openConfront() end },
+                { label = "Rever os documentos", icon = "home", action = function() self:openGrave(case.grave) end },
             },
         })
     elseif result.kind == "ending" then
@@ -651,14 +999,14 @@ function HUDController:choose(index)
 end
 
 function HUDController:openHelp()
-    self.button.BtnHelp.label = "Ajuda"
     Flow.state.idle = 0
     self:showPanel({
         title = "Ajuda",
+        icon = "help",
         subtitle = "Pedir uma pista não tem penalidade",
         body = Flow.hintText() .. "\n\n" .. N.controls,
         small = true,
-        buttons = { { label = "Fechar", action = function() self:closePanel() end } },
+        buttons = { { label = "Fechar", icon = "x", action = function() self:closePanel() end } },
     })
 end
 
@@ -673,10 +1021,10 @@ function HUDController:showMainMenu()
         body = N.menu.body,
         footer = FOOTER_DEFAULT .. "   ·   Doriax Flash Jam 2026",
         buttons = {
-            { label = "Iniciar", action = function() self:showPrologue(1) end },
-            { label = "Opções", action = function() self:showOptions(function() self:showMainMenu() end) end },
-            { label = "Controles", action = function() self:showInfo("Controles", N.controls, function() self:showMainMenu() end) end },
-            { label = "Créditos", action = function() self:showInfo("Créditos", N.credits, function() self:showMainMenu() end) end },
+            { label = "Iniciar", icon = "play", action = function() self:showPrologue(1) end },
+            { label = "Opções", icon = "gear", action = function() self:showOptions(function() self:showMainMenu() end) end },
+            { label = "Controles", icon = "question", action = function() self:showInfo("Controles", N.controls, function() self:showMainMenu() end) end },
+            { label = "Créditos", icon = "candle", action = function() self:showInfo("Créditos", N.credits, function() self:showMainMenu() end) end },
         },
     })
 end
@@ -699,8 +1047,8 @@ function HUDController:showPrologue(page)
         footer = string.format("Prólogo %d de %d   ·   Enter ou 1: continuar   ·   Espaço: mostrar o texto todo", page, #N.prologue),
         back = function() self:showMainMenu() end,
         buttons = {
-            { label = isLast and "Entrar no cemitério" or "Continuar", action = function() self:showPrologue(page + 1) end },
-            { label = "Pular o prólogo", action = function() self:showPrologue(#N.prologue + 1) end },
+            { label = isLast and "Entrar no cemitério" or "Continuar", icon = "play", action = function() self:showPrologue(page + 1) end },
+            { label = "Pular o prólogo", icon = "minus", action = function() self:showPrologue(#N.prologue + 1) end },
         },
     })
 end
@@ -712,7 +1060,7 @@ function HUDController:showInfo(title, body, back)
         subtitle = "",
         body = body,
         back = back,
-        buttons = { { label = "Voltar", action = back } },
+        buttons = { { label = "Voltar", icon = "home", action = back } },
     })
 end
 
@@ -729,19 +1077,19 @@ function HUDController:showOptions(back)
             .. "Texto animado: documentos e cenas se escrevem aos poucos (Espaço completa).",
         back = back,
         buttons = {
-            { label = "Sensibilidade do mouse: " .. Settings.sensitivityLabel(), action = function()
+            { label = "Sensibilidade do mouse: " .. Settings.sensitivityLabel(), icon = "gear", action = function()
                 Settings.cycleSensitivity(); refresh()
             end },
-            { label = "Inverter eixo vertical: " .. (Settings.invertY and "Sim" or "Não"), action = function()
+            { label = "Inverter eixo vertical: " .. (Settings.invertY and "Sim" or "Não"), icon = Settings.invertY and "check" or "x", action = function()
                 Settings.toggleInvertY(); refresh()
             end },
-            { label = "Texto grande: " .. (Settings.largeText and "Sim" or "Não"), action = function()
+            { label = "Texto grande: " .. (Settings.largeText and "Sim" or "Não"), icon = Settings.largeText and "check" or "x", action = function()
                 Settings.toggleLargeText(); self:applyTextSize(); refresh()
             end },
-            { label = "Texto animado: " .. (Settings.animateText and "Sim" or "Não"), action = function()
+            { label = "Texto animado: " .. (Settings.animateText and "Sim" or "Não"), icon = Settings.animateText and "check" or "x", action = function()
                 Settings.toggleAnimateText(); refresh()
             end },
-            { label = "Voltar", action = back },
+            { label = "Voltar", icon = "home", action = back },
         },
     })
 end
@@ -755,8 +1103,8 @@ function HUDController:confirm(title, body, yesLabel, onYes, onNo)
         body = body,
         back = onNo,
         buttons = {
-            { label = "Não, voltar", action = onNo },
-            { label = yesLabel, action = onYes },
+            { label = "Não, voltar", icon = "x", action = onNo },
+            { label = yesLabel, icon = "check", action = onYes },
         },
     })
 end
@@ -797,10 +1145,10 @@ function HUDController:openPause()
         back = resume,
         footer = "1–4 ou clique para escolher   ·   Esc: continuar",
         buttons = {
-            { label = "Continuar", action = resume },
-            { label = "Opções", action = function() self:showOptions(function() self:openPause() end) end },
-            { label = "Controles", action = function() self:showInfo("Controles", N.controls, function() self:openPause() end) end },
-            { label = "Voltar ao menu principal", action = function()
+            { label = "Continuar", icon = "play", action = resume },
+            { label = "Opções", icon = "gear", action = function() self:showOptions(function() self:openPause() end) end },
+            { label = "Controles", icon = "question", action = function() self:showInfo("Controles", N.controls, function() self:openPause() end) end },
+            { label = "Voltar ao menu principal", icon = "home", action = function()
                 self:confirm("Voltar ao menu principal?",
                     "O progresso desta campanha será perdido e a história recomeça da primeira noite.",
                     "Sim, voltar ao menu",
@@ -826,7 +1174,7 @@ function HUDController:showNightIntro(n)
         subtitle = string.format("%s   ·   noite %d de %d", night.subtitle, n, N.nightCount),
         body = body,
         footer = "Enter ou 1: começar",
-        buttons = { { label = "Começar a noite", action = function()
+        buttons = { { label = "Começar a noite", icon = "play", action = function()
             self:closeOverlay()
             Flow.beginNight()
             self:setTopBarVisible(true)
@@ -866,7 +1214,7 @@ function HUDController:showCredits()
         subtitle = ending and ("Final: " .. ending.title .. "   ·   obrigado por jogar") or "Obrigado por jogar",
         body = N.credits,
         buttons = {
-            { label = "Jogar novamente", action = function()
+            { label = "Jogar novamente", icon = "play", action = function()
                 Flow.reset()
                 self:showMainMenu()
             end },
@@ -954,6 +1302,13 @@ function HUDController:onUpdate()
     end
     Flow.tick(dt)
     self:updateReveal(dt)
+
+    -- O motor mede os textos depois que eles mudam: refaz a diagramação com as medidas atuais
+    if self.shrinkWait > 0 then self.shrinkWait = self.shrinkWait - 1 end
+    if self.overlayOpen then self:layoutOverlay() end
+    if self.panelOpen then self:layoutPanel() end
+    if self.toastBg.visible then self:layoutToast() end
+    if self.topBarShown then self:layoutTopBar() end
     if self.toastTime > 0 then
         self.toastTime = self.toastTime - dt
         if self.toastTime <= 0 then self:hideToast() end
