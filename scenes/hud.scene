@@ -99,7 +99,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|28#20
+          id: font|28#22
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -171,7 +171,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|18#55
+          id: font|18#57
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -359,7 +359,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#55
+              id: font|18#57
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -547,7 +547,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#55
+              id: font|18#57
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -735,7 +735,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#55
+              id: font|18#57
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -807,7 +807,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|20#42
+          id: font|20#43
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -948,7 +948,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|19#28
+              id: font|19#32
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -1302,7 +1302,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#42
+                  id: font|20#43
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -1490,7 +1490,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|20#42
+                      id: font|20#43
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -1678,7 +1678,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#55
+                      id: font|18#57
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -1866,7 +1866,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#55
+                      id: font|18#57
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2054,7 +2054,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#55
+                      id: font|18#57
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2242,7 +2242,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#55
+                      id: font|18#57
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2383,7 +2383,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|48#14
+              id: font|48#20
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -2455,7 +2455,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|22#14
+              id: font|22#27
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -2527,7 +2527,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|21#39
+              id: font|21#52
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -2715,7 +2715,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#42
+                  id: font|20#43
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -2903,7 +2903,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#42
+                  id: font|20#43
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -3091,7 +3091,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#42
+                  id: font|20#43
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -3163,7 +3163,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|28#20
+          id: font|28#22
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -3204,4 +3204,4 @@ entities:
         fixedHeight: false
         pivotBaseline: false
         pivotCentered: false
-shaderKeysHash: 433807390ae51b7bb133f0ac601dc1500f11cac8
+shaderKeysHash: be125efdced72e76258c68509650287fa643cb06

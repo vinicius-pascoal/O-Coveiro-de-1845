@@ -28,17 +28,26 @@ local HOTSPOTS = {
     { name = "Crypt", kind = "crypt" },
 }
 
--- Atmosfera por noite (cores sRGB)
+-- Atmosfera por noite (cores sRGB). zenith/moonDisc/stars/clouds alimentam o shader do céu.
 local NIGHT_LOOK = {
-    [1] = { fog = { 0.08, 0.09, 0.14 }, density = 0.045, moon = { 0.60, 0.70, 1.00 }, moonI = 1.6 },
-    [2] = { fog = { 0.07, 0.10, 0.10 }, density = 0.050, moon = { 0.55, 0.78, 0.80 }, moonI = 1.4 },
-    [3] = { fog = { 0.11, 0.06, 0.07 }, density = 0.058, moon = { 0.78, 0.60, 0.70 }, moonI = 1.2 },
+    [1] = { fog = { 0.08, 0.09, 0.14 }, density = 0.045, moon = { 0.60, 0.70, 1.00 }, moonI = 1.6,
+            zenith = { 0.025, 0.035, 0.075 }, moonDisc = { 0.85, 0.90, 1.00 }, stars = 1.0, clouds = 0.50 },
+    [2] = { fog = { 0.07, 0.10, 0.10 }, density = 0.050, moon = { 0.55, 0.78, 0.80 }, moonI = 1.4,
+            zenith = { 0.020, 0.045, 0.055 }, moonDisc = { 0.80, 0.95, 0.90 }, stars = 0.8, clouds = 0.62 },
+    [3] = { fog = { 0.11, 0.06, 0.07 }, density = 0.058, moon = { 0.78, 0.60, 0.70 }, moonI = 1.2,
+            zenith = { 0.045, 0.020, 0.035 }, moonDisc = { 1.00, 0.72, 0.65 }, stars = 0.5, clouds = 0.75 },
 }
 
 local ENDING_LOOK = {
-    preserve = { fog = { 0.05, 0.05, 0.07 }, density = 0.090, moon = { 0.45, 0.50, 0.70 }, moonI = 0.8 },
-    reveal   = { fog = { 0.16, 0.13, 0.12 }, density = 0.020, moon = { 1.00, 0.90, 0.80 }, moonI = 2.4 },
+    preserve = { fog = { 0.05, 0.05, 0.07 }, density = 0.090, moon = { 0.45, 0.50, 0.70 }, moonI = 0.8,
+                 zenith = { 0.012, 0.014, 0.025 }, moonDisc = { 0.50, 0.55, 0.65 }, stars = 0.1, clouds = 0.92 },
+    reveal   = { fog = { 0.16, 0.13, 0.12 }, density = 0.020, moon = { 1.00, 0.90, 0.80 }, moonI = 2.4,
+                 zenith = { 0.060, 0.070, 0.130 }, moonDisc = { 1.00, 0.95, 0.85 }, stars = 1.8, clouds = 0.25 },
 }
+
+local function srgbToLinear(c)
+    return Vector3(c[1] ^ 2.2, c[2] ^ 2.2, c[3] ^ 2.2)
+end
 
 local UP = Vector3(0, 1, 0)
 local RIGHT = Vector3(1, 0, 0)
@@ -95,6 +104,14 @@ function WorldController:init()
 
     self.fog = Fog(s, find(s, "Fog"))
     self.moon = Light(s, find(s, "Moon"))
+    local skyEntity = find(s, "Sky")
+    if skyEntity then
+        self.sky = SkyBox(s, skyEntity)
+        -- a lua do céu fica do lado oposto à direção da luz
+        local d = self.moon.direction
+        local len = math.sqrt(d.x * d.x + d.y * d.y + d.z * d.z)
+        self.sky:setShaderUniform("moonDirection", Vector3(-d.x / len, -d.y / len, -d.z / len))
+    end
     self.baseFogDensity = self.fog.density
     self.extraFog = 0
 
@@ -292,6 +309,14 @@ function WorldController:applyAtmosphere(look)
     self.moon:setColor(look.moon[1], look.moon[2], look.moon[3])
     self.moonIntensity = look.moonI
     self.moon.intensity = look.moonI
+    if self.sky then
+        -- o horizonte do céu usa a cor da névoa para o fundo se fundir sem emenda
+        self.sky:setShaderUniform("horizonColor", srgbToLinear(look.fog))
+        self.sky:setShaderUniform("zenithColor", srgbToLinear(look.zenith))
+        self.sky:setShaderUniform("moonColor", srgbToLinear(look.moonDisc))
+        self.sky:setShaderUniform("starAmount", look.stars)
+        self.sky:setShaderUniform("cloudAmount", look.clouds)
+    end
 end
 
 function WorldController:onEnding(kind)
