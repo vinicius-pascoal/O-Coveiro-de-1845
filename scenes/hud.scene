@@ -99,7 +99,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|28#22
+          id: font|28#20
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -171,7 +171,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|18#62
+          id: font|18#55
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -359,7 +359,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#62
+              id: font|18#55
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -547,7 +547,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#62
+              id: font|18#55
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -735,7 +735,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#62
+              id: font|18#55
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -807,7 +807,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|20#65
+          id: font|20#42
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -948,7 +948,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|19#33
+              id: font|19#28
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -1158,7 +1158,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|30#31
+                  id: font|30#17
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -1230,7 +1230,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|17#30
+                  id: font|17#16
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -1302,7 +1302,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#65
+                  id: font|20#42
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -1490,7 +1490,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|20#65
+                      id: font|20#42
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -1678,7 +1678,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#62
+                      id: font|18#55
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -1866,7 +1866,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#62
+                      id: font|18#55
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2054,7 +2054,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#62
+                      id: font|18#55
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2242,7 +2242,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#62
+                      id: font|18#55
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2383,7 +2383,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|48#16
+              id: font|48#14
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -2455,7 +2455,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|22#17
+              id: font|22#14
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -2527,7 +2527,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|21#48
+              id: font|21#39
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -2715,7 +2715,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#65
+                  id: font|20#42
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -2903,7 +2903,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#65
+                  id: font|20#42
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -3091,7 +3091,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#65
+                  id: font|20#42
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -3163,7 +3163,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|28#22
+          id: font|28#20
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -3204,4 +3204,4 @@ entities:
         fixedHeight: false
         pivotBaseline: false
         pivotCentered: false
-shaderKeysHash: 8f0fcb8835d34d42a2d1aad1cbdb590becaf625d
+shaderKeysHash: 433807390ae51b7bb133f0ac601dc1500f11cac8

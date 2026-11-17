@@ -137,7 +137,7 @@ end
 function SelfTest.aimTest(world)
     local cam = world.camera
     local p = cam:getWorldPosition()
-    Log.print(string.format("SELFTEST player=%s camera=%s onGround=%s", tostring(world.player.position), tostring(p), tostring(world.character:isOnGround())))
+    Log.print(string.format("SELFTEST player=%s camera=%s onGround=%s fps=%.0f", tostring(world.player.position), tostring(p), tostring(world.character:isOnGround()), Engine.framerate))
     local ok, bad = 0, {}
     local savedYaw, savedPitch = world.yaw, world.pitch
     for _, h in ipairs(world.hotspots) do
