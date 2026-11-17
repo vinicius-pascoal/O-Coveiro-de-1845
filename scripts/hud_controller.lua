@@ -19,8 +19,26 @@ local TEXTS = {
 local BUTTONS = {
     "BtnBook", "BtnHelp", "BtnPause", "PanelClose",
     "PanelBtn1", "PanelBtn2", "PanelBtn3", "PanelBtn4",
-    "OverlayBtn1", "OverlayBtn2", "OverlayBtn3", "OverlayBtn4",
+    "OverlayBtn1", "OverlayBtn2", "OverlayBtn3", "OverlayBtn4", "OverlayBtn5",
 }
+
+-- Papéis: cada tipo de documento aparece num papel e tinta próprios (cores sRGB)
+local PAPER = {
+    default   = { bg = { 0.15, 0.125, 0.10, 0.98 }, title = { 0.95, 0.84, 0.58 }, sub = { 0.72, 0.66, 0.55 }, body = { 0.93, 0.91, 0.86 } },
+    letter    = { bg = { 0.86, 0.80, 0.66, 1.0 }, title = { 0.40, 0.16, 0.08 }, sub = { 0.38, 0.30, 0.22 }, body = { 0.16, 0.12, 0.08 } },
+    book      = { bg = { 0.70, 0.64, 0.50, 1.0 }, title = { 0.30, 0.12, 0.06 }, sub = { 0.30, 0.24, 0.18 }, body = { 0.12, 0.09, 0.06 } },
+    record    = { bg = { 0.78, 0.77, 0.72, 1.0 }, title = { 0.22, 0.20, 0.30 }, sub = { 0.32, 0.30, 0.30 }, body = { 0.12, 0.12, 0.14 } },
+    testimony = { bg = { 0.78, 0.77, 0.72, 1.0 }, title = { 0.22, 0.20, 0.30 }, sub = { 0.32, 0.30, 0.30 }, body = { 0.12, 0.12, 0.14 } },
+}
+
+-- Legendas: pensamentos de Severino, sussurros e avisos
+local SAY_STYLE = {
+    thought = { color = { 0.98, 0.90, 0.72 }, prefix = "Severino: " },
+    whisper = { color = { 0.66, 0.90, 0.92 }, prefix = "" },
+    info    = { color = { 0.95, 0.92, 0.86 }, prefix = "" },
+}
+
+local REVEAL_CHARS_PER_SECOND = 70
 local TOP_BAR = { "NightText", "ObjectiveText" }
 -- Botões do topo só aparecem com o cursor livre (painel aberto); na exploração o
 -- mouse fica preso e os atalhos L / H / Esc fazem o mesmo papel.
@@ -28,7 +46,7 @@ local TOP_BUTTONS = { "BtnBook", "BtnHelp", "BtnPause" }
 local KEY_HINTS = "E ou clique: examinar   ·   L: livro   ·   H: ajuda   ·   Esc: menu"
 
 local PANEL_SLOTS = 4
-local OVERLAY_SLOTS = 4
+local OVERLAY_SLOTS = 5
 local TOAST_SECONDS = 5.5
 
 -- Tamanhos de texto: normal / grande (opção do jogador)
@@ -106,9 +124,12 @@ function HUDController:init()
     self.keySlots = { PanelBtn = {}, OverlayBtn = {} }
 
     DIGIT_KEYS = {
-        [Input.KEY_1] = 1, [Input.KEY_2] = 2, [Input.KEY_3] = 3, [Input.KEY_4] = 4,
-        [Input.KEY_KP_1] = 1, [Input.KEY_KP_2] = 2, [Input.KEY_KP_3] = 3, [Input.KEY_KP_4] = 4,
+        [Input.KEY_1] = 1, [Input.KEY_2] = 2, [Input.KEY_3] = 3, [Input.KEY_4] = 4, [Input.KEY_5] = 5,
+        [Input.KEY_KP_1] = 1, [Input.KEY_KP_2] = 2, [Input.KEY_KP_3] = 3, [Input.KEY_KP_4] = 4, [Input.KEY_KP_5] = 5,
     }
+    self.panelBg = Image(s, findEntity(s, "PanelBg"))
+    self.sayQueue = {}
+    self.reveal = nil
 
     self:applyTextSize()
 
@@ -121,6 +142,10 @@ function HUDController:init()
     Flow.on("idleHint", "hud", function() self:onIdleHint() end)
     Flow.on("worldClick", "hud", function(h) self:onWorldClick(h) end)
     Flow.on("focus", "hud", function(h) self:onFocus(h) end)
+    Flow.on("whisper", "hud", function(w)
+        self:say(w.text, w.speaker == "Severino" and "thought" or "whisper")
+    end)
+    Flow.on("reset", "hud", function() self.sayQueue = {} end)
 
     self:hideToast()
     self:closePanel()
@@ -202,12 +227,58 @@ function HUDController:applyTextSize()
     self.text.PanelBody.fontSize = fontSize("body")
 end
 
--- spec = { title, subtitle, body, small, buttons = { {label, action, disabled}, ... } }
+----------------------------------------------------------------------
+-- Texto que se escreve aos poucos (respeita UTF-8; Espaço completa)
+----------------------------------------------------------------------
+function HUDController:setRevealText(textObj, full, animate)
+    if self.reveal and self.reveal.obj == textObj then self.reveal = nil end
+    local len = utf8 and utf8.len(full)
+    if not animate or not Settings.animateText or not len or len < 2 then
+        textObj.text = full
+        return
+    end
+    textObj.text = ""
+    self.reveal = { obj = textObj, full = full, len = len, shown = 0 }
+end
+
+function HUDController:finishReveal()
+    if not self.reveal then return false end
+    self.reveal.obj.text = self.reveal.full
+    self.reveal = nil
+    return true
+end
+
+function HUDController:updateReveal(dt)
+    local r = self.reveal
+    if not r then return end
+    r.shown = r.shown + dt * REVEAL_CHARS_PER_SECOND
+    local n = math.floor(r.shown)
+    if n >= r.len then
+        self:finishReveal()
+    elseif n > 0 then
+        r.obj.text = r.full:sub(1, utf8.offset(r.full, n + 1) - 1)
+    end
+end
+
+local function applyColor(textObj, c, a)
+    textObj:setColor(c[1], c[2], c[3], a or 1)
+end
+
+function HUDController:applyPaper(kind)
+    local p = PAPER[kind] or PAPER.default
+    self.panelBg:setColor(p.bg[1], p.bg[2], p.bg[3], p.bg[4])
+    applyColor(self.text.PanelTitle, p.title)
+    applyColor(self.text.PanelSubtitle, p.sub)
+    applyColor(self.text.PanelBody, p.body)
+end
+
+-- spec = { title, subtitle, body, small, paper, reveal, buttons = { {label, action, disabled}, ... } }
 function HUDController:showPanel(spec)
+    self:applyPaper(spec.paper)
     self.text.PanelTitle.text = spec.title or ""
     self.text.PanelSubtitle.text = spec.subtitle or ""
     self.text.PanelBody.fontSize = fontSize(spec.small and "bodySmall" or "body")
-    self.text.PanelBody.text = spec.body or ""
+    self:setRevealText(self.text.PanelBody, spec.body or "", spec.reveal)
     assignButtons(self, "PanelBtn", PANEL_SLOTS, spec.buttons)
     self.modalDim.visible = true
     self.panelOpen = true
@@ -229,7 +300,7 @@ function HUDController:showOverlay(spec)
     self.overlayBack = spec.back
     self.text.OverlayTitle.text = spec.title or ""
     self.text.OverlaySubtitle.text = spec.subtitle or ""
-    self.text.OverlayBody.text = spec.body or ""
+    self:setRevealText(self.text.OverlayBody, spec.body or "", spec.reveal)
     self.text.OverlayFooter.text = spec.footer or (spec.back and FOOTER_BACK or FOOTER_DEFAULT)
     assignButtons(self, "OverlayBtn", OVERLAY_SLOTS, spec.buttons)
     self.overlayBg:setColor(0.01, 0.012, 0.02, OVERLAY_ALPHA[spec.mode] or OVERLAY_ALPHA_DEFAULT)
@@ -251,10 +322,29 @@ function HUDController:closeOverlay()
     self:updateModalFlag()
 end
 
-function HUDController:toast(message)
-    self.text.ToastText.text = message
+-- Mostra uma legenda agora (substitui a atual)
+function HUDController:showSay(message, style)
+    local st = SAY_STYLE[style] or SAY_STYLE.info
+    self.text.ToastText.text = st.prefix .. message
+    applyColor(self.text.ToastText, st.color)
     self.toastBg.visible = true
-    self.toastTime = TOAST_SECONDS
+    -- tempo de leitura proporcional ao tamanho do texto
+    local len = (utf8 and utf8.len(message)) or #message
+    self.toastTime = math.max(TOAST_SECONDS, 2.5 + len / 14)
+end
+
+-- Enfileira uma legenda: pensamentos e sussurros não atropelam uns aos outros
+function HUDController:say(message, style)
+    if not message or message == "" then return end
+    if self.toastTime > 0 or self.panelOpen or self.overlayOpen then
+        table.insert(self.sayQueue, { message, style })
+    else
+        self:showSay(message, style)
+    end
+end
+
+function HUDController:toast(message)
+    self:say(message, "info")
 end
 
 function HUDController:hideToast()
@@ -280,7 +370,8 @@ end
 function HUDController:onCaseStarted(case)
     self.button.BtnHelp.label = "Ajuda"
     self:refreshObjective()
-    self:toast("Novo registro a conferir: sepultura " .. N.graves[case.grave].number .. " — " .. case.title .. ". Procure a luz fria.")
+    self:say(N.caseThoughts[case.id], "thought")
+    self:say("Novo registro a conferir: sepultura " .. N.graves[case.grave].number .. " — " .. case.title .. ". Procure a luz fria.", "info")
 end
 
 function HUDController:onIdleHint()
@@ -383,12 +474,19 @@ function HUDController:openGrave(g)
 end
 
 function HUDController:openEvidence(id, back)
-    Flow.markRead(id)
+    local firstTime = Flow.markRead(id)
     local ev = N.evidence[id]
+    local body = Flow.evidenceBody(id)
+    local thought = N.thoughts[id]
+    if thought then
+        body = body .. "\n\n— Severino pensa: \"" .. thought .. "\""
+    end
     self:showPanel({
         title = ev.title,
         subtitle = ev.subtitle or KIND_LABEL[ev.kind] or "",
-        body = Flow.evidenceBody(id),
+        body = body,
+        paper = ev.kind,
+        reveal = firstTime,
         buttons = {
             { label = "Voltar", action = back },
             { label = "Fechar", action = function() self:closePanel() end },
@@ -505,6 +603,7 @@ function HUDController:choose(index)
             title = "Registro corrigido",
             subtitle = "Sepultura " .. N.graves[case.grave].number .. " — " .. case.title,
             body = result.text,
+            reveal = true,
             buttons = { { label = "Continuar", action = function()
                 self:closePanel()
                 Flow.advance()
@@ -548,13 +647,34 @@ function HUDController:showMainMenu()
         body = N.menu.body,
         footer = FOOTER_DEFAULT .. "   ·   Doriax Flash Jam 2026",
         buttons = {
-            { label = "Iniciar", action = function()
-                self:closeOverlay()
-                Flow.startGame()
-            end },
+            { label = "Iniciar", action = function() self:showPrologue(1) end },
             { label = "Opções", action = function() self:showOptions(function() self:showMainMenu() end) end },
             { label = "Controles", action = function() self:showInfo("Controles", N.controls, function() self:showMainMenu() end) end },
             { label = "Créditos", action = function() self:showInfo("Créditos", N.credits, function() self:showMainMenu() end) end },
+        },
+    })
+end
+
+-- Prólogo em cartões; o último começa a campanha
+function HUDController:showPrologue(page)
+    local card = N.prologue[page]
+    if not card then
+        self:closeOverlay()
+        Flow.startGame()
+        return
+    end
+    local isLast = page >= #N.prologue
+    self:showOverlay({
+        mode = "prologue",
+        title = card.title,
+        subtitle = card.subtitle,
+        body = card.body,
+        reveal = true,
+        footer = string.format("Prólogo %d de %d   ·   Enter ou 1: continuar   ·   Espaço: mostrar o texto todo", page, #N.prologue),
+        back = function() self:showMainMenu() end,
+        buttons = {
+            { label = isLast and "Entrar no cemitério" or "Continuar", action = function() self:showPrologue(page + 1) end },
+            { label = "Pular o prólogo", action = function() self:showPrologue(#N.prologue + 1) end },
         },
     })
 end
@@ -579,7 +699,8 @@ function HUDController:showOptions(back)
         subtitle = "Valem até fechar o jogo",
         body = "Sensibilidade do mouse: quanto a câmera gira ao mover o mouse.\n"
             .. "Inverter eixo vertical: mover o mouse para cima olha para baixo.\n"
-            .. "Texto grande: aumenta os textos dos painéis, documentos e avisos.",
+            .. "Texto grande: aumenta os textos dos painéis, documentos e avisos.\n"
+            .. "Texto animado: documentos e cenas se escrevem aos poucos (Espaço completa).",
         back = back,
         buttons = {
             { label = "Sensibilidade do mouse: " .. Settings.sensitivityLabel(), action = function()
@@ -590,6 +711,9 @@ function HUDController:showOptions(back)
             end },
             { label = "Texto grande: " .. (Settings.largeText and "Sim" or "Não"), action = function()
                 Settings.toggleLargeText(); self:applyTextSize(); refresh()
+            end },
+            { label = "Texto animado: " .. (Settings.animateText and "Sim" or "Não"), action = function()
+                Settings.toggleAnimateText(); refresh()
             end },
             { label = "Voltar", action = back },
         },
@@ -671,6 +795,7 @@ function HUDController:showNightIntro(n)
     end
     self:showOverlay({
         mode = "night",
+        reveal = true,
         title = night.title,
         subtitle = string.format("%s   ·   noite %d de %d", night.subtitle, n, N.nightCount),
         body = body,
@@ -693,6 +818,7 @@ function HUDController:showEnding(kind, page)
     end
     self:showOverlay({
         mode = "ending",
+        reveal = true,
         title = ending.title,
         subtitle = string.format("Epílogo — %d de %d", page, #ending.pages),
         body = body,
@@ -739,6 +865,12 @@ end
 
 function HUDController:onKeyDown(key, isRepeat, mods)
     if isRepeat then return end
+
+    -- Espaço completa o texto que está se escrevendo
+    if key == Input.KEY_SPACE then
+        self:finishReveal()
+        return
+    end
 
     local digit = DIGIT_KEYS and DIGIT_KEYS[key]
     if digit then
@@ -795,9 +927,13 @@ function HUDController:onUpdate()
         end
     end
     Flow.tick(dt)
+    self:updateReveal(dt)
     if self.toastTime > 0 then
         self.toastTime = self.toastTime - dt
         if self.toastTime <= 0 then self:hideToast() end
+    elseif #self.sayQueue > 0 and not self.panelOpen and not self.overlayOpen then
+        local nextSay = table.remove(self.sayQueue, 1)
+        self:showSay(nextSay[1], nextSay[2])
     end
 end
 

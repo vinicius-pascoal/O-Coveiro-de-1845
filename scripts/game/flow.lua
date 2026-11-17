@@ -47,6 +47,7 @@ local function freshState()
         idle = 0,
         idleHintSent = false,
         notes = {},            -- histórico de descobertas (strings)
+        whispersSeen = {},     -- whisperId -> true
         inscriptions = {},     -- graveIndex -> texto atual
     }
     for i, g in pairs(N.graves) do
@@ -256,6 +257,22 @@ function Flow.advance()
     s.phase = "night_intro"
     Flow.emit("nightEnded", finished)
     Flow.emit("nightIntro", s.night)
+end
+
+-- Sussurros: o WorldController informa a posição do jogador; cada um dispara uma vez
+function Flow.checkWhispers(x, z)
+    local s = Flow.state
+    if s.phase ~= "playing" or s.modalOpen then return end
+    for _, w in ipairs(N.whispers) do
+        if not s.whispersSeen[w.id] and s.night >= (w.night or 1) and (not w.flag or s.flags[w.flag]) then
+            local dx, dz = x - w.x, z - w.z
+            if dx * dx + dz * dz <= w.radius * w.radius then
+                s.whispersSeen[w.id] = true
+                Flow.emit("whisper", w)
+                return
+            end
+        end
+    end
 end
 
 -- Tempo ocioso para o sistema de ajuda (chamado pelo HUD a cada frame)

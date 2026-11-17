@@ -356,6 +356,13 @@ function WorldController:onUpdate()
         local h, dist = self:pickCenter()
         if h and dist > self.interactDistance then h = nil end
         self:setFocus(h)
+        -- sussurros ao se aproximar de certos lugares (verificado 4x por segundo)
+        self.whisperTimer = (self.whisperTimer or 0) - dt
+        if self.whisperTimer <= 0 then
+            self.whisperTimer = 0.25
+            local p = self.player.position
+            Flow.checkWhispers(p.x, p.z)
+        end
     elseif self.focused then
         self:setFocus(nil)
     end

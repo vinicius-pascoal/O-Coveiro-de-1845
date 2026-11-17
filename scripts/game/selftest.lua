@@ -30,7 +30,7 @@ local function clickPanel(hud, labelPrefix)
 end
 
 local function clickOverlay(hud, labelPrefix)
-    for i = 1, 4 do
+    for i = 1, 5 do
         local name = "OverlayBtn" .. i
         local btn = hud.button[name]
         local lbl = hud.slotLabels[name] or btn.label
@@ -105,7 +105,17 @@ function SelfTest.run(hud, endingKind)
     check(hud.overlayMode == "menu", "esc should return to menu")
     -- atalho numérico: 1 = Iniciar
     hud:onKeyDown(Input.KEY_1, false, 0)
-    check(hud.overlayMode == "night", "key 1 should start the game")
+    check(hud.overlayMode == "prologue", "key 1 should open the prologue")
+    -- texto animado: começa vazio e Espaço completa
+    if require("game.settings").animateText then
+        check(hud.reveal ~= nil, "prologue text should be revealing")
+        hud:onKeyDown(Input.KEY_SPACE, false, 0)
+        check(hud.reveal == nil and hud.text.OverlayBody.text == N.prologue[1].body, "space should finish the text")
+    end
+    clickOverlay(hud, "Continuar")
+    clickOverlay(hud, "Continuar")
+    clickOverlay(hud, "Entrar no cemitério")
+    check(hud.overlayMode == "night", "prologue should lead to night 1")
     -- pausa e confirmação (antes de começar a noite não há pausa; testa depois)
 
     for night = 1, 3 do
@@ -150,6 +160,12 @@ function SelfTest.run(hud, endingKind)
         end
     end
     check(Flow.state.phase == "ending", "ending phase expected")
+    -- sussurros: dispara um pelo portão e confere que vai para a fila
+    Flow.state.phase = "playing"; Flow.state.modalOpen = false
+    Flow.state.whispersSeen = {}
+    Flow.checkWhispers(0, 15)
+    check(Flow.state.whispersSeen.gate == true, "gate whisper should fire")
+    Flow.state.phase = "ending"; Flow.state.modalOpen = true
     check(hud.overlayMode == "ending", "ending overlay expected")
     clickOverlay(hud, "Continuar")
     clickOverlay(hud, "Créditos")

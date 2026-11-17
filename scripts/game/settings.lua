@@ -13,6 +13,7 @@ Settings.sensitivityLevels = {
 Settings.sensitivityIndex = 2
 Settings.invertY = false
 Settings.largeText = false
+Settings.animateText = true
 
 function Settings.sensitivity()
     return Settings.sensitivityLevels[Settings.sensitivityIndex].value
@@ -32,6 +33,10 @@ end
 
 function Settings.toggleLargeText()
     Settings.largeText = not Settings.largeText
+end
+
+function Settings.toggleAnimateText()
+    Settings.animateText = not Settings.animateText
 end
 
 return Settings

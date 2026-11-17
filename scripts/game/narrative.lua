@@ -258,6 +258,72 @@ N.controls = "W A S D (ou setas): andar   ·   Shift: correr   ·   Mouse: olhar
 
 N.credits = "O Coveiro de 1845: Os Nomes Esquecidos\nDoriax Flash Jam 2026\n\nModelos 3D: KayKit por Kay Lousberg — Halloween Bits, Dungeon Pack e RPG Tools Bits (CC0).\nFonte: Roboto (Google, Apache 2.0), fonte padrão do Doriax.\nMotor: Doriax Engine.\nCódigo e textos produzidos com auxílio de IA (Claude).\n\nTodas as pessoas, lugares e acontecimentos são ficcionais, inspirados no Sergipe da década de 1840."
 
+----------------------------------------------------------------------
+-- Prólogo (antes da Noite 1)
+----------------------------------------------------------------------
+N.prologue = {
+    { title = "Santa Luzia do Paramopama", subtitle = "Sergipe, novembro de 1845",
+      body = "A febre do ano passado levou gente demais. A Câmara Municipal jura que foram poucos, e o porto continuou aberto.\n\nNo mesmo inverno, o coveiro Benedito Ramos sumiu sem deixar recado. Ninguém foi procurá-lo." },
+    { title = "Ofício da Câmara", subtitle = "Lido em voz alta na porta da Matriz", paper = "record",
+      body = "\"Nomeia-se Severino Lopes para o cargo de coveiro e zelador do cemitério desta vila, com a obrigação de manter em ordem o livro de registros de sepultamento, conforme o que nele estiver escrito.\"\n\nVocê assinou sem perguntar quem escreveu o livro antes de você." },
+    { title = "A primeira noite", subtitle = "17 de novembro de 1845",
+      body = "Você chega ao portão depois do toque de recolher. A lamparina da mesa já está acesa.\n\nDizem na vila que o livro de registros nunca fica fechado." },
+}
+
+----------------------------------------------------------------------
+-- Pensamentos de Severino ao ler um documento pela primeira vez
+----------------------------------------------------------------------
+N.thoughts = {
+    ["book:07"] = "Lançado por ordem da Câmara. Não pelo coveiro.",
+    ["carta_rosa"] = "Em junho de 1844, Antônio mandava redes para a filha. A pedra diz que ele já estava morto.",
+    ["book:02"] = "Essa nota à margem foi escrita depois. A tinta é outra.",
+    ["assento_casamento"] = "Nunes antes do casamento, Santos depois. Uma mulher, dois nomes.",
+    ["book:04"] = "Dois homens, o mesmo nome, o mesmo dia, a mesma cova. Alguém teve pressa.",
+    ["testemunho_vigario"] = "A vala do fundo. Nenhuma pedra marca onde fica.",
+    ["inventario_04"] = "Uma corda de sino. Nenhuma ferramenta de carpinteiro.",
+    ["book:05"] = "O livro diz 1845. Sem rasura.",
+    ["carta_tomas"] = "Escrita um dia depois do enterro. Não há como inventar uma dor dessas.",
+    ["bilhete_canteiro"] = "Se não foi a mão dele, foi outra mão. E recente.",
+    ["book:01"] = "O nome aparece como se o papel se lembrasse sozinho.",
+    ["pagina_rasgada"] = "\"Procurem na primeira cova.\" Ele sabia o que ia acontecer.",
+    ["oficio_camara"] = "Datas diversas, números separados. A febre foi apagada por decreto.",
+    ["book:06"] = "Vinte e cinco de novembro. Daqui a oito dias.",
+    ["nota_benedito"] = "Ele também teve que escolher. E a escolha dele está na primeira cova.",
+}
+
+-- Pensamento ao começar cada caso
+N.caseThoughts = {
+    c1 = "Antônio Ferreira, mestre de saveiro. A pedra e o livro não concordam nem no ano.",
+    c2 = "Maria das Dores. O nome da pedra não é o nome do livro.",
+    c3 = "Dois homens chamados José de Santana na mesma linha. Um deles não devia estar aqui.",
+    c4 = "Ana Beatriz morreu num ano que ainda não chegou. Alguém mexeu nessa pedra.",
+    c5 = "A primeira cova. A página rasgada mandou procurar aqui.",
+    c6 = "A última pedra está lisa. O livro, não.",
+}
+
+----------------------------------------------------------------------
+-- Sussurros: legendas disparadas ao chegar perto de um lugar (uma vez por campanha)
+-- x/z = posição no cemitério; night = noite mínima; flag = evento necessário
+----------------------------------------------------------------------
+N.whispers = {
+    { id = "gate", x = 0, z = 14.5, radius = 4, night = 1, speaker = "Severino",
+      text = "O portão rangeu atrás de mim. Ninguém o empurrou." },
+    { id = "desk", x = 6, z = -16, radius = 4, night = 1, speaker = "Severino",
+      text = "O livro está aberto numa página que eu não abri." },
+    { id = "crypt", x = -11, z = -13.5, radius = 5, night = 1, speaker = "Severino",
+      text = "Do arquivo vem cheiro de cera velha. A Câmara guarda aqui o que não quer ver." },
+    { id = "grave03", x = 5, z = -6.5, radius = 3.5, night = 2, flag = "night1_event", speaker = "Sussurro",
+      text = "...ele saiu com o livro debaixo do braço... e voltou sem ele..." },
+    { id = "bell", x = -2.2, z = -2, radius = 4, night = 2, speaker = "Severino",
+      text = "Um sino, uma vez só. A Matriz fica a meia légua daqui." },
+    { id = "grave01", x = -12, z = -6.5, radius = 4, night = 2, flag = "night2_event", speaker = "Sussurro",
+      text = "...a primeira cova não tem nome porque não deixaram..." },
+    { id = "grave06", x = -4.5, z = 5.5, radius = 3.5, night = 3, speaker = "Severino",
+      text = "Uma pedra lisa. Como se estivesse esperando alguém." },
+    { id = "road", x = 0, z = 15, radius = 4.5, night = 3, speaker = "Sussurro",
+      text = "...vinte e cinco de novembro... vinte e cinco..." },
+}
+
 N.toasts = {
     notCaseGrave = "Esta sepultura não faz parte do caso desta noite.",
     resolvedGrave = "Registro já corrigido.",
