@@ -133,35 +133,31 @@ function SelfTest.run(hud, endingKind)
     Log.print("SELFTEST: PASS (" .. endingKind .. ")")
 end
 
--- Varre a tela e registra o que a seleção 3D encontra
-function SelfTest.pickSweep(world)
-    local w, h = Engine.canvasWidth, Engine.canvasHeight
-    for _, p in ipairs({ { w / 2, h / 2 }, { 0, 0 }, { w, 0 }, { 0, h }, { w, h } }) do
-        local r = world.camera:screenToRay(p[1], p[2])
-        Log.print(string.format("SELFTEST ray (%.0f,%.0f): origin=%s dir=%s", p[1], p[2], tostring(r.origin), tostring(r.direction)))
-    end
-    Log.print("SELFTEST camera pos=" .. tostring(world.camera.position) .. " target=" .. tostring(world.camera.target) .. " worldTarget=" .. tostring(world.camera:getWorldTarget()))
-    local acc = {}
-    for gy = 1, 71 do
-        for gx = 1, 127 do
-            local x, y = gx * w / 128, gy * h / 72
-            local hit = world:pick(x, y)
-            if hit then
-                local a = acc[hit.name] or { sx = 0, sy = 0, n = 0 }
-                a.sx, a.sy, a.n = a.sx + x, a.sy + y, a.n + 1
-                acc[hit.name] = a
-            end
+-- Mira a câmera em cada objeto interativo e confere se a seleção pelo centro da tela o encontra
+function SelfTest.aimTest(world)
+    local cam = world.camera
+    local p = cam:getWorldPosition()
+    Log.print(string.format("SELFTEST player=%s camera=%s onGround=%s", tostring(world.player.position), tostring(p), tostring(world.character:isOnGround())))
+    local ok, bad = 0, {}
+    local savedYaw, savedPitch = world.yaw, world.pitch
+    for _, h in ipairs(world.hotspots) do
+        local c = h.mesh:getWorldAABB():getCenter()
+        local dx, dy, dz = c.x - p.x, c.y - p.y, c.z - p.z
+        world.yaw = math.deg(math.atan(-dx, -dz))
+        world.pitch = math.deg(math.atan(dy, math.sqrt(dx * dx + dz * dz)))
+        world:applyLook()
+        cam:updateTransform()
+        cam:updateCamera()
+        local hit, dist = world:pickCenter()
+        if hit == h or (hit and hit.kind == h.kind and h.kind == "book") then
+            ok = ok + 1
+        else
+            bad[#bad + 1] = string.format("%s->%s", h.name, hit and hit.name or "nil")
         end
     end
-    local names = {}
-    for name, a in pairs(acc) do
-        local hs
-        for _, hh in ipairs(world.hotspots) do if hh.name == name then hs = hh end end
-        local c = hs and hs.mesh:getWorldAABB():getCenter()
-        names[#names + 1] = string.format("%s@(%.0f,%.0f) world(%.1f,%.1f,%.1f)", name, a.sx / a.n, a.sy / a.n, c and c.x or 0, c and c.y or 0, c and c.z or 0)
-    end
-    table.sort(names)
-    Log.print("SELFTEST pick sweep (" .. w .. "x" .. h .. "): " .. table.concat(names, "  "))
+    world.yaw, world.pitch = savedYaw, savedPitch
+    world:applyLook()
+    Log.print(string.format("SELFTEST aim: %d/%d ok %s", ok, #world.hotspots, table.concat(bad, " ")))
 end
 
 return SelfTest

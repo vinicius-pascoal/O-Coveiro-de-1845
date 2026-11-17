@@ -199,7 +199,7 @@ N.nights = {
     {
         title = "Noite 1",
         subtitle = "O primeiro nome",
-        intro = "Seu primeiro turno no cemitério. O livro de registros está aberto na mesa, ao fundo. Algumas lápides não batem com o que está escrito nele.\n\nComo jogar: clique na sepultura marcada pela luz fria para examiná-la. Consulte o livro e os documentos e, quando tiver lido todas as fontes, use \"Confrontar registros\" para decidir o que as provas sustentam.",
+        intro = "Seu primeiro turno no cemitério. O livro de registros está aberto na mesa, ao fundo, perto da estante. Algumas lápides não batem com o que está escrito nele.\n\nComo jogar: ande com W A S D e olhe com o mouse. Vá até a sepultura marcada pela luz fria, mire nela e aperte E (ou clique) para examiná-la. Consulte o livro e os documentos e, quando tiver lido todas as fontes, use \"Confrontar registros\" para decidir o que as provas sustentam.",
         outro = "Ao fechar o livro, você nota que a inscrição da sepultura 03 mudou. Ninguém passou pelo portão.\n\nEntre as últimas folhas, há uma página rasgada assinada com as iniciais B. R. — Benedito Ramos, o coveiro antes de você.",
     },
     {
@@ -254,7 +254,7 @@ N.menu = {
     body = "Vila de Santa Luzia do Paramopama, Sergipe, novembro de 1845.\n\nVocê é Severino Lopes, o novo coveiro. O livro de registros não concorda com as lápides, e as cartas da vila não concordam com nenhum dos dois.\n\nQuem decide o que a cidade lembra dos seus mortos?",
 }
 
-N.controls = "Mouse: clique nas sepulturas e no livro sobre a mesa para examiná-los.\nLivro (canto superior direito): registros do caso atual e anotações.\nAjuda: aponta a fonte que ainda falta consultar, sem penalidade.\nESC: fecha o painel aberto ou pausa o jogo.\n\nControls (EN): click the graves and the record book to inspect them. \"Livro\" opens the records and notes, \"Ajuda\" gives a hint, ESC closes panels or pauses. Game text is in Portuguese."
+N.controls = "W A S D (ou setas): andar   ·   Shift: correr   ·   Mouse: olhar\nE ou clique: examinar a sepultura ou o livro sob a mira\nL: livro de registros e anotações   ·   H: ajuda (sem penalidade)\nEsc: fecha o painel aberto ou pausa o jogo\n\nControls (EN): WASD to walk, Shift to run, mouse to look. E or click to inspect what is under the crosshair. L opens the record book, H gives a hint, Esc closes panels or pauses. Game text is in Portuguese."
 
 N.credits = "O Coveiro de 1845: Os Nomes Esquecidos\nDoriax Flash Jam 2026\n\nModelos 3D: KayKit por Kay Lousberg — Halloween Bits, Dungeon Pack e RPG Tools Bits (CC0).\nFonte: Roboto (Google, Apache 2.0), fonte padrão do Doriax.\nMotor: Doriax Engine.\nCódigo e textos produzidos com auxílio de IA (Claude).\n\nTodas as pessoas, lugares e acontecimentos são ficcionais, inspirados no Sergipe da década de 1840."
 

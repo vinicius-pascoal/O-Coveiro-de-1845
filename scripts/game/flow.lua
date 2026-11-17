@@ -280,15 +280,15 @@ function Flow.hintText()
         local id = missing[1]
         local where
         if id:sub(1, 6) == "grave:" then
-            where = "Clique na sepultura " .. N.graves[case.grave].number .. ", marcada pela luz fria, para ler a lápide."
+            where = "Vá até a sepultura " .. N.graves[case.grave].number .. ", marcada pela luz fria, mire nela e aperte E para ler a lápide."
         elseif id:sub(1, 5) == "book:" then
-            where = "Abra o botão Livro (ou clique no livro sobre a mesa) para ler a entrada do registro."
+            where = "Aperte L (ou vá até o livro sobre a mesa, ao norte) para ler a entrada do registro."
         else
-            where = "Abra a sepultura " .. N.graves[case.grave].number .. " e leia o documento \"" .. Flow.sourceTitle(id) .. "\"."
+            where = "Examine a sepultura " .. N.graves[case.grave].number .. " e leia o documento \"" .. Flow.sourceTitle(id) .. "\"."
         end
         return "Fonte ainda não consultada: " .. Flow.sourceTitle(id) .. ".\n" .. where
     end
-    return "Você já leu todas as fontes. Abra a sepultura " .. N.graves[case.grave].number .. " e use \"Confrontar registros\".\n\n" .. case.hint
+    return "Você já leu todas as fontes. Examine a sepultura " .. N.graves[case.grave].number .. " e use \"Confrontar registros\".\n\n" .. case.hint
 end
 
 return Flow

@@ -11,7 +11,7 @@ local HUDController = {
 }
 
 local TEXTS = {
-    "NightText", "ObjectiveText", "HoverLabel", "ToastText",
+    "NightText", "ObjectiveText", "HoverLabel", "Crosshair", "ToastText",
     "PanelTitle", "PanelSubtitle", "PanelBody",
     "OverlayTitle", "OverlaySubtitle", "OverlayBody",
 }
@@ -20,7 +20,11 @@ local BUTTONS = {
     "PanelBtn1", "PanelBtn2", "PanelBtn3", "PanelBtn4",
     "OverlayBtn1", "OverlayBtn2", "OverlayBtn3",
 }
-local TOP_BAR = { "NightText", "ObjectiveText", "BtnBook", "BtnHelp", "BtnPause" }
+local TOP_BAR = { "NightText", "ObjectiveText" }
+-- Botões do topo só aparecem com o cursor livre (painel aberto); na exploração o
+-- mouse fica preso e os atalhos L / H / Esc fazem o mesmo papel.
+local TOP_BUTTONS = { "BtnBook", "BtnHelp", "BtnPause" }
+local KEY_HINTS = "E ou clique: examinar   ·   L: livro   ·   H: ajuda   ·   Esc: menu"
 
 local PANEL_SLOTS = 4
 local OVERLAY_SLOTS = 3
@@ -85,7 +89,7 @@ function HUDController:init()
     Flow.on("evidenceRead", "hud", function() self:refreshObjective() end)
     Flow.on("idleHint", "hud", function() self:onIdleHint() end)
     Flow.on("worldClick", "hud", function(h) self:onWorldClick(h) end)
-    Flow.on("hover", "hud", function(h, x, y) self:onHover(h, x, y) end)
+    Flow.on("focus", "hud", function(h) self:onFocus(h) end)
 
     self:hideToast()
     self:closePanel()
@@ -106,7 +110,19 @@ end
 
 function HUDController:setTopBarVisible(visible)
     for _, name in ipairs(TOP_BAR) do
-        setVisible(self.text[name] or self.button[name], visible)
+        setVisible(self.text[name], visible)
+    end
+    self:refreshExploreUI()
+end
+
+-- Mira, aviso de interação e botões do topo conforme o estado
+function HUDController:refreshExploreUI()
+    local playing = Flow.state.phase == "playing" and not self.overlayOpen
+    local exploring = playing and not self.panelOpen
+    setVisible(self.text.Crosshair, exploring)
+    if not exploring then setVisible(self.text.HoverLabel, false) end
+    for _, name in ipairs(TOP_BUTTONS) do
+        setVisible(self.button[name], playing and self.panelOpen)
     end
 end
 
@@ -116,7 +132,7 @@ function HUDController:updateModalFlag()
         Flow.setModal(open)
         Flow.emit("modalChanged", open)
     end
-    if open then setVisible(self.text.HoverLabel, false) end
+    self:refreshExploreUI()
 end
 
 -- Distribui os botões nos slots de baixo para cima, deixando o espaço livre para o texto
@@ -201,7 +217,7 @@ function HUDController:refreshObjective()
     self.text.NightText.text = string.format("Noite %d/%d — %s", Flow.state.night, N.nightCount, night and night.subtitle or "")
     if case then
         local readCount, total = Flow.progress(case)
-        self.text.ObjectiveText.text = string.format("%s\nFontes consultadas: %d/%d", case.objective, readCount, total)
+        self.text.ObjectiveText.text = string.format("%s\nFontes consultadas: %d/%d\n%s", case.objective, readCount, total, KEY_HINTS)
     else
         self.text.ObjectiveText.text = ""
     end
@@ -220,7 +236,8 @@ function HUDController:onIdleHint()
     end
 end
 
-function HUDController:onHover(h, x, y)
+-- Aviso no centro da tela para o objeto sob a mira
+function HUDController:onFocus(h)
     local label = self.text.HoverLabel
     if not h or self.panelOpen or self.overlayOpen then
         label.visible = false
@@ -229,18 +246,17 @@ function HUDController:onHover(h, x, y)
     local caption
     if h.kind == "grave" then
         local g = N.graves[h.grave]
-        caption = "Sepultura " .. g.number
+        caption = "Examinar a sepultura " .. g.number
         local case = Flow.currentCase()
         if case and case.grave == h.grave then
             caption = caption .. " — caso atual"
         end
     elseif h.kind == "book" then
-        caption = "Livro de registros"
+        caption = "Ler o livro de registros"
     else
         caption = "Arquivo da Câmara"
     end
-    label.text = caption
-    label.positionOffset = Vector2(x + 18, y + 16)
+    label.text = "[E] " .. caption
     label.visible = true
 end
 
@@ -577,7 +593,17 @@ end
 -- Eventos do motor
 ----------------------------------------------------------------------
 function HUDController:onKeyDown(key, isRepeat, mods)
-    if key ~= Input.KEY_ESCAPE or isRepeat then return end
+    if isRepeat then return end
+    local playing = Flow.state.phase == "playing" and not self.overlayOpen
+    if key == Input.KEY_L and playing then
+        if self.panelOpen then self:closePanel() else self:openBook() end
+        return
+    end
+    if key == Input.KEY_H and playing then
+        if self.panelOpen then self:closePanel() else self:openHelp() end
+        return
+    end
+    if key ~= Input.KEY_ESCAPE then return end
     if self.panelOpen then
         self:closePanel()
     elseif self.overlayOpen and self.overlayMode == "pause" then
@@ -590,7 +616,7 @@ end
 function HUDController:runSelfTest()
     local SelfTest = require("game.selftest")
     if Flow.worldController then
-        local ok, err = pcall(SelfTest.pickSweep, Flow.worldController)
+        local ok, err = pcall(SelfTest.aimTest, Flow.worldController)
         if not ok then Log.error(tostring(err)) end
     end
     for _, kind in ipairs({ "reveal", "preserve" }) do
@@ -606,7 +632,7 @@ function HUDController:onUpdate()
     local dt = Engine.deltatime
     if self.selfTest and not self.selfTestDone then
         self.selfTestFrames = (self.selfTestFrames or 0) + 1
-        if self.selfTestFrames > 5 then
+        if self.selfTestFrames > 90 then
             self.selfTestDone = true
             self:runSelfTest()
         end
