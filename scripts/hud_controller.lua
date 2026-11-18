@@ -58,7 +58,7 @@ local function clamp(v, lo, hi)
 end
 local BUTTONS = {
     "BtnBook", "BtnHelp", "BtnPause", "PanelClose",
-    "PanelBtn1", "PanelBtn2", "PanelBtn3", "PanelBtn4",
+    "PanelBtn1", "PanelBtn2", "PanelBtn3", "PanelBtn4", "PanelBtn5", "PanelBtn6",
     "OverlayBtn1", "OverlayBtn2", "OverlayBtn3", "OverlayBtn4", "OverlayBtn5",
 }
 
@@ -92,7 +92,7 @@ local TOP_BUTTONS = { "BtnBook", "BtnHelp", "BtnPause" }
 -- Atalhos aparecem na barra só durante a primeira noite; depois ficam na Pausa > Controles
 local KEY_HINTS = "E examinar  ·  L livro  ·  H ajuda  ·  Esc pausa"
 
-local PANEL_SLOTS = 4
+local PANEL_SLOTS = 6
 local OVERLAY_SLOTS = 5
 local TOAST_SECONDS = 5.5
 
@@ -171,8 +171,8 @@ function HUDController:init()
     self.keySlots = { PanelBtn = {}, OverlayBtn = {} }
 
     DIGIT_KEYS = {
-        [Input.KEY_1] = 1, [Input.KEY_2] = 2, [Input.KEY_3] = 3, [Input.KEY_4] = 4, [Input.KEY_5] = 5,
-        [Input.KEY_KP_1] = 1, [Input.KEY_KP_2] = 2, [Input.KEY_KP_3] = 3, [Input.KEY_KP_4] = 4, [Input.KEY_KP_5] = 5,
+        [Input.KEY_1] = 1, [Input.KEY_2] = 2, [Input.KEY_3] = 3, [Input.KEY_4] = 4, [Input.KEY_5] = 5, [Input.KEY_6] = 6,
+        [Input.KEY_KP_1] = 1, [Input.KEY_KP_2] = 2, [Input.KEY_KP_3] = 3, [Input.KEY_KP_4] = 4, [Input.KEY_KP_5] = 5, [Input.KEY_KP_6] = 6,
     }
     self.panelBg = Image(s, findEntity(s, "PanelBg"))
     self.panelPaper = Image(s, findEntity(s, "PanelPaper"))
@@ -211,7 +211,8 @@ function HUDController:init()
     RegisterEngineEvent(self, "onKeyDown")
 
     Flow.on("nightIntro", "hud", function(n) self:showNightIntro(n) end)
-    Flow.on("caseStarted", "hud", function(case) self:onCaseStarted(case) end)
+    Flow.on("casesOpened", "hud", function(list) self:onCasesOpened(list) end)
+    Flow.on("casesChanged", "hud", function() self:refreshObjective() end)
     Flow.on("evidenceRead", "hud", function() self:refreshObjective() end)
     Flow.on("idleHint", "hud", function() self:onIdleHint() end)
     Flow.on("worldClick", "hud", function(h) self:onWorldClick(h) end)
@@ -708,6 +709,16 @@ function HUDController:refreshObjective()
     t.NightText.text = string.format("Noite %d/%d — %s", Flow.state.night, N.nightCount, night and night.subtitle or "")
 
     local objective = case and case.objective or ""
+    if case then
+        if Flow.isProven(case) then
+            objective = objective .. "\nProvado. Falta corrigir o registro."
+        end
+        for _, other in ipairs(Flow.openCases()) do
+            if other ~= case then
+                objective = objective .. "\nTambém aberta: sepultura " .. N.graves[other.grave].number .. " — " .. other.title
+            end
+        end
+    end
     fitTextWidth(t.ObjectiveText, objective, t.ObjectiveText.fontSize, OBJECTIVE_MAX_W)
     t.ObjectiveText.text = objective
 
@@ -731,10 +742,18 @@ function HUDController:refreshObjective()
     if shown then self:layoutTopBar() end
 end
 
-function HUDController:onCaseStarted(case)
+function HUDController:onCasesOpened(list)
     self:refreshObjective()
-    self:say(N.caseThoughts[case.id], "thought")
-    self:say("Novo registro a conferir: sepultura " .. N.graves[case.grave].number .. " — " .. case.title .. ". Procure a luz fria.", "info")
+    if #list == 1 then
+        local case = list[1]
+        self:say("Novo registro a conferir: sepultura " .. N.graves[case.grave].number .. " — " .. case.title .. ". Procure a luz fria.", "info")
+    elseif #list > 1 then
+        local parts = {}
+        for _, c in ipairs(list) do
+            parts[#parts + 1] = N.graves[c.grave].number .. " (" .. c.title .. ")"
+        end
+        self:say("Registros a conferir esta noite: sepulturas " .. table.concat(parts, " e ") .. ". Procure as luzes frias; a ordem é sua.", "info")
+    end
 end
 
 function HUDController:onIdleHint()
@@ -754,9 +773,9 @@ function HUDController:onFocus(h)
     if h.kind == "grave" then
         local g = N.graves[h.grave]
         caption = "Examinar a sepultura " .. g.number
-        local case = Flow.currentCase()
-        if case and case.grave == h.grave then
-            caption = caption .. " — caso atual"
+        local case = Flow.caseForGrave(h.grave)
+        if case and Flow.isOpen(case) then
+            caption = caption .. (Flow.isProven(case) and " — corrigir o registro" or " — caso aberto")
         end
     elseif h.kind == "book" then
         caption = "Ler o livro de registros"
@@ -789,16 +808,33 @@ function HUDController:onWorldClick(h)
     end
 end
 
+-- Botões "Anotar" para os detalhes de uma fonte (lápide ou documento)
+function HUDController:clueButtons(sourceId, reopen)
+    local buttons = {}
+    for _, c in ipairs(Flow.cluesFor(sourceId)) do
+        if Flow.hasClue(c.id) then
+            buttons[#buttons + 1] = { label = "Anotado: " .. c.text, icon = "check", disabled = true }
+        else
+            buttons[#buttons + 1] = { label = "Anotar: " .. c.text, icon = "plus", action = function()
+                Flow.noteClue(c.id)
+                reopen()
+            end }
+        end
+    end
+    return buttons
+end
+
 function HUDController:openGrave(g)
     local grave = N.graves[g]
-    local case = Flow.currentCase()
-    local isCase = case and case.grave == g
+    local case = Flow.caseForGrave(g)
+    local isOpen = case and Flow.isOpen(case)
 
-    if not isCase then
-        local other = Flow.caseForGrave(g)
+    if not isOpen then
         local note
-        if other and Flow.isResolved(other) then
-            note = N.toasts.resolvedGrave .. "\n" .. other.summary
+        if case and Flow.isResolved(case) then
+            note = N.toasts.resolvedGrave .. "\n" .. case.summary
+        elseif Flow.isLocked(case) then
+            note = N.toasts.lockedGrave
         else
             note = N.toasts.notCaseGrave
         end
@@ -812,9 +848,11 @@ function HUDController:openGrave(g)
         return
     end
 
-    Flow.markRead(Flow.graveEvidenceId(g))
+    Flow.setFocus(case)
+    local graveId = Flow.graveEvidenceId(g)
+    Flow.markRead(graveId)
     local back = function() self:openGrave(g) end
-    local buttons = {}
+    local buttons = self:clueButtons(graveId, back)
     for _, id in ipairs(case.evidence) do
         local ev = N.evidence[id]
         local label
@@ -825,19 +863,26 @@ function HUDController:openGrave(g)
         end
         buttons[#buttons + 1] = { label = label, icon = readIcon(id), action = function() self:openEvidence(id, back) end }
     end
-    local readCount, total = Flow.progress(case)
-    local can = Flow.canConfront(case)
-    local confrontLabel = case.decision and "Decidir o destino do livro" or "Confrontar registros"
-    if not can then
-        confrontLabel = confrontLabel .. string.format("  (%d/%d fontes lidas)", readCount, total)
+    if Flow.isProven(case) then
+        buttons[#buttons + 1] = { label = "Corrigir o registro", icon = "check", action = function() self:openFix(case) end }
+    elseif case.decision then
+        local readCount, total = Flow.progress(case)
+        local can = Flow.canConfront(case)
+        local label = "Decidir o destino do livro"
+        if not can then label = label .. string.format("  (%d/%d fontes lidas)", readCount, total) end
+        buttons[#buttons + 1] = { label = label, icon = can and "question" or "minus", disabled = not can, action = function() self:openConfront(case) end }
+    else
+        buttons[#buttons + 1] = { label = "Confrontar registros", icon = "question", action = function() self:openConfront(case) end }
     end
-    buttons[#buttons + 1] = { label = confrontLabel, icon = can and "question" or "minus", disabled = not can, action = function() self:openConfront() end }
 
+    local body = Flow.inscription(g) .. "\n\n" .. case.objective
+    local thought = N.caseThoughts[case.id]
+    if thought then body = body .. "\n\n— Severino pensa: \"" .. thought .. "\"" end
     self:showPanel({
         title = "Sepultura " .. grave.number .. " — " .. case.title,
         subtitle = "Inscrição da lápide",
         icon = "tomb",
-        body = Flow.inscription(g) .. "\n\n" .. case.objective,
+        body = body,
         buttons = buttons,
     })
 end
@@ -850,53 +895,58 @@ function HUDController:openEvidence(id, back)
     if thought then
         body = body .. "\n\n— Severino pensa: \"" .. thought .. "\""
     end
+    local buttons = self:clueButtons(id, function() self:openEvidence(id, back) end)
+    buttons[#buttons + 1] = { label = "Voltar", icon = "home", action = back }
     self:showPanel({
         title = ev.title,
         subtitle = ev.subtitle or KIND_LABEL[ev.kind] or "",
         body = body,
         paper = ev.kind,
         reveal = firstTime,
-        buttons = {
-            { label = "Voltar", icon = "home", action = back },
-            { label = "Fechar", icon = "x", action = function() self:closePanel() end },
-        },
+        buttons = buttons,
     })
 end
 
 function HUDController:openBook()
     if Flow.state.phase ~= "playing" then return end
-    local case = Flow.currentCase()
+    local open = Flow.openCases()
     local buttons = {}
-    local body
-    if case then
-        local lines = { "Caso atual: " .. case.objective, "", "Fontes do caso:" }
-        for _, id in ipairs(Flow.requiredSources(case)) do
-            lines[#lines + 1] = "• " .. Flow.sourceTitle(id) .. (Flow.isRead(id) and " — lida" or " — não consultada")
-        end
-        body = table.concat(lines, "\n")
+    local lines = {}
+    if #open == 0 then
+        lines[1] = "Nenhum caso aberto."
+    else
+        lines[1] = "Registros abertos esta noite:"
+    end
+    local backToBook = function() self:openBook() end
+    for _, case in ipairs(open) do
+        local readCount, total = Flow.progress(case)
+        local noted = #Flow.notedCaseClues(case)
+        local state = Flow.isProven(case) and "provado, falta corrigir"
+            or string.format("%d de %d fontes lidas, %d anotações", readCount, total, noted)
+        lines[#lines + 1] = "• Sepultura " .. N.graves[case.grave].number .. " — " .. case.title .. ": " .. state
         for _, id in ipairs(case.evidence) do
             if id:sub(1, 5) == "book:" then
                 buttons[#buttons + 1] = {
                     label = "Ler o registro nº " .. N.graves[case.grave].number .. readMark(id), icon = readIcon(id),
-                    action = function() self:openEvidence(id, function() self:openBook() end) end,
+                    action = function() self:openEvidence(id, backToBook) end,
                 }
             end
         end
+    end
+    for _, case in ipairs(open) do
         buttons[#buttons + 1] = {
             label = "Ir para a sepultura " .. N.graves[case.grave].number, icon = "play",
             action = function() self:openGrave(case.grave) end,
         }
-    else
-        body = "Nenhum caso aberto."
     end
     buttons[#buttons + 1] = {
-        label = string.format("Anotações do coveiro (%d)", #Flow.state.notes), icon = "candle",
+        label = string.format("Caderno do coveiro (%d)", #Flow.state.clueOrder + #Flow.state.notes), icon = "candle",
         action = function() self:openNotes() end,
     }
     if Flow.state.flags.night1_event then
         buttons[#buttons + 1] = {
             label = "Página rasgada" .. readMark("pagina_rasgada"), icon = readIcon("pagina_rasgada"),
-            action = function() self:openEvidence("pagina_rasgada", function() self:openBook() end) end,
+            action = function() self:openEvidence("pagina_rasgada", backToBook) end,
         }
     end
     while #buttons > PANEL_SLOTS do table.remove(buttons) end
@@ -904,23 +954,31 @@ function HUDController:openBook()
         title = "Livro de registros",
         subtitle = N.town .. " — 1845",
         icon = "candle",
-        body = body,
+        body = table.concat(lines, "\n"),
         buttons = buttons,
     })
 end
 
+-- Caderno: anotações dos casos abertos + histórico das descobertas
 function HUDController:openNotes()
-    local notes = Flow.state.notes
-    local body
-    if #notes == 0 then
-        body = "Nenhuma anotação ainda. Cada registro corrigido e cada mudança estranha ficarão anotados aqui."
-    else
-        local lines = {}
-        for _, n in ipairs(notes) do lines[#lines + 1] = "• " .. n end
-        body = table.concat(lines, "\n")
+    local lines = {}
+    for _, case in ipairs(Flow.openCases()) do
+        if not case.decision then
+            lines[#lines + 1] = "Sepultura " .. N.graves[case.grave].number .. " — " .. case.title
+            local noted = Flow.notedCaseClues(case)
+            if #noted == 0 then
+                lines[#lines + 1] = "   (nada anotado ainda)"
+            end
+            for _, c in ipairs(noted) do lines[#lines + 1] = "   • " .. c.text end
+            lines[#lines + 1] = ""
+        end
     end
-    if Flow.state.flags.night2_event then
-        body = body .. "\n\nVocê pode reler o testemunho do Padre Inácio abaixo."
+    local notes = Flow.state.notes
+    if #notes > 0 then
+        lines[#lines + 1] = "Descobertas:"
+        for _, n in ipairs(notes) do lines[#lines + 1] = "• " .. n end
+    elseif #lines == 0 then
+        lines[1] = "Nenhuma anotação ainda. Os detalhes que você anotar nos documentos e cada registro corrigido ficarão aqui."
     end
     local buttons = { { label = "Voltar ao livro", icon = "home", action = function() self:openBook() end } }
     if Flow.state.flags.night2_event then
@@ -931,68 +989,153 @@ function HUDController:openNotes()
     end
     buttons[#buttons + 1] = { label = "Fechar", icon = "x", action = function() self:closePanel() end }
     self:showPanel({
-        title = "Anotações do coveiro",
+        title = "Caderno do coveiro",
         icon = "candle",
-        subtitle = "Histórico das descobertas",
-        body = body,
+        subtitle = "Anotações e descobertas",
+        body = table.concat(lines, "\n"),
         small = true,
         buttons = buttons,
     })
 end
 
-function HUDController:openConfront()
-    local case = Flow.currentCase()
+-- Passo 1 do confronto: escolher a conclusão
+function HUDController:openConfront(case)
+    case = case or Flow.currentCase()
     if not case then return end
-    local lines = { case.question, "", "Fontes consultadas:" }
-    for _, id in ipairs(Flow.requiredSources(case)) do
-        lines[#lines + 1] = "• " .. Flow.sourceTitle(id)
-    end
     local buttons = {}
     for i, h in ipairs(case.hypotheses) do
-        buttons[#buttons + 1] = { label = h.text, action = function() self:choose(i) end }
+        buttons[#buttons + 1] = { label = h.text, action = function()
+            if case.decision then self:decide(case, i) else self:openPresent(case, i) end
+        end }
     end
-    if not case.decision then
+    local body
+    if case.decision then
+        body = case.question
+    else
+        body = case.question .. "\n\nEscolha a conclusão. Em seguida, apresente a anotação do caderno que a prova."
         buttons[#buttons + 1] = { label = "Voltar à sepultura", icon = "home", action = function() self:openGrave(case.grave) end }
     end
     self:showPanel({
         title = case.decision and "A última página" or ("Confrontar registros — sepultura " .. N.graves[case.grave].number),
         subtitle = case.title,
         icon = "skull",
-        body = table.concat(lines, "\n"),
+        body = body,
         buttons = buttons,
     })
 end
 
-function HUDController:choose(index)
-    local result = Flow.choose(index)
+-- Passo 2: apresentar a anotação que sustenta a conclusão
+function HUDController:openPresent(case, hypIndex)
+    local h = case.hypotheses[hypIndex]
+    local noted = Flow.notedCaseClues(case)
+    local buttons = {}
+    local body
+    if #noted == 0 then
+        body = "\"" .. h.text .. "\"\n\nSeu caderno ainda não tem nada sobre este caso. Leia a lápide e os documentos e anote os detalhes que importam."
+    else
+        body = "\"" .. h.text .. "\"\n\nQual anotação do caderno prova isso?"
+        for i = 1, math.min(#noted, PANEL_SLOTS - 1) do
+            local c = noted[i]
+            buttons[#buttons + 1] = { label = c.text, icon = "candle", action = function() self:present(case, hypIndex, c.id) end }
+        end
+    end
+    buttons[#buttons + 1] = { label = "Voltar às conclusões", icon = "home", action = function() self:openConfront(case) end }
+    self:showPanel({
+        title = "Apresentar a prova",
+        subtitle = "Sepultura " .. N.graves[case.grave].number .. " — " .. case.title,
+        icon = "skull",
+        body = body,
+        buttons = buttons,
+    })
+end
+
+function HUDController:present(case, hypIndex, clueId)
+    local result = Flow.present(case, hypIndex, clueId)
     if not result then return end
-    local case = result.case
-    if result.kind == "back" then
-        self:openGrave(case.grave)
-    elseif result.kind == "correct" then
-        self:refreshObjective()
-        self:showPanel({
-            title = "Registro corrigido",
-            icon = "correct",
-            subtitle = "Sepultura " .. N.graves[case.grave].number .. " — " .. case.title,
-            body = result.text,
-            reveal = true,
-            buttons = { { label = "Continuar", icon = "play", action = function()
-                self:closePanel()
-                Flow.advance()
-            end } },
-        })
-    elseif result.kind == "wrong" then
+    local review = { label = "Rever os documentos", icon = "home", action = function() self:openGrave(case.grave) end }
+    if result.kind == "wrong" then
         self:showPanel({
             title = "As provas não sustentam isso",
             icon = "wrong",
             subtitle = "O registro continua aberto",
             body = result.text .. "\n\nA névoa sobre o cemitério fica um pouco mais densa.",
             buttons = {
-                { label = "Tentar outra conclusão", icon = "question", action = function() self:openConfront() end },
-                { label = "Rever os documentos", icon = "home", action = function() self:openGrave(case.grave) end },
+                { label = "Tentar outra conclusão", icon = "question", action = function() self:openConfront(case) end },
+                review,
             },
         })
+    elseif result.kind == "weak" then
+        self:showPanel({
+            title = "Essa anotação não prova isso",
+            icon = "wrong",
+            subtitle = "A conclusão pode estar certa, mas falta a prova",
+            body = result.text .. "\n\nA névoa sobre o cemitério fica um pouco mais densa.",
+            buttons = {
+                { label = "Apresentar outra anotação", icon = "candle", action = function() self:openPresent(case, hypIndex) end },
+                review,
+            },
+        })
+    elseif result.kind == "proven" then
+        self:refreshObjective()
+        self:openFix(case, true)
+    end
+end
+
+-- Passo 3: o jogador escreve a correção
+function HUDController:openFix(case, justProven)
+    local fix = case.fix
+    if not fix then
+        self:applyFix(case, nil)
+        return
+    end
+    local buttons = {}
+    for i, opt in ipairs(fix.options) do
+        buttons[#buttons + 1] = { label = opt, icon = "plus", action = function() self:applyFix(case, i) end }
+    end
+    buttons[#buttons + 1] = { label = "Voltar à sepultura", icon = "home", action = function() self:openGrave(case.grave) end }
+    local intro = justProven and "As provas sustentam a sua conclusão. Agora corrija com a sua própria mão:" or "Complete a correção:"
+    self:showPanel({
+        title = fix.title,
+        subtitle = "Sepultura " .. N.graves[case.grave].number .. " — " .. case.title,
+        icon = "tomb",
+        body = intro .. "\n\n" .. fix.prompt,
+        buttons = buttons,
+    })
+end
+
+function HUDController:applyFix(case, optionIndex)
+    local result = Flow.fix(case, optionIndex)
+    if not result then return end
+    if result.kind == "fixWrong" then
+        self:showPanel({
+            title = "A mão hesita",
+            icon = "wrong",
+            subtitle = case.fix.title,
+            body = result.text,
+            buttons = { { label = "Escrever de novo", icon = "question", action = function() self:openFix(case) end } },
+        })
+        return
+    end
+    self:refreshObjective()
+    self:showPanel({
+        title = "Registro corrigido",
+        icon = "correct",
+        subtitle = "Sepultura " .. N.graves[case.grave].number .. " — " .. case.title,
+        body = result.text,
+        reveal = true,
+        buttons = { { label = "Continuar", icon = "play", action = function()
+            self:closePanel()
+            Flow.advance()
+            self:refreshObjective()
+        end } },
+    })
+end
+
+function HUDController:decide(case, index)
+    local result = Flow.decide(case, index)
+    if not result then return end
+    if result.kind == "back" then
+        self:openGrave(case.grave)
     elseif result.kind == "ending" then
         self:showEnding(result.ending, 1)
     end
@@ -1124,7 +1267,7 @@ function HUDController:pauseSummary()
     if case then
         local readCount, total = Flow.progress(case)
         lines[#lines + 1] = "Objetivo: " .. case.objective
-        lines[#lines + 1] = string.format("Fontes consultadas neste caso: %d de %d", readCount, total)
+        lines[#lines + 1] = string.format("Fontes consultadas neste caso: %d de %d   ·   Anotações: %d", readCount, total, #Flow.notedCaseClues(case))
     end
     lines[#lines + 1] = string.format("Registros desta noite: %d de %d   ·   Campanha: %d de %d", nightDone, nightTotal, resolvedCount, #N.cases)
     if s.mistakes > 0 then
@@ -1187,7 +1330,7 @@ function HUDController:showEnding(kind, page)
     if not ending then return end
     local body = ending.pages[page]
     local isLast = page >= #ending.pages
-    if isLast and Flow.state.mistakes >= 3 then
+    if isLast and Flow.state.mistakes >= 5 then
         body = body .. N.endings.mistakesNote
     end
     self:showOverlay({

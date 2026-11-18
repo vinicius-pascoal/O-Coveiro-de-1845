@@ -91,16 +91,24 @@ function WorldController:init()
 
     -- Luzes e efeitos
     self.hoverLight = Light(s, find(s, "HoverLight"))
-    self.caseLight = Light(s, find(s, "CaseLight"))
     self.hoverLightIntensity = self.hoverLight.intensity
-    self.caseLightIntensity = self.caseLight.intensity
     self.hoverLight.intensity = 0
-    self.caseLight.intensity = 0
 
-    local wispEntity = s:findEntity("Wisp")
-    if wispEntity and wispEntity ~= 0 then
-        self.wisp = Object(s, wispEntity)
-        self.wisp.visible = false
+    -- Uma luz fria + fogo-fátuo para cada caso aberto na noite (até dois ao mesmo tempo)
+    self.markers = {}
+    for i, suffix in ipairs({ "", "2" }) do
+        local lightEntity = s:findEntity("CaseLight" .. suffix)
+        if lightEntity and lightEntity ~= 0 then
+            local m = { light = Light(s, lightEntity) }
+            m.intensity = m.light.intensity
+            m.light.intensity = 0
+            local wispEntity = s:findEntity("Wisp" .. suffix)
+            if wispEntity and wispEntity ~= 0 then
+                m.wisp = Object(s, wispEntity)
+                m.wisp.visible = false
+            end
+            self.markers[i] = m
+        end
     end
 
     self.fog = Fog(s, find(s, "Fog"))
@@ -138,7 +146,7 @@ function WorldController:init()
 
     Flow.on("reset", "world", function() self:resetVisuals() end)
     Flow.on("nightStarted", "world", function(n) self:applyAtmosphere(NIGHT_LOOK[n] or NIGHT_LOOK[1]) end)
-    Flow.on("caseStarted", "world", function(case) self:markCase(case) end)
+    Flow.on("casesChanged", "world", function() self:markCases(Flow.openCases()) end)
     Flow.on("caseResolved", "world", function(case) self:onCaseResolved(case) end)
     Flow.on("mistake", "world", function() self:onMistake() end)
     Flow.on("ending", "world", function(kind) self:onEnding(kind) end)
@@ -272,21 +280,30 @@ function WorldController:graveHotspot(graveIndex)
     return nil
 end
 
-function WorldController:markCase(case)
-    local h = case and self:graveHotspot(case.grave)
-    if not h then
-        self.caseLight.intensity = 0
-        if self.wisp then self.wisp.visible = false end
-        return
+function WorldController:clearMarkers()
+    for _, m in ipairs(self.markers) do
+        m.light.intensity = 0
+        if m.wisp then m.wisp.visible = false end
     end
-    local aabb = h.mesh:getWorldAABB()
-    local c, size = aabb:getCenter(), aabb:getSize()
-    local pos = Vector3(c.x, c.y + size.y * 0.5 + 1.1, c.z + 0.4)
-    self.caseLight.position = pos
-    self.caseLight.intensity = self.caseLightIntensity
-    if self.wisp then
-        self.wisp.position = pos
-        self.wisp.visible = true
+end
+
+-- Marca com luz fria as sepulturas de todos os casos abertos
+function WorldController:markCases(cases)
+    self:clearMarkers()
+    for i, case in ipairs(cases or {}) do
+        local m = self.markers[i]
+        local h = m and self:graveHotspot(case.grave)
+        if h then
+            local aabb = h.mesh:getWorldAABB()
+            local c, size = aabb:getCenter(), aabb:getSize()
+            local pos = Vector3(c.x, c.y + size.y * 0.5 + 1.1, c.z + 0.4)
+            m.light.position = pos
+            m.light.intensity = m.intensity
+            if m.wisp then
+                m.wisp.position = pos
+                m.wisp.visible = true
+            end
+        end
     end
 end
 
@@ -294,8 +311,7 @@ function WorldController:onCaseResolved(case)
     if self.candles[case.grave] then
         self.candles[case.grave].visible = true
     end
-    self.caseLight.intensity = 0
-    if self.wisp then self.wisp.visible = false end
+    self:markCases(Flow.openCases())
     -- Sobressalto sobrenatural: a lua pisca forte por um instante
     self.flash = 0.6
 end
@@ -324,8 +340,7 @@ function WorldController:applyAtmosphere(look)
 end
 
 function WorldController:onEnding(kind)
-    self.caseLight.intensity = 0
-    if self.wisp then self.wisp.visible = false end
+    self:clearMarkers()
     self.extraFog = 0
     self:applyAtmosphere(ENDING_LOOK[kind] or ENDING_LOOK.preserve)
 end
@@ -334,9 +349,8 @@ function WorldController:resetVisuals()
     self.extraFog = 0
     self.flash = nil
     for _, c in pairs(self.candles) do c.visible = false end
-    self.caseLight.intensity = 0
+    self:clearMarkers()
     self.hoverLight.intensity = 0
-    if self.wisp then self.wisp.visible = false end
     self.focused = nil
     -- jogador volta ao portão olhando para o norte
     if self.character then

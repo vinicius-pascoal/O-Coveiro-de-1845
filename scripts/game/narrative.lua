@@ -83,7 +83,64 @@ N.evidence = {
 }
 
 ----------------------------------------------------------------------
--- Casos (em ordem). evidence = documentos exigidos além da própria lápide.
+-- Detalhes que o jogador pode anotar no caderno, por fonte (lápide ou documento).
+-- Alguns provam a conclusão do caso; outros são verdadeiros mas não provam nada.
+----------------------------------------------------------------------
+N.clues = {
+    ["grave:07"] = { { id = "c1_lapide", text = "Lápide: \"Faleceu em 1843\"" } },
+    ["book:07"] = {
+        { id = "c1_livro", text = "Livro: morto de febre em março de 1845" },
+        { id = "c1_camara", text = "Livro: \"Lançado por ordem da Câmara\"" },
+    },
+    ["carta_rosa"] = {
+        { id = "c1_carta", text = "Carta de junho de 1844: o pai mandou redes" },
+        { id = "c1_tosse", text = "Carta: \"o senhor tosse demais\"" },
+    },
+
+    ["grave:02"] = { { id = "c2_lapide", text = "Lápide: \"Maria das Dores Santos\"" } },
+    ["book:02"] = {
+        { id = "c2_livro", text = "Livro: \"Maria das Dores Nunes, lavadeira\"" },
+        { id = "c2_margem", text = "Margem: \"Santos — sem registro de óbito\"" },
+    },
+    ["assento_casamento"] = {
+        { id = "c2_assento", text = "Assento: \"passa a assinar ... Santos\"" },
+        { id = "c2_padre", text = "Assento: assinado pelo Padre Inácio" },
+    },
+
+    ["book:04"] = { { id = "c3_livro", text = "Livro: dois José de Santana no nº 04" } },
+    ["testemunho_vigario"] = {
+        { id = "c3_padre_corda", text = "Padre: enterrou o velho com a corda do sino" },
+        { id = "c3_padre_vala", text = "Padre: o moço foi para a vala do fundo" },
+    },
+    ["inventario_04"] = {
+        { id = "c3_corda", text = "Inventário: corda de sino dentro da cova" },
+        { id = "c3_ferramenta", text = "Inventário: \"nenhuma ferramenta\"" },
+    },
+
+    ["grave:05"] = { { id = "c4_lapide", text = "Lápide: \"Faleceu em 1846\"" } },
+    ["book:05"] = { { id = "c4_livro", text = "Livro: falecida em setembro de 1845" } },
+    ["carta_tomas"] = { { id = "c4_tomas", text = "Tomás: \"enterramos Ana ontem\" (1845)" } },
+    ["bilhete_canteiro"] = {
+        { id = "c4_gravei", text = "Firmino: \"Gravei 1845, como me pediram\"" },
+        { id = "c4_sulcos", text = "Firmino: \"Os sulcos do 6 são novos\"" },
+    },
+
+    ["grave:01"] = { { id = "c5_raspado", text = "Lápide: o nome foi raspado da pedra" } },
+    ["pagina_rasgada"] = {
+        { id = "c5_recusa", text = "B. R.: \"Não escrevo mais o que me mandam\"" },
+        { id = "c5_sumir", text = "B. R.: \"Se eu sumir, procurem na primeira cova\"" },
+    },
+    ["oficio_camara"] = {
+        { id = "c5_riscado", text = "Ofício: o desobediente terá o nome riscado" },
+        { id = "c5_datas", text = "Ofício: lançar a febre com datas diversas" },
+    },
+}
+
+----------------------------------------------------------------------
+-- Casos. evidence = documentos do caso além da própria lápide.
+-- proof: anotações aceitas como prova da hipótese correta (e respostas às outras).
+-- fix: a correção que o próprio jogador escreve depois de provar.
+-- Na mesma noite os casos ficam abertos juntos; requires trava um caso até outro ser resolvido.
 ----------------------------------------------------------------------
 N.cases = {
     {
@@ -91,7 +148,26 @@ N.cases = {
         title = "Antônio Ferreira",
         objective = "Sepultura 07 — Antônio Ferreira: a data da lápide não confere com o livro.",
         evidence = { "book:07", "carta_rosa" },
-        hint = "Compare as três datas: a lápide diz 1843, o livro diz 1845 e a carta da filha foi escrita em 1844. Quem está errado?",
+        hint = "Compare as três datas: a lápide diz 1843, o livro diz 1845 e a carta da filha foi escrita em 1844. A pedra e o livro se contradizem; qual fonte independente desempata?",
+        proof = {
+            accept = { "c1_carta" },
+            feedback = {
+                c1_lapide = "Essa é justamente a data em dúvida. Ela não pode provar a si mesma.",
+                c1_livro = "O livro diz 1845, a pedra diz 1843: é a palavra de um contra a do outro. Que fonte de fora desempata?",
+                c1_camara = "Estranho, sim: quem lançou foi a Câmara, não o coveiro. Mas isso não diz quando Antônio morreu.",
+                c1_tosse = "Tosse não é morte. O que mostra que ele ainda estava vivo depois de 1843?",
+            },
+        },
+        fix = {
+            title = "Corrigir a lápide",
+            prompt = "ANTÔNIO FERREIRA\nMestre do saveiro Bom Jesus\nFaleceu em ____",
+            options = { "1843", "1844", "1845" },
+            correct = 3,
+            feedback = {
+                [1] = "É a data que você acabou de provar errada. O cinzel para no ar.",
+                [2] = "Em junho de 1844 ele ainda mandava redes à filha. O livro diz março de 1845.",
+            },
+        },
         question = "O que os documentos sustentam sobre Antônio Ferreira?",
         hypotheses = {
             { text = "A lápide está errada: Antônio morreu em 1845, como diz o livro.", correct = true },
@@ -110,6 +186,25 @@ N.cases = {
         objective = "Sepultura 02 — Maria das Dores: o nome da lápide não é o nome do livro.",
         evidence = { "book:02", "assento_casamento" },
         hint = "O livro fala de Maria das Dores Nunes; a lápide, de Maria das Dores Santos. O assento de casamento explica por que um nome virou o outro.",
+        proof = {
+            accept = { "c2_assento" },
+            feedback = {
+                c2_lapide = "Isso só mostra um dos nomes. O que liga um ao outro?",
+                c2_livro = "Isso só mostra o outro nome. Alguma fonte liga os dois?",
+                c2_margem = "A nota à margem é justamente o que separa as duas mulheres. E foi escrita depois, em outra tinta.",
+                c2_padre = "Quem assinou importa pouco. O que o assento diz sobre o nome dela?",
+            },
+        },
+        fix = {
+            title = "Corrigir o livro e a lápide",
+            prompt = "Registro nº 02 — Maria das Dores ____\nLavadeira do Paramopama",
+            options = { "Santos", "Nunes", "Nunes Santos" },
+            correct = 3,
+            feedback = {
+                [1] = "Ficar só com Santos apaga a moça que nasceu Nunes. O assento liga os dois nomes.",
+                [2] = "Ficar só com Nunes apaga a mulher casada que a vila conheceu. O assento liga os dois nomes.",
+            },
+        },
         question = "Como resolver a diferença entre os dois nomes?",
         hypotheses = {
             { text = "Há duas mulheres: o corpo foi enterrado na sepultura errada.",
@@ -128,6 +223,24 @@ N.cases = {
         objective = "Sepultura 04 — José de Santana: dois homens com o mesmo nome no mesmo número.",
         evidence = { "book:04", "testemunho_vigario", "inventario_04" },
         hint = "Um José era sineiro, o outro carpinteiro. O que foi encontrado dentro da cova 04? E para onde o padre diz que levaram o moço?",
+        proof = {
+            accept = { "c3_corda", "c3_padre_vala" },
+            feedback = {
+                c3_livro = "As duas linhas são o problema, não a resposta.",
+                c3_padre_corda = "É a palavra do padre sobre o próprio enterro que ele fez. Há algo dentro da cova que confirme?",
+                c3_ferramenta = "Um carpinteiro pode ser enterrado sem ferramentas. O que foi de fato encontrado lá dentro?",
+            },
+        },
+        fix = {
+            title = "Corrigir o livro",
+            prompt = "Registro nº 04 — riscar a linha de ____",
+            options = { "José de Santana, 61 anos, sineiro", "José de Santana, 27 anos, carpinteiro", "as duas linhas" },
+            correct = 2,
+            feedback = {
+                [1] = "Riscar o sineiro tiraria do livro o homem que está de fato na cova, com a corda nas mãos.",
+                [3] = "Riscar as duas deixaria a cova 04 sem ninguém. A corda do sino ainda está lá dentro.",
+            },
+        },
         question = "Quem está, de fato, na sepultura 04?",
         hypotheses = {
             { text = "Os dois Josés foram enterrados na mesma cova.",
@@ -145,6 +258,25 @@ N.cases = {
         objective = "Sepultura 05 — Ana Beatriz: a lápide marca um ano que ainda não chegou.",
         evidence = { "book:05", "carta_tomas", "bilhete_canteiro" },
         hint = "O livro e a carta do irmão concordam em 1845. O canteiro jura que gravou 1845. Então quem mudou o 6 — e quando?",
+        proof = {
+            accept = { "c4_sulcos" },
+            feedback = {
+                c4_lapide = "É justamente o que precisa de explicação.",
+                c4_livro = "Isso confirma 1845, mas não explica como um 6 foi parar na pedra.",
+                c4_tomas = "Isso confirma 1845, mas não explica como um 6 foi parar na pedra.",
+                c4_gravei = "Isso mostra o que a pedra dizia. Mas há algo na própria pedra que mostre quando ela mudou?",
+            },
+        },
+        fix = {
+            title = "Corrigir a lápide",
+            prompt = "ANA BEATRIZ DE ALMEIDA\nProfessora de primeiras letras\nFaleceu em ____",
+            options = { "1846", "1845", "deixar a data em branco" },
+            correct = 2,
+            feedback = {
+                [1] = "O 6 é o sulco novo, a mentira. Você não vai repeti-la.",
+                [3] = "O livro, o irmão e o canteiro concordam em 1845. Apagar a data é esquecer de outro jeito.",
+            },
+        },
         question = "Por que a lápide de Ana Beatriz diz 1846?",
         hypotheses = {
             { text = "O canteiro errou a data ao gravar a pedra.",
@@ -163,6 +295,24 @@ N.cases = {
         objective = "Sepultura 01 — a cova sem nome: descubra o que aconteceu com Benedito Ramos.",
         evidence = { "book:01", "pagina_rasgada", "oficio_camara" },
         hint = "Releia a página rasgada com as iniciais B. R. e o ofício da Câmara. O que acontecia com quem desobedecia?",
+        proof = {
+            accept = { "c5_recusa", "c5_riscado" },
+            feedback = {
+                c5_raspado = "A pedra foi raspada, isso você já sabia. Por quem, e por quê?",
+                c5_sumir = "Ele previa que ia sumir. Mas o que ele fez para merecer isso?",
+                c5_datas = "Isso explica o que a Câmara queria esconder, não o que aconteceu com quem se recusou.",
+            },
+        },
+        fix = {
+            title = "Completar o registro",
+            prompt = "Registro nº 01 — Benedito Ramos, zelador e coveiro.\nCausa da morte: ____",
+            options = { "febre", "fugiu da vila", "recusou-se a escrever o que mandavam" },
+            correct = 3,
+            feedback = {
+                [1] = "Seria escrever exatamente o que a Câmara queria: mais um morto da febre, sem nome.",
+                [2] = "Ele avisou onde procurá-lo: na primeira cova. Ninguém foge para dentro de uma cova.",
+            },
+        },
         question = "Por que Benedito Ramos desapareceu dos registros?",
         hypotheses = {
             { text = "Benedito fugiu da vila levando o arquivo.",
@@ -176,7 +326,7 @@ N.cases = {
         summary = "Sepultura 01: Benedito Ramos recusou-se a falsificar os mortos da febre e teve o nome apagado.",
     },
     {
-        id = "c6", night = 3, grave = 6,
+        id = "c6", night = 3, grave = 6, requires = "c5",
         title = "O nome que falta",
         objective = "Sepultura 06 — a lápide lisa. Leia a última página do livro.",
         evidence = { "book:06", "nota_benedito" },
@@ -199,7 +349,7 @@ N.nights = {
     {
         title = "Noite 1",
         subtitle = "O primeiro nome",
-        intro = "Seu primeiro turno no cemitério. O livro de registros está aberto na mesa, ao fundo, perto da estante. Algumas lápides não batem com o que está escrito nele.\n\nComo jogar: ande com W A S D e olhe com o mouse. Vá até a sepultura marcada pela luz fria, mire nela e aperte E (ou clique) para examiná-la. Consulte o livro e os documentos e, quando tiver lido todas as fontes, use \"Confrontar registros\" para decidir o que as provas sustentam.",
+        intro = "Seu primeiro turno no cemitério. O livro de registros está aberto na mesa, ao fundo, perto da estante. Duas lápides, marcadas pela luz fria, não batem com o que está escrito nele. Resolva-as na ordem que quiser.\n\nComo jogar: ande com W A S D e olhe com o mouse; mire numa sepultura e aperte E. Leia a lápide e os documentos e anote no caderno os detalhes que importam. Em \"Confrontar registros\", escolha uma conclusão e apresente a anotação que a prova. Depois, corrija o registro com a sua própria mão.",
         outro = "Ao fechar o livro, você nota que a inscrição da sepultura 03 mudou. Ninguém passou pelo portão.\n\nEntre as últimas folhas, há uma página rasgada assinada com as iniciais B. R. — Benedito Ramos, o coveiro antes de você.",
     },
     {
@@ -329,6 +479,7 @@ N.toasts = {
     resolvedGrave = "Registro já corrigido.",
     crypt = "O arquivo da Câmara. Lá dentro, só caixas de papéis úmidos e o cheiro de cera velha.",
     idleHint = "Precisa de uma pista? Clique em Ajuda.",
+    lockedGrave = "A pedra lisa ainda não diz nada. Primeiro, a primeira cova.",
 }
 
 return N

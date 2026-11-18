@@ -37,7 +37,12 @@ local function freshState()
     local s = {
         phase = "menu",        -- menu | night_intro | playing | night_end | ending
         night = 1,
-        caseIndex = 1,
+        focus = nil,           -- id do caso que o jogador examinou por último
+        announced = {},        -- caseId -> true (caso já anunciado ao abrir)
+        caseSeen = {},         -- caseId -> true (pensamento de abertura já dito)
+        clues = {},            -- clueId -> true (anotado no caderno)
+        clueOrder = {},        -- clueIds na ordem em que foram anotados
+        proven = {},           -- caseId -> true (prova aceita; falta corrigir o registro)
         read = {},             -- evidenceId -> true
         resolved = {},         -- caseId -> true
         mistakes = 0,
@@ -68,9 +73,49 @@ end
 ----------------------------------------------------------------------
 function Flow.narrative() return N end
 
+local function requirementMet(case)
+    return not case.requires or Flow.state.resolved[case.requires] == true
+end
+
+-- Casos abertos nesta noite, na ordem do roteiro (o jogador escolhe qual resolver)
+function Flow.openCases()
+    local s, list = Flow.state, {}
+    if s.phase ~= "playing" then return list end
+    for _, c in ipairs(N.cases) do
+        if c.night == s.night and not s.resolved[c.id] and requirementMet(c) then
+            list[#list + 1] = c
+        end
+    end
+    return list
+end
+
+function Flow.isOpen(case)
+    for _, c in ipairs(Flow.openCases()) do
+        if c == case then return true end
+    end
+    return false
+end
+
+-- Caso desta noite que ainda espera outro ser resolvido
+function Flow.isLocked(case)
+    local s = Flow.state
+    return case and s.phase == "playing" and case.night == s.night and not s.resolved[case.id] and not requirementMet(case)
+end
+
+-- Caso em foco: o último examinado, se ainda aberto; senão o primeiro aberto
 function Flow.currentCase()
-    if Flow.state.phase ~= "playing" then return nil end
-    return N.cases[Flow.state.caseIndex]
+    local open = Flow.openCases()
+    for _, c in ipairs(open) do
+        if c.id == Flow.state.focus then return c end
+    end
+    return open[1]
+end
+
+function Flow.setFocus(case)
+    if case and Flow.state.focus ~= case.id then
+        Flow.state.focus = case.id
+        Flow.emit("casesChanged")
+    end
 end
 
 function Flow.caseForGrave(graveIndex)
@@ -145,9 +190,62 @@ function Flow.progress(case)
     return readCount, #list, missing
 end
 
+-- Só a decisão final exige ler tudo; nos outros casos a prova apresentada é o que conta
 function Flow.canConfront(case)
+    if not case.decision then return true end
     local readCount, total = Flow.progress(case)
     return readCount >= total
+end
+
+----------------------------------------------------------------------
+-- Caderno: detalhes anotados
+----------------------------------------------------------------------
+local clueIndex = {}
+for source, list in pairs(N.clues or {}) do
+    for _, c in ipairs(list) do
+        clueIndex[c.id] = { id = c.id, text = c.text, source = source }
+    end
+end
+
+function Flow.clue(id) return clueIndex[id] end
+
+function Flow.cluesFor(sourceId)
+    return (N.clues and N.clues[sourceId]) or {}
+end
+
+function Flow.hasClue(id) return Flow.state.clues[id] == true end
+
+function Flow.noteClue(id)
+    if Flow.state.clues[id] or not clueIndex[id] then return false end
+    Flow.state.clues[id] = true
+    table.insert(Flow.state.clueOrder, id)
+    Flow.state.idle = 0
+    Flow.emit("clueNoted", id)
+    return true
+end
+
+-- Todas as anotações possíveis do caso, na ordem das fontes
+function Flow.caseClues(case)
+    local list = {}
+    for _, src in ipairs(Flow.requiredSources(case)) do
+        for _, c in ipairs(Flow.cluesFor(src)) do list[#list + 1] = clueIndex[c.id] end
+    end
+    return list
+end
+
+function Flow.notedCaseClues(case)
+    local list = {}
+    for _, c in ipairs(Flow.caseClues(case)) do
+        if Flow.state.clues[c.id] then list[#list + 1] = c end
+    end
+    return list
+end
+
+function Flow.isProofClue(case, id)
+    for _, a in ipairs(case.proof and case.proof.accept or {}) do
+        if a == id then return true end
+    end
+    return false
 end
 
 ----------------------------------------------------------------------
@@ -178,67 +276,105 @@ function Flow.startGame()
     Flow.emit("nightIntro", 1)
 end
 
+-- Anuncia os casos que acabaram de abrir (início da noite ou destravados)
+local function announceOpenCases()
+    local s, fresh = Flow.state, {}
+    for _, c in ipairs(Flow.openCases()) do
+        if not s.announced[c.id] then
+            s.announced[c.id] = true
+            fresh[#fresh + 1] = c
+        end
+    end
+    Flow.emit("casesChanged")
+    if #fresh > 0 then Flow.emit("casesOpened", fresh) end
+end
+
 function Flow.beginNight()
     local s = Flow.state
     s.phase = "playing"
-    for i, c in ipairs(N.cases) do
-        if c.night == s.night and not s.resolved[c.id] then
-            s.caseIndex = i
-            break
-        end
-    end
+    s.focus = nil
     s.idle = 0
     s.idleHintSent = false
     Flow.emit("nightStarted", s.night)
-    Flow.emit("caseStarted", N.cases[s.caseIndex])
+    announceOpenCases()
 end
 
--- Resultado: { kind = "correct" | "wrong" | "ending" | "back", text = ..., case = ... }
-function Flow.choose(hypIndex)
-    local case = Flow.currentCase()
-    if not case then return nil end
-    local h = case.hypotheses[hypIndex]
-    if not h then return nil end
+local function mistake(case)
+    Flow.state.mistakes = Flow.state.mistakes + 1
+    Flow.emit("mistake", case, Flow.state.mistakes)
+end
 
+-- Decisão final (caso sem prova). Resultado: { kind = "ending" | "back", ... }
+function Flow.decide(case, hypIndex)
+    local h = case and case.hypotheses[hypIndex]
+    if not h then return nil end
     if h.back then
         return { kind = "back", case = case }
     end
+    Flow.state.ending = h.ending
+    Flow.state.resolved[case.id] = true
+    Flow.state.phase = "ending"
+    Flow.addNote(case.summary)
+    Flow.emit("ending", h.ending)
+    return { kind = "ending", ending = h.ending, case = case }
+end
 
-    if case.decision then
-        Flow.state.ending = h.ending
-        Flow.state.resolved[case.id] = true
-        Flow.state.phase = "ending"
-        Flow.addNote(case.summary)
-        Flow.emit("ending", h.ending)
-        return { kind = "ending", ending = h.ending, case = case }
+-- Confronto: hipótese + anotação apresentada como prova.
+-- Resultado: { kind = "wrong" (hipótese errada) | "weak" (prova não sustenta) | "proven", text, case }
+function Flow.present(case, hypIndex, clueId)
+    local h = case and case.hypotheses[hypIndex]
+    if not h then return nil end
+    if not h.correct then
+        mistake(case)
+        return { kind = "wrong", text = h.feedback, case = case }
     end
-
-    if h.correct then
-        Flow.state.resolved[case.id] = true
-        if case.newInscription then
-            Flow.state.inscriptions[case.grave] = case.newInscription
-        end
-        Flow.addNote(case.summary)
-        Flow.emit("caseResolved", case)
-        return { kind = "correct", text = case.resolution, case = case }
+    if not Flow.isProofClue(case, clueId) then
+        mistake(case)
+        local fb = case.proof.feedback and case.proof.feedback[clueId]
+        return { kind = "weak", case = case,
+                 text = fb or "Essa anotação é verdadeira, mas não prova a conclusão." }
     end
+    Flow.state.proven[case.id] = true
+    Flow.emit("caseProven", case)
+    return { kind = "proven", case = case }
+end
 
-    Flow.state.mistakes = Flow.state.mistakes + 1
-    Flow.emit("mistake", case, Flow.state.mistakes)
-    return { kind = "wrong", text = h.feedback, case = case }
+function Flow.isProven(case)
+    return case and Flow.state.proven[case.id] == true
+end
+
+local function resolve(case)
+    local s = Flow.state
+    s.resolved[case.id] = true
+    s.proven[case.id] = nil
+    if case.newInscription then
+        s.inscriptions[case.grave] = case.newInscription
+    end
+    Flow.addNote(case.summary)
+    Flow.emit("caseResolved", case)
+end
+
+-- Correção escrita pelo jogador depois da prova.
+-- Resultado: { kind = "fixWrong" | "correct", text, case }
+function Flow.fix(case, optionIndex)
+    if not Flow.isProven(case) then return nil end
+    local fix = case.fix
+    if fix and optionIndex ~= fix.correct then
+        mistake(case)
+        local fb = fix.feedback and fix.feedback[optionIndex]
+        return { kind = "fixWrong", case = case, text = fb or "Não foi isso que as provas mostraram." }
+    end
+    resolve(case)
+    return { kind = "correct", text = case.resolution, case = case }
 end
 
 -- Chamado depois que o jogador lê a resolução de um caso
 function Flow.advance()
     local s = Flow.state
-    local nextIndex = s.caseIndex + 1
-    local nextCase = N.cases[nextIndex]
-
-    if nextCase and nextCase.night == s.night then
-        s.caseIndex = nextIndex
-        s.idle = 0
-        s.idleHintSent = false
-        Flow.emit("caseStarted", nextCase)
+    s.idle = 0
+    s.idleHintSent = false
+    if #Flow.openCases() > 0 then
+        announceOpenCases()
         return
     end
 
@@ -292,20 +428,41 @@ function Flow.hintText()
     if not case then
         return "Não há caso aberto agora."
     end
+    local number = N.graves[case.grave].number
+    local head = "Caso em foco: sepultura " .. number .. " — " .. case.title .. ".\n"
+    local others = {}
+    for _, c in ipairs(Flow.openCases()) do
+        if c ~= case then others[#others + 1] = N.graves[c.grave].number end
+    end
+    local tail = #others > 0 and ("\n\nTambém aberta esta noite: sepultura " .. table.concat(others, ", ") .. ".") or ""
+
+    if Flow.isProven(case) then
+        return head .. "Você já provou o que aconteceu. Examine a sepultura " .. number .. " e use \"Corrigir o registro\"." .. tail
+    end
     local _, _, missing = Flow.progress(case)
     if #missing > 0 then
         local id = missing[1]
         local where
         if id:sub(1, 6) == "grave:" then
-            where = "Vá até a sepultura " .. N.graves[case.grave].number .. ", marcada pela luz fria, mire nela e aperte E para ler a lápide."
+            where = "Vá até a sepultura " .. number .. ", marcada pela luz fria, mire nela e aperte E para ler a lápide."
         elseif id:sub(1, 5) == "book:" then
             where = "Aperte L (ou vá até o livro sobre a mesa, ao norte) para ler a entrada do registro."
         else
-            where = "Examine a sepultura " .. N.graves[case.grave].number .. " e leia o documento \"" .. Flow.sourceTitle(id) .. "\"."
+            where = "Examine a sepultura " .. number .. " e leia o documento \"" .. Flow.sourceTitle(id) .. "\"."
         end
-        return "Fonte ainda não consultada: " .. Flow.sourceTitle(id) .. ".\n" .. where
+        return head .. "Fonte ainda não consultada: " .. Flow.sourceTitle(id) .. ".\n" .. where .. tail
     end
-    return "Você já leu todas as fontes. Examine a sepultura " .. N.graves[case.grave].number .. " e use \"Confrontar registros\".\n\n" .. case.hint
+    if case.decision then
+        return head .. "Você já leu tudo. Examine a sepultura " .. number .. " e decida.\n\n" .. case.hint
+    end
+    local hasProof = false
+    for _, c in ipairs(Flow.notedCaseClues(case)) do
+        if Flow.isProofClue(case, c.id) then hasProof = true end
+    end
+    if hasProof then
+        return head .. "Você já anotou o detalhe que resolve o caso. Examine a sepultura " .. number .. ", use \"Confrontar registros\" e apresente-o.\n\n" .. case.hint .. tail
+    end
+    return head .. "Você leu todas as fontes, mas ainda não anotou o detalhe decisivo. Releia os documentos e anote o que desempata a questão.\n\n" .. case.hint .. tail
 end
 
 return Flow

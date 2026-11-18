@@ -11,8 +11,10 @@ local function check(cond, msg)
     if not cond then error("SELFTEST FAIL: " .. msg, 2) end
 end
 
+local PANEL_SLOTS = 6
+
 local function clickPanel(hud, labelPrefix)
-    for i = 1, 4 do
+    for i = 1, PANEL_SLOTS do
         local name = "PanelBtn" .. i
         local btn = hud.button[name]
         local lbl = hud.slotLabels[name] or btn.label
@@ -22,7 +24,7 @@ local function clickPanel(hud, labelPrefix)
         end
     end
     local labels = {}
-    for i = 1, 4 do
+    for i = 1, PANEL_SLOTS do
         local b = hud.button["PanelBtn" .. i]
         labels[#labels + 1] = (b.visible and b.label or "-") .. (hud.actions["PanelBtn" .. i] and "" or "[x]")
     end
@@ -42,21 +44,47 @@ local function clickOverlay(hud, labelPrefix)
     error("SELFTEST FAIL: overlay button not found: " .. labelPrefix, 2)
 end
 
+-- Anota todos os detalhes da fonte aberta no painel
+local function noteAll(hud, sourceId)
+    for _, c in ipairs(Flow.cluesFor(sourceId)) do
+        clickPanel(hud, "Anotar: " .. c.text)
+        check(Flow.hasClue(c.id), "clue should be noted: " .. c.id)
+    end
+end
+
 local function playCase(hud, case, makeMistake)
     hud:onWorldClick({ kind = "grave", grave = case.grave })
     check(hud.panelOpen, "grave panel should be open")
-    -- confronto bloqueado antes de ler tudo
-    for i = 1, 4 do
-        local b = hud.button["PanelBtn" .. i]
-        if b.visible and b.label:find("fontes lidas", 1, true) then
-            check(b.disabled, "confront should be disabled before reading")
+    check(Flow.currentCase() == case, "opening the grave should focus " .. case.id)
+    if case.decision then
+        -- decisão final bloqueada antes de ler tudo
+        local found = false
+        for i = 1, PANEL_SLOTS do
+            local b = hud.button["PanelBtn" .. i]
+            if b.visible and b.label:find("fontes lidas", 1, true) then
+                found = true
+                check(b.disabled, "decision should be disabled before reading")
+            end
         end
+        check(found, "decision button with progress expected")
+    else
+        -- confrontar sem anotações: o caderno vazio não deixa provar nada
+        clickPanel(hud, "Confrontar")
+        for _, h in ipairs(case.hypotheses) do
+            if h.correct then clickPanel(hud, h.text:sub(1, 20)); break end
+        end
+        check(hud.text.PanelBody.text:find("ainda não tem nada", 1, true) ~= nil, "empty notebook message expected")
+        clickPanel(hud, "Voltar às conclusões")
+        clickPanel(hud, "Voltar à sepultura")
+        noteAll(hud, Flow.graveEvidenceId(case.grave))
     end
     for _, id in ipairs(case.evidence) do
         local ev = N.evidence[id]
         local prefix = ev.kind == "book" and "Consultar o livro" or ("Ler: " .. ev.title)
         clickPanel(hud, prefix)
         check(Flow.isRead(id), "evidence should be read: " .. id)
+        hud:finishReveal()
+        noteAll(hud, id)
         clickPanel(hud, "Voltar")
     end
     check(Flow.canConfront(case), "should be able to confront " .. case.id)
@@ -66,23 +94,50 @@ local function playCase(hud, case, makeMistake)
         return
     end
 
+    local correctText, proofText, weakText
+    for _, h in ipairs(case.hypotheses) do
+        if h.correct then correctText = h.text end
+    end
+    for _, c in ipairs(Flow.caseClues(case)) do
+        if Flow.isProofClue(case, c.id) then proofText = proofText or c.text else weakText = weakText or c.text end
+    end
+    check(proofText and weakText, "case needs proof and decoy clues: " .. case.id)
+
     if makeMistake then
+        -- conclusão errada
         for _, h in ipairs(case.hypotheses) do
-            if not h.correct then
-                clickPanel(hud, h.text:sub(1, 20))
-                break
-            end
+            if not h.correct then clickPanel(hud, h.text:sub(1, 20)); break end
         end
+        clickPanel(hud, weakText)
         check(hud.text.PanelTitle.text:find("não sustentam", 1, true) ~= nil, "wrong answer panel expected")
         clickPanel(hud, "Tentar outra")
+        -- conclusão certa com prova fraca
+        clickPanel(hud, correctText:sub(1, 20))
+        clickPanel(hud, weakText)
+        check(hud.text.PanelTitle.text:find("não prova", 1, true) ~= nil, "weak proof panel expected")
+        clickPanel(hud, "Apresentar outra")
+    else
+        clickPanel(hud, correctText:sub(1, 20))
     end
-    for _, h in ipairs(case.hypotheses) do
-        if h.correct then
-            clickPanel(hud, h.text:sub(1, 20))
-            break
+    clickPanel(hud, proofText)
+    check(Flow.isProven(case), "case should be proven: " .. case.id)
+    check(not Flow.isResolved(case), "case should wait for the fix: " .. case.id)
+
+    if makeMistake then
+        -- sai no meio da correção e volta pela sepultura
+        clickPanel(hud, "Voltar à sepultura")
+        clickPanel(hud, "Corrigir o registro")
+        for i, opt in ipairs(case.fix.options) do
+            if i ~= case.fix.correct then clickPanel(hud, opt); break end
         end
+        check(hud.text.PanelTitle.text:find("hesita", 1, true) ~= nil, "wrong fix panel expected")
+        clickPanel(hud, "Escrever de novo")
     end
+    clickPanel(hud, case.fix.options[case.fix.correct])
     check(Flow.isResolved(case), "case should be resolved: " .. case.id)
+    if case.newInscription then
+        check(Flow.inscription(case.grave) == case.newInscription, "inscription should change: " .. case.id)
+    end
     clickPanel(hud, "Continuar")
 end
 
@@ -134,7 +189,7 @@ function SelfTest.run(hud, endingKind)
         end
         hud:openBook()
         check(hud.panelOpen, "book should open")
-        clickPanel(hud, "Anotações")
+        clickPanel(hud, "Caderno")
         clickPanel(hud, "Voltar ao livro")
         hud:closePanel()
         hud:openHelp()
@@ -144,11 +199,25 @@ function SelfTest.run(hud, endingKind)
         check(hud.panelOpen, "non-case grave panel should open")
         hud:closePanel()
 
+        local nightCases = {}
         for _, case in ipairs(N.cases) do
-            if case.night == night then
-                playCase(hud, case, case.id == "c1" or case.id == "c3" or case.id == "c4")
-                Log.print("SELFTEST: case " .. case.id .. " ok")
-            end
+            if case.night == night then nightCases[#nightCases + 1] = case end
+        end
+        if night == 3 then
+            -- a lápide lisa só abre depois da primeira cova
+            check(#Flow.openCases() == 1, "only c5 should be open on night 3")
+            hud:onWorldClick({ kind = "grave", grave = 6 })
+            check(hud.text.PanelBody.text:find("primeira cova", 1, true) ~= nil, "locked grave message expected")
+            hud:closePanel()
+        else
+            -- ordem livre: joga os casos da noite de trás para frente
+            check(#Flow.openCases() == 2, "two cases should be open on night " .. night)
+            local a, b = nightCases[1], nightCases[2]
+            nightCases = { b, a }
+        end
+        for _, case in ipairs(nightCases) do
+            playCase(hud, case, case.id == "c1" or case.id == "c3" or case.id == "c4")
+            Log.print("SELFTEST: case " .. case.id .. " ok")
         end
     end
 
