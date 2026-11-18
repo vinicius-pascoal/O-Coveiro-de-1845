@@ -32,7 +32,7 @@ local function clickPanel(hud, labelPrefix)
 end
 
 local function clickOverlay(hud, labelPrefix)
-    for i = 1, 5 do
+    for i = 1, 7 do
         local name = "OverlayBtn" .. i
         local btn = hud.button[name]
         local lbl = hud.slotLabels[name] or btn.label
@@ -273,6 +273,14 @@ function SelfTest.run(hud, endingKind)
     local sens0 = Settings.sensitivityIndex
     for _ = 1, #Settings.sensitivityLevels do clickOverlay(hud, "Sensibilidade") end
     check(Settings.sensitivityIndex == sens0, "sensitivity should cycle back")
+    -- volume: os dois botões aparecem e voltam ao valor inicial depois de uma volta completa
+    check(#hud.keySlots.OverlayBtn == 7, "options should show 7 buttons")
+    for _, kind in ipairs({ "master", "ambient" }) do
+        local vol0 = Settings.volumeIndex[kind]
+        local label = kind == "master" and "Volume geral" or "Volume do ambiente"
+        for _ = 1, #Settings.volumeLevels do clickOverlay(hud, label) end
+        check(Settings.volumeIndex[kind] == vol0, kind .. " volume should cycle back")
+    end
     clickOverlay(hud, "Inverter"); clickOverlay(hud, "Inverter")
     clickOverlay(hud, "Texto grande"); check(Settings.largeText, "large text on")
     clickOverlay(hud, "Texto grande"); check(not Settings.largeText, "large text off")
@@ -391,6 +399,18 @@ function SelfTest.run(hud, endingKind)
     clickOverlay(hud, "Créditos")
     check(hud.overlayMode == "credits", "credits expected")
     check(hud.overlayLogo.visible, "end credits should show the KayKit logo")
+    -- sons: a paisagem sonora existe e nenhum arquivo de assets/sons falhou ao carregar
+    local audio = Flow.worldController and Flow.worldController.audio
+    check(audio ~= nil, "soundscape should be running")
+    local soundCount, failedNames = 0, {}
+    for file, snd in pairs(audio.sounds) do
+        soundCount = soundCount + 1
+        local okC, comp = pcall(function() return snd:getSoundComponent() end)
+        if okC and comp and comp.loadFailed then failedNames[#failedNames + 1] = file end
+    end
+    check(#failedNames == 0, "sounds failed to load: " .. table.concat(failedNames, ", "))
+    check(audio.windA and audio.windA:getPlayingTime() > 0, "the wind should be playing")
+    Log.print("SELFTEST: sounds used = " .. soundCount)
     Log.print("SELFTEST: mistakes = " .. Flow.state.mistakes .. ", notes = " .. #Flow.state.notes)
     clickOverlay(hud, "Jogar novamente")
     check(hud.overlayMode == "menu" and Flow.state.phase == "menu", "back to menu expected")

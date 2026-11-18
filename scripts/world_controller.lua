@@ -6,6 +6,7 @@
 local Flow = require("game.flow")
 local Settings = require("game.settings")
 local N = require("game.narrative")
+local Soundscape = require("game.soundscape")
 
 -- Esqueletos dos mortos: duração (s) das animações que tocam uma vez
 local ANIM_LEN = {
@@ -244,6 +245,10 @@ function WorldController:init()
     Flow.on("ending", "world", function(kind) self:onEnding(kind) end)
 
     self:resetVisuals()
+
+    -- Sons: vento, passos, rangidos e rosnados (escuta os mesmos eventos do Flow)
+    local okAudio, audio = pcall(Soundscape.new, s, self)
+    if okAudio then self.audio = audio else Log.warn("WorldController: sound disabled: " .. tostring(audio)) end
 end
 
 ----------------------------------------------------------------------
@@ -1002,6 +1007,14 @@ function WorldController:onUpdate()
         end
     elseif self.focused then
         self:setFocus(nil)
+    end
+
+    if self.audio then
+        local okAudio, err = pcall(self.audio.update, self.audio, dt)
+        if not okAudio then
+            Log.warn("WorldController: sound update failed: " .. tostring(err))
+            self.audio = nil
+        end
     end
 
     local pp = self.player.position

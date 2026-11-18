@@ -254,7 +254,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|18#55
+          id: font|18#61
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -442,7 +442,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#55
+              id: font|18#61
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -630,7 +630,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#55
+              id: font|18#61
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -818,7 +818,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#55
+              id: font|18#61
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -890,7 +890,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|20#30
+          id: font|20#45
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -1031,7 +1031,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|19#42
+              id: font|19#52
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -1589,7 +1589,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#30
+                  id: font|20#45
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -1777,7 +1777,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|20#30
+                      id: font|20#45
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -1965,7 +1965,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#55
+                      id: font|18#61
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2221,7 +2221,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#55
+                      id: font|18#61
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2477,7 +2477,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#55
+                      id: font|18#61
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2733,7 +2733,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#55
+                      id: font|18#61
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -3057,7 +3057,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#55
+                      id: font|18#61
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -3313,7 +3313,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#55
+                      id: font|18#61
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -3590,7 +3590,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|48#17
+              id: font|48#20
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -3662,7 +3662,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|22#21
+              id: font|22#27
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -3922,7 +3922,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#30
+                  id: font|20#45
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -4178,7 +4178,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#30
+                  id: font|20#45
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -4434,7 +4434,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#30
+                  id: font|20#45
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -4690,7 +4690,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#30
+                  id: font|20#45
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -5086,7 +5086,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#30
+                  id: font|20#45
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -5535,6 +5535,518 @@ entities:
             patchMarginTop: 0
             patchMarginBottom: 0
             textureScaleFactor: 0
+      - type: Entity
+        entity: 1108
+        name: OverlayBtn6
+        components:
+          transform:
+            position: [420, 660, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [420, 660, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 660, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 660, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [440, 50, 0]
+            worldAABB:
+              min: [420, 660, 0]
+              max: [860, 710, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/horror/btn_normal.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [1, 1, 1, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          button:
+            label: 1109
+            textureNormal:
+              textureType: 2D
+              source: path
+              path: ui/horror/btn_normal.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            textureHovered:
+              textureType: 2D
+              source: path
+              path: ui/horror/btn_hover.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            texturePressed:
+              textureType: 2D
+              source: path
+              path: ui/horror/btn_pressed.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            textureDisabled:
+              textureType: 2D
+              source: path
+              path: ui/horror/btn_disabled.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            colorNormal: [1, 1, 1, 1]
+            colorHovered: [1, 1, 1, 1]
+            colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+            colorDisabled: [1, 1, 1, 0.6]
+            scaleHovered: 1.03
+            scalePressed: 0.98
+            transitionTime: 0.08
+            disabled: false
+            focusable: true
+          uilayout:
+            width: 440
+            height: 50
+            anchorPointLeft: 0.5
+            anchorPointTop: 0
+            anchorPointRight: 0.5
+            anchorPointBottom: 0
+            anchorOffsetLeft: -220
+            anchorOffsetTop: 0
+            anchorOffsetRight: 220
+            anchorOffsetBottom: 50
+            positionOffset: [0, 660]
+            pivot: [0, 0]
+            anchorPreset: CENTER_TOP
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [145.40904, 150.95526, 665.7645, 374.4925]
+            ignoreScissor: false
+            ignoreEvents: false
+          image:
+            patchMarginLeft: 15
+            patchMarginRight: 15
+            patchMarginTop: 15
+            patchMarginBottom: 15
+            textureScaleFactor: 0
+        children:
+          - type: Entity
+            entity: 1109
+            name: Label
+            components:
+              transform:
+                position: [189, 15, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [609, 675, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [189, 15, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [609, 675, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 48
+                aabb:
+                  min: [0, 0, 0]
+                  max: [63, 16.833334, 0]
+                worldAABB:
+                  min: [609, 675, 0]
+                  max: [672, 691.8333, 0]
+                texture:
+                  textureType: 2D
+                  source: id
+                  id: font|20#45
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: false
+                color: [0.8524374, 0.7361094, 0.6120656, 1]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              uilayout:
+                width: 63
+                height: 20
+                anchorPointLeft: 0.5
+                anchorPointTop: 0.5
+                anchorPointRight: 0.5
+                anchorPointBottom: 0.5
+                anchorOffsetLeft: -31
+                anchorOffsetTop: -10
+                anchorOffsetRight: 32
+                anchorOffsetBottom: 10
+                positionOffset: [0, 0]
+                pivot: [0, 0]
+                anchorPreset: CENTER
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [145.40904, 150.95526, 665.7645, 374.4925]
+                ignoreScissor: false
+                ignoreEvents: true
+              text:
+                font: []
+                text: Créditos
+                fontSize: 20
+                multiline: true
+                maxTextSize: 200
+                fixedWidth: false
+                fixedHeight: false
+                pivotBaseline: false
+                pivotCentered: false
+          - type: Entity
+            entity: 1110
+            name: OverlayBtn6Icon
+            components:
+              transform:
+                position: [29, 7, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [449, 667, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [29, 7, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [449, 667, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 54
+                aabb:
+                  min: [0, 0, 0]
+                  max: [36, 36, 0]
+                worldAABB:
+                  min: [449, 667, 0]
+                  max: [485, 703, 0]
+                texture:
+                  textureType: 2D
+                  source: path
+                  path: ui/horror/icon_play.png
+                  minFilter: nearest
+                  magFilter: nearest
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                color: [1, 1, 1, 1]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              uilayout:
+                width: 36
+                height: 36
+                anchorPointLeft: 0
+                anchorPointTop: 0.5
+                anchorPointRight: 0
+                anchorPointBottom: 0.5
+                anchorOffsetLeft: 0
+                anchorOffsetTop: -18
+                anchorOffsetRight: 36
+                anchorOffsetBottom: 18
+                positionOffset: [14, 0]
+                pivot: [0, 0]
+                anchorPreset: CENTER_LEFT
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [378.94675, 497.88098, 18.72464, 18.72461]
+                ignoreScissor: false
+                ignoreEvents: true
+              image:
+                patchMarginLeft: 0
+                patchMarginRight: 0
+                patchMarginTop: 0
+                patchMarginBottom: 0
+                textureScaleFactor: 0
+      - type: Entity
+        entity: 1111
+        name: OverlayBtn7
+        components:
+          transform:
+            position: [420, 660, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [420, 660, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 660, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [420, 660, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [440, 50, 0]
+            worldAABB:
+              min: [420, 660, 0]
+              max: [860, 710, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/horror/btn_normal.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [1, 1, 1, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          button:
+            label: 1112
+            textureNormal:
+              textureType: 2D
+              source: path
+              path: ui/horror/btn_normal.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            textureHovered:
+              textureType: 2D
+              source: path
+              path: ui/horror/btn_hover.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            texturePressed:
+              textureType: 2D
+              source: path
+              path: ui/horror/btn_pressed.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            textureDisabled:
+              textureType: 2D
+              source: path
+              path: ui/horror/btn_disabled.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            colorNormal: [1, 1, 1, 1]
+            colorHovered: [1, 1, 1, 1]
+            colorPressed: [0.6993936, 0.6993936, 0.6993936, 1]
+            colorDisabled: [1, 1, 1, 0.6]
+            scaleHovered: 1.03
+            scalePressed: 0.98
+            transitionTime: 0.08
+            disabled: false
+            focusable: true
+          uilayout:
+            width: 440
+            height: 50
+            anchorPointLeft: 0.5
+            anchorPointTop: 0
+            anchorPointRight: 0.5
+            anchorPointBottom: 0
+            anchorOffsetLeft: -220
+            anchorOffsetTop: 0
+            anchorOffsetRight: 220
+            anchorOffsetBottom: 50
+            positionOffset: [0, 660]
+            pivot: [0, 0]
+            anchorPreset: CENTER_TOP
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [145.40904, 150.95526, 665.7645, 374.4925]
+            ignoreScissor: false
+            ignoreEvents: false
+          image:
+            patchMarginLeft: 15
+            patchMarginRight: 15
+            patchMarginTop: 15
+            patchMarginBottom: 15
+            textureScaleFactor: 0
+        children:
+          - type: Entity
+            entity: 1112
+            name: Label
+            components:
+              transform:
+                position: [189, 15, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [609, 675, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [189, 15, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [609, 675, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 48
+                aabb:
+                  min: [0, 0, 0]
+                  max: [63, 16.833334, 0]
+                worldAABB:
+                  min: [609, 675, 0]
+                  max: [672, 691.8333, 0]
+                texture:
+                  textureType: 2D
+                  source: id
+                  id: font|20#45
+                  minFilter: linear
+                  magFilter: linear
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: false
+                color: [0.8524374, 0.7361094, 0.6120656, 1]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              uilayout:
+                width: 63
+                height: 20
+                anchorPointLeft: 0.5
+                anchorPointTop: 0.5
+                anchorPointRight: 0.5
+                anchorPointBottom: 0.5
+                anchorOffsetLeft: -31
+                anchorOffsetTop: -10
+                anchorOffsetRight: 32
+                anchorOffsetBottom: 10
+                positionOffset: [0, 0]
+                pivot: [0, 0]
+                anchorPreset: CENTER
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [145.40904, 150.95526, 665.7645, 374.4925]
+                ignoreScissor: false
+                ignoreEvents: true
+              text:
+                font: []
+                text: Créditos
+                fontSize: 20
+                multiline: true
+                maxTextSize: 200
+                fixedWidth: false
+                fixedHeight: false
+                pivotBaseline: false
+                pivotCentered: false
+          - type: Entity
+            entity: 1113
+            name: OverlayBtn7Icon
+            components:
+              transform:
+                position: [29, 7, 0]
+                rotation: [1, 0, 0, 0]
+                scale: [1, 1, 1]
+                worldPosition: [449, 667, 0]
+                worldRotation: [1, 0, 0, 0]
+                worldScale: [1, 1, 1]
+                localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [29, 7, 0, 1]]
+                modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [449, 667, 0, 1]]
+                normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+                visible: true
+                billboardRotation: [1, 0, 0, 0]
+                billboard: false
+                fakeBillboard: false
+                cylindricalBillboard: false
+              ui:
+                primitiveType: triangles
+                vertexCount: 54
+                aabb:
+                  min: [0, 0, 0]
+                  max: [36, 36, 0]
+                worldAABB:
+                  min: [449, 667, 0]
+                  max: [485, 703, 0]
+                texture:
+                  textureType: 2D
+                  source: path
+                  path: ui/horror/icon_play.png
+                  minFilter: nearest
+                  magFilter: nearest
+                  wrapU: repeat
+                  wrapV: repeat
+                  releaseDataAfterLoad: true
+                color: [1, 1, 1, 1]
+                automaticFlipY: true
+                flipY: false
+                pointerMoved: false
+                focused: false
+              uilayout:
+                width: 36
+                height: 36
+                anchorPointLeft: 0
+                anchorPointTop: 0.5
+                anchorPointRight: 0
+                anchorPointBottom: 0.5
+                anchorOffsetLeft: 0
+                anchorOffsetTop: -18
+                anchorOffsetRight: 36
+                anchorOffsetBottom: 18
+                positionOffset: [14, 0]
+                pivot: [0, 0]
+                anchorPreset: CENTER_LEFT
+                usingAnchors: true
+                panel: 0
+                containerBoxIndex: -1
+                scissor: [378.94675, 497.88098, 18.72464, 18.72461]
+                ignoreScissor: false
+                ignoreEvents: true
+              image:
+                patchMarginLeft: 0
+                patchMarginRight: 0
+                patchMarginTop: 0
+                patchMarginBottom: 0
+                textureScaleFactor: 0
   - type: Entity
     entity: 1059
     name: Crosshair
@@ -6396,7 +6908,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|20#30
+              id: font|20#45
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -6681,7 +7193,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#55
+              id: font|18#61
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -6722,4 +7234,4 @@ entities:
             fixedHeight: false
             pivotBaseline: false
             pivotCentered: false
-shaderKeysHash: 64ba8a23bc0614e5b2d4d608ab1e563a29471ab4
+shaderKeysHash: 18926e676d46e215d340286ec880e95cfeeb9edf

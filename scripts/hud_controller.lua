@@ -72,7 +72,7 @@ end
 local BUTTONS = {
     "BtnBook", "BtnHelp", "BtnPause", "PanelClose",
     "PanelBtn1", "PanelBtn2", "PanelBtn3", "PanelBtn4", "PanelBtn5", "PanelBtn6",
-    "OverlayBtn1", "OverlayBtn2", "OverlayBtn3", "OverlayBtn4", "OverlayBtn5",
+    "OverlayBtn1", "OverlayBtn2", "OverlayBtn3", "OverlayBtn4", "OverlayBtn5", "OverlayBtn6", "OverlayBtn7",
 }
 
 -- Papéis: o painel padrão usa a moldura escura da spritesheet (assets/ui/horror);
@@ -109,7 +109,7 @@ local KEY_HINTS = "E examinar  ·  Tab caderno  ·  L livro  ·  H ajuda  ·  Es
 
 local PANEL_SLOTS = 6
 local MODAL_DIM_ALPHA = 0.55
-local OVERLAY_SLOTS = 5
+local OVERLAY_SLOTS = 7
 local TOAST_SECONDS = 5.5
 
 -- Tamanhos de texto: normal / grande (opção do jogador)
@@ -193,8 +193,8 @@ function HUDController:init()
     self.keySlots = { PanelBtn = {}, OverlayBtn = {} }
 
     DIGIT_KEYS = {
-        [Input.KEY_1] = 1, [Input.KEY_2] = 2, [Input.KEY_3] = 3, [Input.KEY_4] = 4, [Input.KEY_5] = 5, [Input.KEY_6] = 6,
-        [Input.KEY_KP_1] = 1, [Input.KEY_KP_2] = 2, [Input.KEY_KP_3] = 3, [Input.KEY_KP_4] = 4, [Input.KEY_KP_5] = 5, [Input.KEY_KP_6] = 6,
+        [Input.KEY_1] = 1, [Input.KEY_2] = 2, [Input.KEY_3] = 3, [Input.KEY_4] = 4, [Input.KEY_5] = 5, [Input.KEY_6] = 6, [Input.KEY_7] = 7,
+        [Input.KEY_KP_1] = 1, [Input.KEY_KP_2] = 2, [Input.KEY_KP_3] = 3, [Input.KEY_KP_4] = 4, [Input.KEY_KP_5] = 5, [Input.KEY_KP_6] = 6, [Input.KEY_KP_7] = 7,
     }
     self.panelBg = Image(s, findEntity(s, "PanelBg"))
     self.panelPaper = Image(s, findEntity(s, "PanelPaper"))
@@ -650,7 +650,11 @@ function HUDController:showOverlay(spec)
     t.OverlayTitle.text = spec.title or ""
     t.OverlaySubtitle.text = spec.subtitle or ""
     self:setRevealText(t.OverlayBody, spec.body or "", spec.reveal)
-    t.OverlayFooter.text = spec.footer or (spec.back and FOOTER_BACK or FOOTER_DEFAULT)
+    -- o atalho do rodapé acompanha quantas opções a tela tem (Opções chega a 7)
+    local footer = spec.footer or (spec.back and FOOTER_BACK or FOOTER_DEFAULT)
+    local nButtons = #(spec.buttons or {})
+    if nButtons > 1 then footer = footer:gsub("1–4", "1–" .. nButtons) end
+    t.OverlayFooter.text = footer
     -- só a cena escurece; o conteúdo fica num cartão do tamanho dele (OverlayCard)
     self.overlayBg:setColor(0, 0, 0, OVERLAY_ALPHA[spec.mode] or OVERLAY_ALPHA_DEFAULT)
     self.overlayBg.visible = true
@@ -1655,12 +1659,19 @@ function HUDController:showOptions(back)
         mode = "options",
         title = "Opções",
         subtitle = "Valem até fechar o jogo",
-        body = "Sensibilidade do mouse: quanto a câmera gira ao mover o mouse.\n"
+        body = "Volume geral: todos os sons do jogo. Ambiente: o vento e as rajadas.\n"
+            .. "Sensibilidade do mouse: quanto a câmera gira ao mover o mouse.\n"
             .. "Inverter eixo vertical: mover o mouse para cima olha para baixo.\n"
             .. "Texto grande: aumenta os textos dos painéis, documentos e avisos.\n"
             .. "Texto animado: documentos e cenas se escrevem aos poucos (Espaço completa).",
         back = back,
         buttons = {
+            { label = "Volume geral: " .. Settings.volumeLabel("master"), icon = Settings.volume("master") > 0 and "play" or "x", action = function()
+                Settings.cycleVolume("master"); refresh()
+            end },
+            { label = "Volume do ambiente: " .. Settings.volumeLabel("ambient"), icon = Settings.volume("ambient") > 0 and "play" or "x", action = function()
+                Settings.cycleVolume("ambient"); refresh()
+            end },
             { label = "Sensibilidade do mouse: " .. Settings.sensitivityLabel(), icon = "gear", action = function()
                 Settings.cycleSensitivity(); refresh()
             end },
