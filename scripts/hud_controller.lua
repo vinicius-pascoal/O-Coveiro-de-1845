@@ -98,6 +98,7 @@ local TOAST_TEXT_Y = 18
 
 -- Lápide decorativa só nas telas "de capa"
 local TOMB_MODES = { menu = true, credits = true }
+local LOGO_SIZE = 120
 
 local REVEAL_CHARS_PER_SECOND = 70
 -- Botões do topo só aparecem com o cursor livre (painel aberto); na exploração o
@@ -206,6 +207,7 @@ function HUDController:init()
     self.overlayCard = Image(s, findEntity(s, "OverlayCard"))
     self.overlayRule = Image(s, findEntity(s, "OverlayRule"))
     self.overlaySkull = Image(s, findEntity(s, "OverlaySkull"))
+    self.overlayLogo = Image(s, findEntity(s, "OverlayLogo"))
     self.overlayCandles = { Image(s, findEntity(s, "OverlayCandleL")), Image(s, findEntity(s, "OverlayCandleR")) }
     self.panelIcon = Image(s, findEntity(s, "PanelIcon"))
     self.btnIcon = {}
@@ -654,6 +656,7 @@ function HUDController:showOverlay(spec)
     self.overlayBg.visible = true
     assignButtons(self, "OverlayBtn", OVERLAY_SLOTS, spec.buttons)
     self.overlayTomb.visible = TOMB_MODES[spec.mode] == true
+    self.overlayLogo.visible = spec.logo == true
     self:layoutOverlay()
     self.overlayOpen = true
     self:setTopBarVisible(false)
@@ -694,6 +697,9 @@ function HUDController:layoutOverlay()
     y = ruleY + 32
     local bodyY = y
     if bodyH > 0 then y = y + bodyH + 26 end
+    -- logo dos créditos (KayKit), entre o texto e os botões
+    local logoY = y
+    if self.overlayLogo.visible then y = y + LOGO_SIZE + 22 end
     local btnY = y
     if n > 0 then y = y + n * (OVERLAY_BUTTON_H + OVERLAY_BUTTON_GAP) - OVERLAY_BUTTON_GAP + 20 end
     local footY = y
@@ -723,6 +729,10 @@ function HUDController:layoutOverlay()
     self:place(self.overlayCandles[1], -(cardW / 2 - 72), candleY)
     self:place(self.overlayCandles[2], cardW / 2 - 72, candleY)
     self:place(t.OverlayBody, 0, top + bodyY)
+    if self.overlayLogo.visible then
+        setSize(self.overlayLogo, LOGO_SIZE, LOGO_SIZE)
+        self:place(self.overlayLogo, 0, top + logoY)
+    end
     for i, name in ipairs(slots) do
         self:place(self.button[name], 0, top + btnY + (i - 1) * (OVERLAY_BUTTON_H + OVERLAY_BUTTON_GAP))
     end
@@ -1597,7 +1607,7 @@ function HUDController:showMainMenu()
             { label = "Iniciar", icon = "play", action = function() self:showPrologue(1) end },
             { label = "Opções", icon = "gear", action = function() self:showOptions(function() self:showMainMenu() end) end },
             { label = "Controles", icon = "question", action = function() self:showInfo("Controles", N.controls, function() self:showMainMenu() end) end },
-            { label = "Créditos", icon = "candle", action = function() self:showInfo("Créditos", N.credits, function() self:showMainMenu() end) end },
+            { label = "Créditos", icon = "candle", action = function() self:showInfo("Créditos", N.credits, function() self:showMainMenu() end, true) end },
         },
     })
 end
@@ -1626,13 +1636,14 @@ function HUDController:showPrologue(page)
     })
 end
 
-function HUDController:showInfo(title, body, back)
+function HUDController:showInfo(title, body, back, logo)
     self:showOverlay({
         mode = "info",
         title = title,
         subtitle = "",
         body = body,
         back = back,
+        logo = logo,
         buttons = { { label = "Voltar", icon = "home", action = back } },
     })
 end
@@ -1786,6 +1797,7 @@ function HUDController:showCredits()
         title = "Créditos",
         subtitle = ending and ("Final: " .. ending.title .. "   ·   obrigado por jogar") or "Obrigado por jogar",
         body = N.credits,
+        logo = true,
         buttons = {
             { label = "Jogar novamente", icon = "play", action = function()
                 Flow.reset()
