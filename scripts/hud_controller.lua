@@ -4,6 +4,7 @@
 local Flow = require("game.flow")
 local N = require("game.narrative")
 local Settings = require("game.settings")
+local Saves = require("game.saves")
 
 local HUDController = {
     properties = {
@@ -244,6 +245,7 @@ function HUDController:init()
     RegisterEngineEvent(self, "onUpdate")
     RegisterEngineEvent(self, "onKeyDown")
 
+    Saves.install()
     Flow.on("nightIntro", "hud", function(n) self:showNightIntro(n) end)
     Flow.on("casesOpened", "hud", function(list) self:onCasesOpened(list) end)
     Flow.on("casesChanged", "hud", function() self:refreshObjective() end)
@@ -1601,18 +1603,100 @@ end
 -- Telas cheias: menu, pausa, noites, finais, créditos
 ----------------------------------------------------------------------
 function HUDController:showMainMenu()
+    Saves.current = nil
+    local buttons = {}
+    -- atalho para a campanha em andamento salva por último
+    local latest = Saves.latest()
+    if latest then
+        local info = Saves.info(latest)
+        buttons[#buttons + 1] = { label = string.format("Continuar (espaço %d, noite %d)", latest, info.night), icon = "play",
+            action = function() self:continueSlot(latest) end }
+    end
+    buttons[#buttons + 1] = { label = latest and "Escolher save" or "Jogar", icon = latest and "tomb" or "play",
+        action = function() self:showSlots(false) end }
+    for _, b in ipairs({
+            { label = "Opções", icon = "gear", action = function() self:showOptions(function() self:showMainMenu() end) end },
+            { label = "Controles", icon = "question", action = function() self:showInfo("Controles", N.controls, function() self:showMainMenu() end) end },
+            { label = "Créditos", icon = "candle", action = function() self:showInfo("Créditos", N.credits, function() self:showMainMenu() end, true) end },
+        }) do
+        buttons[#buttons + 1] = b
+    end
     self:showOverlay({
         mode = "menu",
         title = N.menu.title,
         subtitle = N.menu.subtitle,
         body = N.menu.body,
         footer = FOOTER_DEFAULT .. "   ·   Doriax Flash Jam 2026",
-        buttons = {
-            { label = "Iniciar", icon = "play", action = function() self:showPrologue(1) end },
-            { label = "Opções", icon = "gear", action = function() self:showOptions(function() self:showMainMenu() end) end },
-            { label = "Controles", icon = "question", action = function() self:showInfo("Controles", N.controls, function() self:showMainMenu() end) end },
-            { label = "Créditos", icon = "candle", action = function() self:showInfo("Créditos", N.credits, function() self:showMainMenu() end, true) end },
-        },
+        buttons = buttons,
+    })
+end
+
+-- Texto de um espaço de save na lista
+local function slotLabel(n, info)
+    if not info then return string.format("Espaço %d — vazio (novo jogo)", n) end
+    if info.ending then
+        local ending = N.endings[info.ending]
+        return string.format("Espaço %d — concluído (%s)", n, ending and ending.title or "fim")
+    end
+    return string.format("Espaço %d — noite %d · %d de %d registros", n, info.night, info.resolved, info.total)
+end
+
+function HUDController:continueSlot(n)
+    self:closeOverlay()
+    if not Saves.load(n) then
+        self:showInfo("Save ilegível", "Não foi possível abrir o espaço " .. n .. ". Ele pode ter sido salvo por outra versão do jogo.",
+            function() self:showSlots(false) end)
+    end
+end
+
+-- Escolha do espaço: vazio começa um jogo novo; ocupado continua; concluído recomeça.
+-- deleting = true: clicar num espaço pergunta se deve apagá-lo
+function HUDController:showSlots(deleting)
+    local buttons = {}
+    local any = false
+    for n = 1, Saves.SLOTS do
+        local info = Saves.info(n)
+        any = any or info ~= nil
+        local label = slotLabel(n, info)
+        local action
+        if deleting then
+            if info then
+                label = "Apagar: " .. label
+                action = function()
+                    self:confirm("Apagar o espaço " .. n .. "?", "Esta campanha será apagada para sempre.", "Sim, apagar",
+                        function() Saves.delete(n); self:showSlots(false) end,
+                        function() self:showSlots(true) end)
+                end
+            end
+        elseif not info then
+            action = function() Saves.startNew(n); self:showPrologue(1) end
+        elseif info.ending then
+            action = function()
+                self:confirm("Recomeçar no espaço " .. n .. "?", "Esta campanha já terminou. Um jogo novo começa neste espaço, no lugar dela.",
+                    "Sim, recomeçar", function() Saves.startNew(n); self:showPrologue(1) end,
+                    function() self:showSlots(false) end)
+            end
+        else
+            action = function() self:continueSlot(n) end
+        end
+        buttons[#buttons + 1] = { label = label, icon = info and (info.ending and "check" or "tomb") or "plus",
+            disabled = action == nil, action = action }
+    end
+    if deleting then
+        buttons[#buttons + 1] = { label = "Cancelar", icon = "x", action = function() self:showSlots(false) end }
+    elseif any then
+        buttons[#buttons + 1] = { label = "Apagar um save", icon = "minus", action = function() self:showSlots(true) end }
+    end
+    buttons[#buttons + 1] = { label = "Voltar", icon = "home", action = function() self:showMainMenu() end }
+    self:showOverlay({
+        mode = "slots",
+        title = deleting and "Apagar um save" or "Saves",
+        subtitle = deleting and "Escolha o espaço que será apagado" or "Até três campanhas",
+        body = deleting and "Apagar não pode ser desfeito."
+            or "O jogo salva sozinho a cada pista, documento e registro corrigido, e no começo de cada noite.\n"
+            .. "Ao continuar, você volta à noite em que parou, com tudo o que já descobriu.",
+        back = function() if deleting then self:showSlots(false) else self:showMainMenu() end end,
+        buttons = buttons,
     })
 end
 
@@ -1728,26 +1812,35 @@ function HUDController:pauseSummary()
     return table.concat(lines, "\n")
 end
 
-function HUDController:openPause()
+function HUDController:openPause(savedNow)
     if Flow.state.phase ~= "playing" then return end
     local night = N.nights[Flow.state.night]
     local resume = function() self:closeOverlay() end
+    local slot = Saves.current
+    local body = self:pauseSummary()
+    if slot then
+        body = body .. "\n" .. (savedNow and ("Jogo salvo no espaço " .. slot .. ".")
+            or ("O jogo salva sozinho no espaço " .. slot .. "."))
+    end
     self:showOverlay({
         mode = "pause",
         title = "Pausa",
         subtitle = string.format("Noite %d de %d — %s", Flow.state.night, N.nightCount, night and night.subtitle or ""),
-        body = self:pauseSummary(),
+        body = body,
         back = resume,
         footer = "1–4 ou clique para escolher   ·   Esc: continuar",
         buttons = {
             { label = "Continuar", icon = "play", action = resume },
+            { label = savedNow and "Jogo salvo" or "Salvar jogo", icon = savedNow and "check" or "tomb", disabled = not slot,
+              action = function() Saves.save(); self:openPause(true) end },
             { label = "Opções", icon = "gear", action = function() self:showOptions(function() self:openPause() end) end },
             { label = "Controles", icon = "question", action = function() self:showInfo("Controles", N.controls, function() self:openPause() end) end },
             { label = "Voltar ao menu principal", icon = "home", action = function()
                 self:confirm("Voltar ao menu principal?",
-                    "O progresso desta campanha será perdido e a história recomeça da primeira noite.",
+                    slot and ("O jogo será salvo no espaço " .. slot .. ". Ao continuar, você volta a esta noite, no mesmo lugar, com tudo o que já descobriu.")
+                        or "O progresso desta campanha será perdido.",
                     "Sim, voltar ao menu",
-                    function() Flow.reset(); self:showMainMenu() end,
+                    function() Saves.save(); Flow.reset(); self:showMainMenu() end,
                     function() self:openPause() end)
             end },
         },

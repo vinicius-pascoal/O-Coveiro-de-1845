@@ -31,6 +31,21 @@ local function clickPanel(hud, labelPrefix)
     error("SELFTEST FAIL: panel button not found: '" .. labelPrefix .. "' in {" .. table.concat(labels, " | ") .. "}", 2)
 end
 
+local Saves = require("game.saves")
+
+-- Testes e demonstrações usam espaços de save próprios: os saves do jogador ficam intactos
+local function useTestSaves()
+    Saves.prefix = "coveiro1845_selftest_"
+    for n = 1, Saves.SLOTS do Saves.delete(n) end
+    pcall(UserSettings.removeKey, Saves.prefix .. "seq")
+end
+
+local function startTestGame(hud)
+    useTestSaves()
+    Saves.startNew(1)
+    hud:showPrologue(1)
+end
+
 local function clickOverlay(hud, labelPrefix)
     for i = 1, 7 do
         local name = "OverlayBtn" .. i
@@ -258,7 +273,10 @@ end
 
 function SelfTest.run(hud, endingKind)
     Log.print("SELFTEST: start (" .. endingKind .. ")")
+    useTestSaves()
+    hud:showMainMenu()
     check(hud.overlayOpen and hud.overlayMode == "menu", "main menu expected")
+    check(hud.slotLabels.OverlayBtn4 == "Jogar", "without saves the menu starts with 'Jogar'")
     clickOverlay(hud, "Controles")
     check(not hud.overlayLogo.visible, "the KayKit logo belongs only to the credits")
     clickOverlay(hud, "Voltar")
@@ -286,9 +304,12 @@ function SelfTest.run(hud, endingKind)
     clickOverlay(hud, "Texto grande"); check(not Settings.largeText, "large text off")
     hud:onKeyDown(Input.KEY_ESCAPE, false, 0)
     check(hud.overlayMode == "menu", "esc should return to menu")
-    -- atalho numérico: 1 = Iniciar
+    -- atalho numérico: 1 = Jogar -> saves; 1 = espaço 1 (vazio) -> prólogo
     hud:onKeyDown(Input.KEY_1, false, 0)
-    check(hud.overlayMode == "prologue", "key 1 should open the prologue")
+    check(hud.overlayMode == "slots", "key 1 should open the save slots")
+    check((hud.slotLabels.OverlayBtn4 or ""):find("vazio", 1, true) ~= nil, "slots should start empty")
+    hud:onKeyDown(Input.KEY_1, false, 0)
+    check(hud.overlayMode == "prologue" and Saves.current == 1, "an empty slot should start a new game")
     -- texto animado: começa vazio e Espaço completa
     if require("game.settings").animateText then
         check(hud.reveal ~= nil, "prologue text should be revealing")
@@ -303,8 +324,27 @@ function SelfTest.run(hud, endingKind)
 
     for night = 1, 3 do
         check(hud.overlayMode == "night", "night intro expected for night " .. night)
+        if night == 2 then
+            -- save: o fim da noite 1 ficou gravado; sai para o menu e continua pelo save
+            local info = Saves.info(1)
+            check(info and info.night == 2 and info.resolved == 2, "slot 1 should hold night 2 with 2 records")
+            local clues, notes, mistakes = #Flow.state.clueOrder, #Flow.state.notes, Flow.state.mistakes
+            Flow.reset()
+            hud:showMainMenu()
+            check((hud.slotLabels.OverlayBtn3 or ""):find("Continuar", 1, true) == 1, "menu should offer 'Continuar'")
+            clickOverlay(hud, "Continuar")
+            check(hud.overlayMode == "night" and Flow.state.night == 2 and Saves.current == 1, "loading should reopen night 2")
+            check(Flow.state.resolved.c1 and Flow.state.resolved.c2, "loaded save should keep the resolved cases")
+            check(#Flow.state.clueOrder == clues and #Flow.state.notes == notes and Flow.state.mistakes == mistakes,
+                "loaded save should keep clues, notes and mistakes")
+            check(Flow.inscription(N.cases[1].grave) == N.cases[1].newInscription, "loaded save should keep the new inscription")
+        end
         clickOverlay(hud, "Começar")
         check(Flow.state.phase == "playing", "phase playing expected")
+        if night == 2 and Flow.worldController then
+            local w = Flow.worldController
+            check(w.candles[N.cases[1].grave].visible and w.candles[N.cases[2].grave].visible, "candles of loaded records should be lit")
+        end
         if night == 3 and Flow.worldController then
             check(Flow.worldController.spirits.c5.state == "hidden", "Benedito's spirit waits for the guide")
         end
@@ -312,6 +352,9 @@ function SelfTest.run(hud, endingKind)
         if night == 1 then
             hud:openPause()
             check(hud.overlayMode == "pause", "pause expected")
+            clickOverlay(hud, "Salvar jogo")
+            check(hud.overlayMode == "pause" and hud.slotLabels.OverlayBtn4 == "Jogo salvo", "manual save should confirm")
+            check(Saves.info(1) and Saves.info(1).night == 1, "manual save should write slot 1")
             clickOverlay(hud, "Voltar ao menu")
             check(hud.overlayMode == "confirm", "confirm expected")
             clickOverlay(hud, "Não, voltar")
@@ -412,8 +455,20 @@ function SelfTest.run(hud, endingKind)
     check(audio.windA and audio.windA:getPlayingTime() > 0, "the wind should be playing")
     Log.print("SELFTEST: sounds used = " .. soundCount)
     Log.print("SELFTEST: mistakes = " .. Flow.state.mistakes .. ", notes = " .. #Flow.state.notes)
+    -- save concluído: não aparece em "Continuar"; o espaço mostra o final e pode ser apagado
+    check(Saves.info(1) and Saves.info(1).ending == endingKind, "slot 1 should record the ending")
     clickOverlay(hud, "Jogar novamente")
     check(hud.overlayMode == "menu" and Flow.state.phase == "menu", "back to menu expected")
+    check(hud.slotLabels.OverlayBtn4 == "Jogar", "a finished campaign is not offered as 'Continuar'")
+    clickOverlay(hud, "Jogar")
+    check((hud.slotLabels.OverlayBtn3 or ""):find("concluído", 1, true) ~= nil, "slot 1 should show as finished")
+    clickOverlay(hud, "Apagar um save")
+    clickOverlay(hud, "Apagar: Espaço 1")
+    check(hud.overlayMode == "confirm", "deleting asks first")
+    clickOverlay(hud, "Sim, apagar")
+    check(Saves.info(1) == nil and hud.overlayMode == "slots", "slot 1 should be empty after deleting")
+    clickOverlay(hud, "Voltar")
+    check(hud.overlayMode == "menu", "back to menu expected after the slots")
     Log.print("SELFTEST: PASS (" .. endingKind .. ")")
 end
 
@@ -423,7 +478,7 @@ function SelfTest.demoSteps(hud)
     local world = Flow.worldController
     return {
         { 0.5, function()
-            clickOverlay(hud, "Iniciar")
+            startTestGame(hud)
             hud:finishReveal(); clickOverlay(hud, "Pular")
             hud:finishReveal(); clickOverlay(hud, "Começar")
             world.character.position = Vector3(7.6, 0.05, 9.6)
@@ -471,7 +526,7 @@ function SelfTest.demoViewSteps(hud)
     local night = SelfTest.viewNight or 1
     return {
         { 0.5, function()
-            clickOverlay(hud, "Iniciar")
+            startTestGame(hud)
             hud:finishReveal(); clickOverlay(hud, "Pular")
             Flow.state.night = night
             hud:finishReveal(); clickOverlay(hud, "Começar")
@@ -501,7 +556,7 @@ function SelfTest.demoGuideSteps(hud)
     end
     return {
         { 0.5, function()
-            clickOverlay(hud, "Iniciar")
+            startTestGame(hud)
             hud:finishReveal(); clickOverlay(hud, "Pular")
             local s = Flow.state
             s.night = 3
@@ -531,7 +586,7 @@ function SelfTest.demoFinaleSteps(hud)
     local world = Flow.worldController
     return {
         { 0.5, function()
-            clickOverlay(hud, "Iniciar")
+            startTestGame(hud)
             hud:finishReveal(); clickOverlay(hud, "Pular")
             local s = Flow.state
             s.night = 3

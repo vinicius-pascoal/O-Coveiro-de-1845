@@ -65,10 +65,22 @@ local function freshState()
 end
 
 Flow.state = freshState()
+Flow.newState = freshState
 
 function Flow.reset()
     Flow.state = freshState()
     Flow.emit("reset")
+end
+
+-- Campanha carregada de um save: limpa o mundo e reabre a noite em que o jogador parou
+function Flow.restore(s)
+    Flow.state = s
+    s.phase = "night_intro"
+    s.modalOpen = false
+    s.idle = 0
+    s.idleHintSent = false
+    Flow.emit("reset")
+    Flow.emit("nightIntro", s.night)
 end
 
 ----------------------------------------------------------------------

@@ -223,8 +223,9 @@ function WorldController:init()
 
     Flow.on("reset", "world", function() self:resetVisuals() end)
     Flow.on("nightStarted", "world", function(n)
+        self:restoreProgress()
         self:applyAtmosphere(NIGHT_LOOK[n] or NIGHT_LOOK[1])
-        if n == 3 then self:startTrail() end
+        if n == 3 and not Flow.state.resolved.c5 then self:startTrail() end
         self:startGuide(n)
     end)
     Flow.on("finale", "world", function(kind)
@@ -926,6 +927,22 @@ function WorldController:onCaseResolved(case)
     local fx = N.resolutionEffects and N.resolutionEffects[case.id] or {}
     self.flash = fx.flash or 0.6
     if fx.shake then self.shake = fx.shake end
+end
+
+-- Campanha vinda de um save: velas das covas já corrigidas, névoa dos erros e o lugar do coveiro
+function WorldController:restoreProgress()
+    local s = Flow.state
+    for _, case in ipairs(N.cases) do
+        if s.resolved[case.id] and self.candles[case.grave] then self.candles[case.grave].visible = true end
+    end
+    self.extraFog = math.min((s.mistakes or 0) * 0.006, 0.03)
+    local p = s.resumePos
+    s.resumePos = nil
+    if p and self.character then
+        self.character.position = Vector3(p.x, self.startPosition.y, p.z)
+        self.yaw, self.pitch = p.yaw or 0, -4
+        self:applyLook()
+    end
 end
 
 function WorldController:onMistake()
