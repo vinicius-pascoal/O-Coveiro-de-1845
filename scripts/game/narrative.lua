@@ -120,6 +120,15 @@ N.spirits = {
            awaken = "...você achou a primeira cova. Sabe por que me apagaram?",
            ask = "\"Diga em voz alta o que fizeram comigo. E com o que você prova.\"",
            rest = "...agora o livro é seu. Escolha melhor do que a Câmara." },
+    -- A mão que escreve o livro: não se levanta do chão, está de pé escrevendo ao lado da lápide lisa
+    c6 = { entity = "Spirit_c6", name = "O escrivão do livro", standing = true,
+           awaken = "...toda vila precisa de alguém que escreva por ela, coveiro. Benedito recusou. Você vai recusar?",
+           ask = "\"A última página espera a sua letra. O que esta vila vai lembrar?\"",
+           notReady = "\"Ainda não leu a página inteira, coveiro. Ninguém assina o que não leu.\"",
+           finale = {
+               reveal = "...não! Sem mim, cada um vai lembrar de um jeito...",
+               preserve = "...bom coveiro. A página do dia 25 já está pronta.",
+           } },
 }
 
 ----------------------------------------------------------------------
@@ -433,9 +442,9 @@ N.cases = {
     {
         id = "c6", night = 3, grave = 6, requires = "c5",
         title = "O nome que falta",
-        objective = "Sepultura 06 — a lápide lisa. Leia a última página do livro.",
+        objective = "Sepultura 06 — a lápide lisa. Leia a última página e encare quem escreve o livro.",
         evidence = { "book:06", "nota_benedito" },
-        hint = "Não há resposta certa aqui. Leia a última página e o bilhete de Benedito, e decida o que a vila deve lembrar.",
+        hint = "Não há resposta certa aqui. Leia a última página e o bilhete de Benedito, depois encare o escrivão ao lado da lápide lisa e decida o que a vila deve lembrar.",
         question = "O livro guarda uma versão da vila. O que você fará com ele?",
         decision = true,
         hypotheses = {
@@ -553,7 +562,7 @@ N.caseThoughts = {
     c3 = "Dois homens chamados José de Santana na mesma linha. Um deles não devia estar aqui.",
     c4 = "Ana Beatriz morreu num ano que ainda não chegou. Alguém mexeu nessa pedra.",
     c5 = "A primeira cova. A página rasgada mandou procurar aqui.",
-    c6 = "A última pedra está lisa. O livro, não.",
+    c6 = "A última pedra está lisa. O livro, não. E há alguém escrevendo nele.",
 }
 
 ----------------------------------------------------------------------

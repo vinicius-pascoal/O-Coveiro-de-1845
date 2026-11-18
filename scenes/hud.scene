@@ -78,6 +78,11 @@ entities:
                 type: Bool
                 value: false
                 defaultValue: false
+              - name: demoFinale
+                displayName: Visual Demo (Finale)
+                type: Bool
+                value: false
+                defaultValue: false
   - type: Entity
     entity: 1069
     name: TopBarBg
@@ -137,7 +142,7 @@ entities:
         usingAnchors: true
         panel: 0
         containerBoxIndex: -1
-        scissor: [97.04941, 97.20913, 382.4635, 59.833244]
+        scissor: [156.68127, 137.91739, 347.69412, 54.39386]
         ignoreScissor: false
         ignoreEvents: true
       image:
@@ -177,7 +182,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|28#29
+          id: font|28#17
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -249,7 +254,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|18#77
+          id: font|18#52
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -437,7 +442,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#77
+              id: font|18#52
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -625,7 +630,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#77
+              id: font|18#52
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -813,7 +818,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#77
+              id: font|18#52
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -885,7 +890,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|20#85
+          id: font|20#34
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -985,7 +990,7 @@ entities:
         usingAnchors: true
         panel: 0
         containerBoxIndex: -1
-        scissor: [190.90547, 456.2086, 523.2476, 15.251617]
+        scissor: [242.00499, 464.28055, 475.67963, 13.865082]
         ignoreScissor: false
         ignoreEvents: true
       image:
@@ -1026,7 +1031,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|19#67
+              id: font|19#28
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -1126,7 +1131,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [189.7323, 450.9292, 19.357803, 25.810425]
+            scissor: [240.93846, 459.48108, 17.597977, 23.46399]
             ignoreScissor: true
             ignoreEvents: true
           image:
@@ -1194,7 +1199,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [189.7323, 451.5158, 19.944412, 22.290802]
+            scissor: [240.93846, 460.0143, 18.131271, 20.264404]
             ignoreScissor: true
             ignoreEvents: true
           image:
@@ -1262,7 +1267,7 @@ entities:
         usingAnchors: true
         panel: 0
         containerBoxIndex: -1
-        scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+        scissor: [138.55, 120.85264, 682.58966, 383.9567]
         ignoreScissor: false
         ignoreEvents: false
       image:
@@ -1331,7 +1336,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [204.3973, 114.807144, 496.26398, 349.6139]
+            scissor: [254.27026, 153.91557, 451.14905, 317.8308]
             ignoreScissor: false
             ignoreEvents: false
           image:
@@ -1400,7 +1405,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [204.3973, 114.807144, 496.26398, 349.6139]
+                scissor: [254.27026, 153.91557, 451.14905, 317.8308]
                 ignoreScissor: true
                 ignoreEvents: true
               image:
@@ -1440,7 +1445,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|30#42
+                  id: font|30#18
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -1512,7 +1517,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|17#57
+                  id: font|17#23
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -1584,7 +1589,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#85
+                  id: font|20#34
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -1772,7 +1777,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|20#85
+                      id: font|20#34
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -1960,7 +1965,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#77
+                      id: font|18#52
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2060,7 +2065,7 @@ entities:
                     usingAnchors: true
                     panel: 0
                     containerBoxIndex: -1
-                    scissor: [226.6881, 283.74805, 21.117615, 21.117615]
+                    scissor: [274.53467, 307.49823, 19.197845, 19.197815]
                     ignoreScissor: false
                     ignoreEvents: true
                   image:
@@ -2216,7 +2221,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#77
+                      id: font|18#52
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2316,7 +2321,7 @@ entities:
                     usingAnchors: true
                     panel: 0
                     containerBoxIndex: -1
-                    scissor: [226.6881, 315.4245, 21.117615, 21.117615]
+                    scissor: [274.53467, 336.29498, 19.197845, 19.197815]
                     ignoreScissor: false
                     ignoreEvents: true
                   image:
@@ -2472,7 +2477,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#77
+                      id: font|18#52
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2572,7 +2577,7 @@ entities:
                     usingAnchors: true
                     panel: 0
                     containerBoxIndex: -1
-                    scissor: [226.6881, 347.1009, 21.117615, 21.117645]
+                    scissor: [274.53467, 365.0917, 19.197845, 19.197845]
                     ignoreScissor: false
                     ignoreEvents: true
                   image:
@@ -2728,7 +2733,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#77
+                      id: font|18#52
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2828,7 +2833,7 @@ entities:
                     usingAnchors: true
                     panel: 0
                     containerBoxIndex: -1
-                    scissor: [226.6881, 378.77734, 21.117615, 21.117645]
+                    scissor: [274.53467, 393.8885, 19.197845, 19.197815]
                     ignoreScissor: false
                     ignoreEvents: true
                   image:
@@ -2896,7 +2901,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [206.15709, 111.87412, 25.81041, 25.810417]
+                scissor: [255.8701, 151.2492, 23.464005, 23.464005]
                 ignoreScissor: true
                 ignoreEvents: true
               image:
@@ -3052,7 +3057,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#77
+                      id: font|18#52
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -3152,7 +3157,7 @@ entities:
                     usingAnchors: true
                     panel: 0
                     containerBoxIndex: -1
-                    scissor: [226.6881, 410.45377, 21.117615, 21.117615]
+                    scissor: [274.53467, 422.6852, 19.197845, 19.197845]
                     ignoreScissor: false
                     ignoreEvents: true
                   image:
@@ -3308,7 +3313,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#77
+                      id: font|18#52
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -3408,7 +3413,7 @@ entities:
                     usingAnchors: true
                     panel: 0
                     containerBoxIndex: -1
-                    scissor: [226.6881, 442.1302, 21.117615, 21.117615]
+                    scissor: [274.53467, 451.482, 19.197845, 19.197815]
                     ignoreScissor: false
                     ignoreEvents: true
                   image:
@@ -3476,7 +3481,7 @@ entities:
         usingAnchors: true
         panel: 0
         containerBoxIndex: -1
-        scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+        scissor: [138.55, 120.85264, 682.58966, 383.9567]
         ignoreScissor: false
         ignoreEvents: false
       image:
@@ -3545,7 +3550,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [263.05734, 129.47214, 378.94394, 273.35583]
+            scissor: [307.5976, 167.24742, 344.49445, 248.50526]
             ignoreScissor: false
             ignoreEvents: true
           image:
@@ -3585,7 +3590,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|48#37
+              id: font|48#14
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -3613,7 +3618,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [138.55, 120.85264, 682.58966, 383.9567]
             ignoreScissor: false
             ignoreEvents: true
           text:
@@ -3657,7 +3662,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|22#48
+              id: font|22#14
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -3685,7 +3690,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [138.55, 120.85264, 682.58966, 383.9567]
             ignoreScissor: false
             ignoreEvents: true
           text:
@@ -3729,7 +3734,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|21#79
+              id: font|21#40
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -3757,7 +3762,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [138.55, 120.85264, 682.58966, 383.9567]
             ignoreScissor: false
             ignoreEvents: true
           text:
@@ -3876,7 +3881,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [138.55, 120.85264, 682.58966, 383.9567]
             ignoreScissor: false
             ignoreEvents: false
           image:
@@ -3917,7 +3922,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#85
+                  id: font|20#34
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -3945,7 +3950,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+                scissor: [138.55, 120.85264, 682.58966, 383.9567]
                 ignoreScissor: false
                 ignoreEvents: true
               text:
@@ -4017,7 +4022,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [340.48862, 328.9163, 21.117615, 21.117645]
+                scissor: [377.98965, 348.56024, 19.197845, 19.197876]
                 ignoreScissor: false
                 ignoreEvents: true
               image:
@@ -4132,7 +4137,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [138.55, 120.85264, 682.58966, 383.9567]
             ignoreScissor: false
             ignoreEvents: false
           image:
@@ -4173,7 +4178,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#85
+                  id: font|20#34
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -4201,7 +4206,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+                scissor: [138.55, 120.85264, 682.58966, 383.9567]
                 ignoreScissor: false
                 ignoreEvents: true
               text:
@@ -4273,7 +4278,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [340.48862, 364.11234, 21.117615, 21.117615]
+                scissor: [377.98965, 380.55664, 19.197845, 19.197815]
                 ignoreScissor: false
                 ignoreEvents: true
               image:
@@ -4388,7 +4393,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [138.55, 120.85264, 682.58966, 383.9567]
             ignoreScissor: false
             ignoreEvents: false
           image:
@@ -4429,7 +4434,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#85
+                  id: font|20#34
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -4457,7 +4462,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+                scissor: [138.55, 120.85264, 682.58966, 383.9567]
                 ignoreScissor: false
                 ignoreEvents: true
               text:
@@ -4529,7 +4534,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [340.48862, 399.30838, 21.117615, 21.117584]
+                scissor: [377.98965, 412.55304, 19.197845, 19.197815]
                 ignoreScissor: false
                 ignoreEvents: true
               image:
@@ -4644,7 +4649,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [138.55, 120.85264, 682.58966, 383.9567]
             ignoreScissor: false
             ignoreEvents: false
           image:
@@ -4685,7 +4690,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#85
+                  id: font|20#34
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -4713,7 +4718,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+                scissor: [138.55, 120.85264, 682.58966, 383.9567]
                 ignoreScissor: false
                 ignoreEvents: true
               text:
@@ -4785,7 +4790,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [340.48862, 434.50436, 21.117615, 21.117615]
+                scissor: [377.98965, 444.5494, 19.197845, 19.197845]
                 ignoreScissor: false
                 ignoreEvents: true
               image:
@@ -4853,7 +4858,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [300.01318, 211.0096, 305.03223, 3.5196075]
+            scissor: [341.1938, 241.37238, 277.30206, 3.1996307]
             ignoreScissor: false
             ignoreEvents: true
           image:
@@ -4893,7 +4898,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|15#44
+              id: font|15#40
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -4921,7 +4926,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [138.55, 120.85264, 682.58966, 383.9567]
             ignoreScissor: false
             ignoreEvents: true
           text:
@@ -5040,7 +5045,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+            scissor: [138.55, 120.85264, 682.58966, 383.9567]
             ignoreScissor: false
             ignoreEvents: false
           image:
@@ -5081,7 +5086,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#85
+                  id: font|20#34
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -5109,7 +5114,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [77.104996, 78.4379, 750.84863, 422.35236]
+                scissor: [138.55, 120.85264, 682.58966, 383.9567]
                 ignoreScissor: false
                 ignoreEvents: true
               text:
@@ -5181,7 +5186,7 @@ entities:
                 usingAnchors: true
                 panel: 0
                 containerBoxIndex: -1
-                scissor: [340.48862, 469.7004, 21.117615, 21.117645]
+                scissor: [377.98965, 476.54584, 19.197845, 19.197815]
                 ignoreScissor: false
                 ignoreEvents: true
               image:
@@ -5249,7 +5254,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [193.25189, 115.98033, 26.397018, 54.55385]
+            scissor: [244.13809, 154.98212, 23.997284, 49.594406]
             ignoreScissor: false
             ignoreEvents: true
           image:
@@ -5317,7 +5322,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [685.9962, 115.98033, 26.397095, 54.55385]
+            scissor: [692.0875, 154.98212, 23.997314, 49.594406]
             ignoreScissor: false
             ignoreEvents: true
           image:
@@ -5385,7 +5390,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [440.2107, 199.86418, 24.637238, 25.81044]
+            scissor: [468.64612, 231.24017, 22.39746, 23.46402]
             ignoreScissor: false
             ignoreEvents: true
           image:
@@ -5453,7 +5458,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [728.8181, 409.28055, 75.67151, 73.91168]
+            scissor: [731.0165, 421.61865, 68.79224, 67.192444]
             ignoreScissor: false
             ignoreEvents: true
           image:
@@ -5493,7 +5498,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|28#29
+          id: font|28#17
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -5565,7 +5570,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|16#47
+          id: font|16#43
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -5665,7 +5670,7 @@ entities:
         usingAnchors: true
         panel: 0
         containerBoxIndex: -1
-        scissor: [146.32385, 117.15354, 14.0784, 14.078407]
+        scissor: [201.47621, 156.04866, 12.798553, 12.798553]
         ignoreScissor: false
         ignoreEvents: true
       image:
@@ -5733,7 +5738,7 @@ entities:
         usingAnchors: true
         panel: 0
         containerBoxIndex: -1
-        scissor: [162.74867, 117.15354, 14.0784, 14.078407]
+        scissor: [216.4079, 156.04866, 12.798538, 12.798553]
         ignoreScissor: false
         ignoreEvents: true
       image:
@@ -5801,7 +5806,7 @@ entities:
         usingAnchors: true
         panel: 0
         containerBoxIndex: -1
-        scissor: [179.1735, 117.15354, 14.0784, 14.078407]
+        scissor: [231.33954, 156.04866, 12.798553, 12.798553]
         ignoreScissor: false
         ignoreEvents: true
       image:
@@ -5869,7 +5874,7 @@ entities:
         usingAnchors: true
         panel: 0
         containerBoxIndex: -1
-        scissor: [195.59828, 117.15354, 14.0784, 14.078407]
+        scissor: [246.27118, 156.04866, 12.798553, 12.798553]
         ignoreScissor: false
         ignoreEvents: true
       image:
@@ -5937,7 +5942,7 @@ entities:
         usingAnchors: true
         panel: 0
         containerBoxIndex: -1
-        scissor: [212.02312, 117.15354, 14.07843, 14.078407]
+        scissor: [261.20282, 156.04866, 12.798553, 12.798553]
         ignoreScissor: false
         ignoreEvents: true
       image:
@@ -6005,7 +6010,7 @@ entities:
         usingAnchors: true
         panel: 0
         containerBoxIndex: -1
-        scissor: [228.4479, 117.15354, 14.07843, 14.078407]
+        scissor: [276.1345, 156.04866, 12.798523, 12.798553]
         ignoreScissor: false
         ignoreEvents: true
       image:
@@ -6045,7 +6050,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|15#44
+          id: font|15#40
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -6145,7 +6150,7 @@ entities:
         usingAnchors: true
         panel: 0
         containerBoxIndex: -1
-        scissor: [380.96402, 318.9441, 143.13052, 9.38562]
+        scissor: [414.7855, 339.49463, 130.11862, 8.532349]
         ignoreScissor: false
         ignoreEvents: true
       image:
@@ -6214,7 +6219,7 @@ entities:
             usingAnchors: true
             panel: 0
             containerBoxIndex: -1
-            scissor: [382.72385, 320.7039, 139.61087, 5.866028]
+            scissor: [416.3853, 341.09442, 126.91901, 5.332733]
             ignoreScissor: true
             ignoreEvents: true
           image:
@@ -6282,7 +6287,7 @@ entities:
         usingAnchors: true
         panel: 0
         containerBoxIndex: -1
-        scissor: [574.5422, 215.70241, 229.94745, 147.82332]
+        scissor: [590.7656, 245.63855, 209.04309, 134.38483]
         ignoreScissor: false
         ignoreEvents: true
       image:
@@ -6323,7 +6328,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|20#85
+              id: font|20#34
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -6395,7 +6400,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|16#47
+              id: font|16#43
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -6436,4 +6441,4 @@ entities:
             fixedHeight: false
             pivotBaseline: false
             pivotCentered: false
-shaderKeysHash: 9ecc96684f1509441d39e46a44807fe3abf520cf
+shaderKeysHash: 48a83b9f4b71697185d0ab3b1ae3d5bd5715bf89

@@ -222,7 +222,10 @@ function WorldController:init()
         if n == 3 then self:startTrail() end
         self:startGuide(n)
     end)
-    Flow.on("finale", "world", function(kind) self:guideFinale(kind) end)
+    Flow.on("finale", "world", function(kind)
+        self:scribeFinale(kind)
+        self:guideFinale(kind)
+    end)
     Flow.on("casesChanged", "world", function()
         self:markCases(Flow.openCases())
         self:refreshPapers()
@@ -445,7 +448,17 @@ function WorldController:setSpiritState(sp, state)
     sp.state = state
     sp.object.visible = state ~= "hidden"
     sp.hotspot.enabled = (state == "awake")
-    if state == "dormant" then
+    local data = N.spirits[sp.caseId] or {}
+    if state == "dormant" and data.standing then
+        -- o escrivão: de pé, escrevendo, voltado para a lápide lisa
+        local h = self:graveHotspot(caseById(sp.caseId).grave)
+        if h then
+            local c, p = h.mesh:getWorldAABB():getCenter(), sp.object.position
+            sp.yaw = math.deg(math.atan(c.x - p.x, c.z - p.z))
+            sp.object.rotation = Quaternion(sp.yaw, UP)
+        end
+        self:playSpirit(sp, "Use_Item", true, nil, 0)
+    elseif state == "dormant" then
         self:playSpirit(sp, "Skeletons_Inactive_Floor_Pose", true, nil, 0)
     elseif state == "awake" then
         self:playSpirit(sp, "Skeletons_Idle", true)
@@ -463,7 +476,9 @@ function WorldController:refreshSpirits()
         if waitsGuide and not Flow.isResolved(case) and not Flow.isAwake(case) then
             self:setSpiritState(sp, "hidden")
         elseif Flow.isResolved(case) then
-            if sp.state ~= "resting" and sp.anim ~= "Skeletons_Death" then self:setSpiritState(sp, "resting") end
+            -- o escrivão fica como a decisão final o deixou (ver scribeFinale)
+            local standing = (N.spirits[id] or {}).standing
+            if not standing and sp.state ~= "resting" and sp.anim ~= "Skeletons_Death" then self:setSpiritState(sp, "resting") end
         elseif Flow.isOpen(case) then
             if Flow.isAwake(case) then
                 if sp.state == "hidden" or sp.state == "dormant" then self:wakeSpirit(id) end
@@ -488,7 +503,11 @@ function WorldController:wakeSpirit(id)
     sp.state = "rising"
     sp.object.visible = true
     sp.hotspot.enabled = false
-    self:playSpirit(sp, "Skeletons_Awaken_Floor", false, "Skeletons_Idle", 0)
+    if (N.spirits[id] or {}).standing then
+        self:playSpirit(sp, "Interact", false, "Skeletons_Idle", 0.2)   -- larga a pena e se vira
+    else
+        self:playSpirit(sp, "Skeletons_Awaken_Floor", false, "Skeletons_Idle", 0)
+    end
 end
 
 function WorldController:spiritReact(id, kind)
@@ -662,6 +681,13 @@ function WorldController:updateGuide(dt, px, pz)
 
     if g.mode == "finale" then
         g.timer = g.timer - dt
+        if g.finaleLine then
+            g.finaleLineDelay = g.finaleLineDelay - dt
+            if g.finaleLineDelay <= 0 then
+                Flow.emit("guideSay", "Benedito", g.finaleLine)
+                g.finaleLine = nil
+            end
+        end
         if g.finaleKind == "preserve" and g.timer < 2.2 then
             -- dá as costas e vai embora
             if g.anim ~= "Skeletons_Walking" then
@@ -728,19 +754,40 @@ function WorldController:updateGuide(dt, px, pz)
     end
 end
 
+-- Final: o escrivão perde a pena (revelar) ou zomba, satisfeito (preservar)
+function WorldController:scribeFinale(kind)
+    for id, sp in pairs(self.spirits) do
+        local data = N.spirits[id] or {}
+        if data.standing and sp.state ~= "hidden" then
+            sp.hotspot.enabled = false
+            if kind == "reveal" then
+                sp.state = "resting"
+                self:playSpirit(sp, "Skeletons_Death", false, "Skeletons_Death_Pose", 0.15)
+            else
+                sp.state = "awake"
+                self:playSpirit(sp, "Skeletons_Taunt", false, "Skeletons_Idle", 0.15)
+            end
+            local line = data.finale and data.finale[kind]
+            if line then Flow.emit("guideSay", data.name, line) end
+        end
+    end
+end
+
 -- Final: Benedito aparece diante do coveiro para se despedir
 function WorldController:guideFinale(kind)
     local g = self.guide
     if not g then return end
     local cam = self.camera:getWorldPosition()
     local rad = math.rad(self.yaw)
-    local x, z = cam.x - math.sin(rad) * 3.0, cam.z - math.cos(rad) * 3.0
+    -- um pouco à direita do olhar, para não esconder o escrivão atrás dele
+    local x = cam.x - math.sin(rad) * 2.8 + math.cos(rad) * 1.3
+    local z = cam.z - math.cos(rad) * 2.8 - math.sin(rad) * 1.3
     g.object.position = Vector3(x, 0, z)
     g.yaw = math.deg(math.atan(cam.x - x, cam.z - z))
     g.object.rotation = Quaternion(g.yaw, UP)
     g.object.visible = true
     g.anim = nil
-    g.mode, g.finaleKind, g.timer = "finale", kind, 3.6
+    g.mode, g.finaleKind, g.timer = "finale", kind, 4.8
     if kind == "reveal" then
         self:playGuide("Waving", true, 0.1)
     else
@@ -749,8 +796,9 @@ function WorldController:guideFinale(kind)
     end
     g.aimY = 0.9   -- sem painel na despedida: a câmera olha para o rosto dele
     self.talkTarget = g
-    local line = N.beneditoFinale and N.beneditoFinale[kind]
-    if line then Flow.emit("guideSay", "Benedito", line) end
+    -- a fala dele vem depois da do escrivão, para as duas serem lidas
+    g.finaleLine = N.beneditoFinale and N.beneditoFinale[kind]
+    g.finaleLineDelay = 1.8
 end
 
 ----------------------------------------------------------------------

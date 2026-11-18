@@ -68,6 +68,9 @@ local function wakeSpirit(hud, case)
     hud:onWorldClick({ kind = "spirit", caseId = case.id })
     check(hud.talking == case and hud.panelCompact and world.talkTarget == sp, "talk mode expected: " .. case.id)
     check(hud.modalDim.visible, "talk panel lives under ModalDim and must stay visible: " .. case.id)
+    if case.decision then
+        check(hud.text.PanelBody.text:find("Ninguém assina", 1, true) ~= nil, "the scribe should refuse before the reading")
+    end
     hud:closePanel()
     check(hud.talking == nil and world.talkTarget == nil, "closing should end the talk: " .. case.id)
 end
@@ -95,7 +98,11 @@ local function followGuide(night)
 end
 
 local function playCase(hud, case, makeMistake)
-    if not case.decision then wakeSpirit(hud, case) end
+    if case.decision and Flow.worldController then
+        local sp = Flow.worldController.spirits[case.id]
+        check(sp and sp.anim == "Use_Item", "the scribe should be writing by the blank stone")
+    end
+    wakeSpirit(hud, case)
     hud:onWorldClick({ kind = "grave", grave = case.grave })
     check(hud.panelOpen, "grave panel should be open")
     check(Flow.currentCase() == case, "opening the grave should focus " .. case.id)
@@ -357,6 +364,8 @@ function SelfTest.run(hud, endingKind)
         local g = Flow.worldController.guide
         check(g.mode == "finale" and g.object.visible, "Benedito should say goodbye")
         check(g.anim == (endingKind == "reveal" and "Waving" or "Skeletons_Idle"), "finale animation for " .. endingKind)
+        local scribe = Flow.worldController.spirits.c6
+        check(scribe.anim == (endingKind == "reveal" and "Skeletons_Death" or "Skeletons_Taunt"), "scribe reaction for " .. endingKind)
     end
     hud:flushEnding()
     -- sussurros: dispara um pelo portão e confere que vai para a fila
@@ -450,6 +459,33 @@ function SelfTest.demoGuideSteps(hud)
         end },
         { 1.2, function() end },                                -- 9: aceno de despedida
         { 3.0, function() end },                                -- 10: se desfaz
+    }
+end
+
+-- Demonstração do final: pula para a lápide lisa, encara o escrivão e escolhe revelar
+function SelfTest.demoFinaleSteps(hud)
+    local world = Flow.worldController
+    return {
+        { 0.5, function()
+            clickOverlay(hud, "Iniciar")
+            hud:finishReveal(); clickOverlay(hud, "Pular")
+            local s = Flow.state
+            s.night = 3
+            for _, id in ipairs({ "c1", "c2", "c3", "c4", "c5" }) do s.resolved[id] = true end
+            s.flags.night1_event, s.flags.night2_event, s.flags.benedito_rest = true, true, true
+            for _, id in ipairs({ "grave:06", "book:06", "nota_benedito" }) do s.read[id] = true end
+            hud:finishReveal(); clickOverlay(hud, "Começar")
+            world.character.position = Vector3(-2.9, 0.05, 10.5)
+            world.yaw, world.pitch = 0, -6
+            world:applyLook()
+        end },
+        { 1.5, function() end },                                                    -- 2: escrivão escrevendo
+        { 0.5, function() world.character.position = Vector3(-2.9, 0.05, 8.6) end },
+        { 2.5, function() end },                                                    -- 4: virou-se para o coveiro
+        { 0.5, function() hud:onWorldClick({ kind = "spirit", caseId = "c6" }) end }, -- 5: a decisão diante dele
+        { 2.0, function() hud:pressSlot(2) end },                                   -- 6: revelar
+        { 1.4, function() end },                                                    -- 7: Benedito acena, escrivão cai
+        { 3.0, function() end },                                                    -- 8: epílogo
     }
 end
 

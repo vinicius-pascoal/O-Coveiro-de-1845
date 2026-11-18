@@ -10,6 +10,7 @@ local HUDController = {
         { name = "selfTest", displayName = "Self Test", type = "bool", default = false },
         { name = "demo", displayName = "Visual Demo", type = "bool", default = false },
         { name = "demoGuide", displayName = "Visual Demo (Guide)", type = "bool", default = false },
+        { name = "demoFinale", displayName = "Visual Demo (Finale)", type = "bool", default = false },
     }
 }
 
@@ -22,7 +23,8 @@ local TEXTS = {
 local CHISEL_FILL_W = 238
 local NOTEBOOK_W = 440
 local ADVANCE_MAX_DELAY = 12   -- segundos para ler a resolução antes de a noite acabar
-local ENDING_DELAY = 4.0       -- despedida de Benedito antes do epílogo
+local ENDING_DELAY = 5.2       -- despedida (escrivão e Benedito) antes do epílogo
+local URGENT_CUT = 0.6         -- segundos que a legenda atual ainda fica quando chega uma fala urgente
 local PROGRESS_ICONS = 6
 
 -- Ícones recortados da spritesheet (assets/ui/horror). Botões e títulos escolhem pelo nome.
@@ -252,16 +254,17 @@ function HUDController:init()
     end)
     Flow.on("spiritAwake", "hud", function(case)
         local sp = Flow.spirit(case)
-        self:say(sp.name .. ": " .. sp.awaken, "spirit")
+        self:say(sp.name .. ": " .. sp.awaken, "spirit", true)
     end)
     Flow.on("caseResolved", "hud", function(case) self:onResolved(case) end)
     Flow.on("guideSay", "hud", function(speaker, text)
+        -- falas do vulto e dos mortos passam na frente da fila (não chegam atrasadas)
         if speaker == "Severino" then
-            self:say(text, "thought")
-        elseif speaker == "Benedito" then
-            self:say("Benedito: " .. text, "spirit")
+            self:say(text, "thought", true)
+        elseif speaker == "Sussurro" then
+            self:say(text, "whisper", true)
         else
-            self:say(text, "whisper")
+            self:say(speaker .. ": " .. text, "spirit", true)
         end
     end)
     Flow.on("chiselProgress", "hud", function(_, p) self:setChiselProgress(p) end)
@@ -587,7 +590,7 @@ end
 
 -- Começa uma conversa com o morto do caso (a câmera se vira para ele)
 function HUDController:beginTalk(case)
-    if not Flow.spirit(case) or case.decision then return false end
+    if not Flow.spirit(case) then return false end
     Flow.awaken(case)
     if self.talking ~= case then
         self.talking = case
@@ -770,8 +773,19 @@ function HUDController:showSay(message, style)
 end
 
 -- Enfileira uma legenda: pensamentos e sussurros não atropelam uns aos outros
-function HUDController:say(message, style)
+-- urgent: fala que precisa sair no momento (vulto, mortos): vai para a frente da fila
+-- e encurta a legenda atual, em vez de esperar tudo o que já estava na fila
+function HUDController:say(message, style, urgent)
     if not message or message == "" then return end
+    if urgent then
+        if self.toastTime > 0 or self.panelOpen or self.overlayOpen then
+            table.insert(self.sayQueue, 1, { message, style })
+            if self.toastTime > 0 then self.toastTime = math.min(self.toastTime, URGENT_CUT) end
+        else
+            self:showSay(message, style)
+        end
+        return
+    end
     if self.toastTime > 0 or self.panelOpen or self.overlayOpen then
         table.insert(self.sayQueue, { message, style })
     else
@@ -976,6 +990,8 @@ function HUDController:onFocus(h)
         local case = caseById(h.caseId)
         if Flow.isChiseling(case) then
             caption = name .. " espera o cinzel na pedra"
+        elseif N.spirits[h.caseId].standing then
+            caption = "Encarar " .. name
         else
             caption = (Flow.isProven(case) and "Corrigir o registro diante de " or "Confrontar ") .. name
         end
@@ -1267,6 +1283,19 @@ function HUDController:openConfront(case)
     if not case then return end
     local talking = self:beginTalk(case)
     local spirit = Flow.spirit(case)
+    -- a decisão final só é tomada depois de ler tudo
+    if case.decision and not Flow.canConfront(case) then
+        local readCount, total = Flow.progress(case)
+        self:showPanel({
+            title = talking and spirit.name or "A última página",
+            subtitle = string.format("Fontes lidas: %d de %d", readCount, total),
+            icon = "skull",
+            body = (talking and spirit.notReady or "Leia tudo antes de decidir.") .. "\n\n" .. Flow.hintText(),
+            talk = true,
+            buttons = { { label = "Voltar à sepultura", icon = "home", action = function() self:openGrave(case.grave) end } },
+        })
+        return
+    end
     local buttons = {}
     for i, h in ipairs(case.hypotheses) do
         buttons[#buttons + 1] = { label = h.text, action = function()
@@ -1275,7 +1304,7 @@ function HUDController:openConfront(case)
     end
     local body
     if case.decision then
-        body = case.question
+        body = talking and (spirit.ask .. "\n" .. case.question) or case.question
     else
         if talking then
             -- na conversa o texto é curto, para o morto continuar à vista acima do painel
@@ -1286,8 +1315,8 @@ function HUDController:openConfront(case)
         buttons[#buttons + 1] = { label = "Voltar à sepultura", icon = "home", action = function() self:openGrave(case.grave) end }
     end
     self:showPanel({
-        title = case.decision and "A última página" or (talking and spirit.name or ("Confrontar registros — sepultura " .. N.graves[case.grave].number)),
-        subtitle = talking and ("Sepultura " .. N.graves[case.grave].number .. " — o morto espera a sua conclusão") or case.title,
+        title = talking and spirit.name or (case.decision and "A última página" or ("Confrontar registros — sepultura " .. N.graves[case.grave].number)),
+        subtitle = talking and ("Sepultura " .. N.graves[case.grave].number .. (case.decision and " — a última página" or " — o morto espera a sua conclusão")) or case.title,
         icon = "skull",
         body = body,
         talk = true,
@@ -1736,11 +1765,17 @@ function HUDController:onUpdate()
             self:runSelfTest()
         end
     end
-    if (self.demo or self.demoGuide) and not self.demoSteps then
+    if (self.demo or self.demoGuide or self.demoFinale) and not self.demoSteps then
         self.demoFrames = (self.demoFrames or 0) + 1
         if self.demoFrames > 60 then
             local SelfTest = require("game.selftest")
-            self.demoSteps = self.demoGuide and SelfTest.demoGuideSteps(self) or SelfTest.demoSteps(self)
+            if self.demoFinale then
+                self.demoSteps = SelfTest.demoFinaleSteps(self)
+            elseif self.demoGuide then
+                self.demoSteps = SelfTest.demoGuideSteps(self)
+            else
+                self.demoSteps = SelfTest.demoSteps(self)
+            end
             self.demoIndex, self.demoWait = 1, self.demoSteps[1][1]
         end
     end
