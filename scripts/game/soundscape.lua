@@ -26,6 +26,7 @@ local GUSTS = { "Ambient Wind (1).mp3", "Ambient Wind (2).mp3", "Ambient Wind (5
 local STEPS = {
     gravel = { file = "Gravel Footsteps (5).mp3", volume = 0.55 },
     mud    = { file = "Mud Footsteps (2).mp3", volume = 0.60 },
+    wood   = { file = "Wooden Foosteps (2).mp3", volume = 0.55 },
 }
 local GUIDE_STEPS = "Stair Footsteps (3).mp3"      -- Benedito andando
 local PHANTOM_STEPS = { "Wooden Foosteps (1).mp3", "Wooden Foosteps (4).mp3", "Wooden Foosteps (6).mp3" }
@@ -42,9 +43,15 @@ local GROWL_MISTAKE = "Monster Growl (12).mp3"
 local GROWL_REST = "Monster Growl (1).mp3"
 local GROWL_PRESERVE = "Monster Growl (5).mp3"
 
--- Caminho de cascalho (Path_01..17 e o começo da estrada, em x = 0)
-local PATH_HALF_WIDTH = 1.05
-local PATH_Z_MIN, PATH_Z_MAX = -14.6, 21.0
+-- Chão de cada lugar (retângulos x1, z1, x2, z2; o primeiro que contém o ponto vale)
+local SURFACES = {
+    { "wood",   2.5, -20.9, 9.5, -13.9 },     -- piso da cabana do coveiro
+    { "gravel", -1.05, -14.6, 1.05, 21.0 },   -- caminho central (portão → cabana)
+    { "gravel", -14.4, -6.6, 14.4, -4.6 },    -- corredor das covas 01-04
+    { "gravel", -12.5, 5.2, 8.7, 7.2 },       -- corredor das covas 05-07
+    { "gravel", -11.6, -14.9, -0.9, -11.4 },  -- até a cripta
+    { "gravel", 0.9, -13.3, 5.0, -11.3 },     -- até a porta da cabana
+}
 
 local MOVE_SPEED_MIN = 0.6      -- m/s abaixo disso o coveiro está parado
 local STEP_FADE = 8.0           -- quão rápido os passos sobem/descem de volume
@@ -242,7 +249,9 @@ function Soundscape:driveLoop(l, target, dt, speed)
 end
 
 function Soundscape:surfaceAt(x, z)
-    if math.abs(x) <= PATH_HALF_WIDTH and z >= PATH_Z_MIN and z <= PATH_Z_MAX then return "gravel" end
+    for _, r in ipairs(SURFACES) do
+        if x >= r[2] and x <= r[4] and z >= r[3] and z <= r[5] then return r[1] end
+    end
     return "mud"
 end
 

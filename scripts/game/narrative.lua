@@ -104,7 +104,7 @@ N.evidence = {
 -- O papel brilha enquanto guardar um documento de um caso aberto.
 ----------------------------------------------------------------------
 N.places = {
-    desk    = { entity = "PaperDesk", label = "o papel sobre a mesa", where = "sobre a mesa do livro, ao fundo do cemitério" },
+    desk    = { entity = "PaperDesk", label = "o papel sobre a mesa", where = "sobre a mesa do livro, na cabana do coveiro" },
     crypt   = { entity = "PaperCrypt", label = "o papel na porta do arquivo", where = "pregado na porta do arquivo da Câmara (a cripta, a noroeste)" },
     gate    = { entity = "PaperGate", label = "o papel preso no portão", where = "preso na grade do portão de entrada, atrás de você ao chegar" },
     grave04 = { entity = "PaperGrave04", label = "o papel no chão", where = "no chão, ao pé da sepultura 04" },
@@ -174,12 +174,13 @@ N.guideRoutes = {
     [2] = {
         { x = 4.6, z = -15.3, anim = "Skeletons_Idle", wait = { near = 5 }, act = "Interact",
           say = { "Sussurro", "...o livro diz pouco; procura o que caiu dele..." } },
-        { x = 9.0, z = -12.0 },
+        { x = 4.0, z = -12.2 },   -- porta da cabana
+        { x = 9.0, z = -11.6 },
         { x = 11.0, z = -6.0, anim = "Skeletons_Idle", wait = { near = 4.5 }, act = "Interact",
           say = { "Sussurro", "...dois Josés. Só um ganhou a pedra..." } },
-        { x = 9.0, z = -12.0 },
-        { x = 3.5, z = -13.9 },
-        { x = 0.5, z = -12.9 },
+        { x = 9.0, z = -11.6 },
+        { x = 3.0, z = -12.2 },
+        { x = 0.5, z = -12.6 },
         { x = -2.5, z = -12.4 },
         { x = -5.5, z = -11.4 },
         { x = -8.5, z = -11.0, faceX = -11.0, faceZ = -13.5, anim = "Skeletons_Idle", wait = { near = 4.5 }, act = "Interact",
@@ -188,8 +189,8 @@ N.guideRoutes = {
     [3] = {
         { x = 4.6, z = -15.3, anim = "Skeletons_Idle", wait = { near = 8 }, act = "Interact",
           say = { "Benedito", "...fui eu quem te trouxe até aqui. Siga as velas, coveiro." } },
-        { x = 3.5, z = -13.9, follow = 8 },
-        { x = 0.5, z = -12.9, follow = 8 },
+        { x = 4.0, z = -12.2, follow = 8 },   -- porta da cabana
+        { x = 0.5, z = -12.6, follow = 8 },
         { x = -2.5, z = -12.4, follow = 8 },
         { x = -5.5, z = -11.4, follow = 8 },
         { x = -8.5, z = -10.4, follow = 8 },
