@@ -21,6 +21,13 @@ local CHISEL_TIME = 2.4        -- segundos segurando
 local CHISEL_DECAY = 0.6       -- quanto do progresso se perde por segundo ao soltar
 local CHISEL_STRIKE = 0.42     -- intervalo entre as batidas do cinzel
 
+-- Benedito, o guia
+local GUIDE_SPEED = 1.35        -- metros por segundo andando
+local GUIDE_LIE_TIME = 3.0      -- duração de Lie_Down
+local GUIDE_SKIP_RADIUS = 5.0   -- noite 3: se o coveiro chegar antes à cova 01, ele já está lá
+ANIM_LEN.Lie_Down = 3.0
+ANIM_LEN.Waving = 2.13
+
 local TRAIL_CANDLES = 6
 local TRAIL_STEP = 0.45   -- segundos entre uma vela da trilha e a próxima
 
@@ -138,6 +145,13 @@ function WorldController:init()
         end
     end
 
+    -- Benedito, o vulto que guia as noites
+    local guideEntity = s:findEntity(N.benedito.entity)
+    if guideEntity and guideEntity ~= 0 then
+        self.guide = { model = Model(s, guideEntity), object = Object(s, guideEntity), yaw = 0, mode = "hidden" }
+        self.guide.object.visible = false
+    end
+
     -- Trilha de velas da noite 3 (da mesa até a primeira cova)
     self.trail = {}
     for i = 1, TRAIL_CANDLES do
@@ -206,7 +220,9 @@ function WorldController:init()
     Flow.on("nightStarted", "world", function(n)
         self:applyAtmosphere(NIGHT_LOOK[n] or NIGHT_LOOK[1])
         if n == 3 then self:startTrail() end
+        self:startGuide(n)
     end)
+    Flow.on("finale", "world", function(kind) self:guideFinale(kind) end)
     Flow.on("casesChanged", "world", function()
         self:markCases(Flow.openCases())
         self:refreshPapers()
@@ -442,7 +458,11 @@ end
 function WorldController:refreshSpirits()
     for id, sp in pairs(self.spirits) do
         local case = caseById(id)
-        if Flow.isResolved(case) then
+        -- o morto da cova 01 é o próprio Benedito: só aparece depois que o vulto se deita ali
+        local waitsGuide = id == "c5" and not Flow.state.flags.benedito_rest
+        if waitsGuide and not Flow.isResolved(case) and not Flow.isAwake(case) then
+            self:setSpiritState(sp, "hidden")
+        elseif Flow.isResolved(case) then
             if sp.state ~= "resting" and sp.anim ~= "Skeletons_Death" then self:setSpiritState(sp, "resting") end
         elseif Flow.isOpen(case) then
             if Flow.isAwake(case) then
@@ -458,6 +478,11 @@ end
 
 -- Levanta do chão; só depois de de pé ele responde à mira
 function WorldController:wakeSpirit(id)
+    -- confrontar Benedito antes de ele chegar à cova encerra a caminhada do vulto
+    if id == "c5" and not Flow.state.flags.benedito_rest then
+        Flow.state.flags.benedito_rest = true
+        if self.guide then self:hideGuide() end
+    end
     local sp = self.spirits[id]
     if not sp or sp.state == "awake" or sp.state == "rising" then return end
     sp.state = "rising"
@@ -520,7 +545,7 @@ function WorldController:updateSpirits(dt, px, pz, checkWake)
         local cam = self.camera:getWorldPosition()
         local p = t.object.position
         -- mira abaixo do rosto: o morto fica na metade de cima da tela, acima do painel da conversa
-        local dx, dy, dz = p.x - cam.x, p.y - 0.15 - cam.y, p.z - cam.z
+        local dx, dy, dz = p.x - cam.x, p.y + (t.aimY or -0.15) - cam.y, p.z - cam.z
         local wantYaw = math.deg(math.atan(-dx, -dz))
         local wantPitch = math.deg(math.atan(dy, math.sqrt(dx * dx + dz * dz)))
         local k = math.min(1, dt * 5)
@@ -528,6 +553,204 @@ function WorldController:updateSpirits(dt, px, pz, checkWake)
         self.pitch = self.pitch + (wantPitch - self.pitch) * k
         self:applyLook()
     end
+end
+
+----------------------------------------------------------------------
+-- Benedito, o guia das noites
+----------------------------------------------------------------------
+function WorldController:playGuide(name, loop, fade)
+    local g = self.guide
+    if not g or g.anim == name then return end
+    local ok, err = pcall(function()
+        g.model:findAnimation(name).loop = loop and true or false
+        g.model:playAnimation(name, fade or 0.25)
+    end)
+    if ok then g.anim = name else Log.warn("Guide animation failed (" .. name .. "): " .. tostring(err)) end
+end
+
+function WorldController:guideSay(node)
+    if node.say then Flow.emit("guideSay", node.say[1], node.say[2]) end
+end
+
+function WorldController:hideGuide()
+    local g = self.guide
+    if not g then return end
+    g.object.visible = false
+    g.mode = "hidden"
+    g.anim = nil
+    if self.talkTarget == g then self.talkTarget = nil end
+end
+
+function WorldController:startGuide(night)
+    local g = self.guide
+    if not g then return end
+    local route = N.guideRoutes and N.guideRoutes[night]
+    if not route or (night == 3 and Flow.state.flags.benedito_rest) then
+        self:hideGuide()
+        return
+    end
+    g.route, g.night, g.index = route, night, 1
+    local first = route[1]
+    g.object.position = Vector3(first.x, 0, first.z)
+    g.object.visible = true
+    g.anim = nil
+    self:guideArrive()
+end
+
+-- Chegou ao ponto atual da rota
+function WorldController:guideArrive()
+    local g = self.guide
+    local node = g.route[g.index]
+    g.waitTime = 0
+    if node.lie then
+        g.mode, g.timer = "lying", GUIDE_LIE_TIME
+        self:playGuide("Lie_Down", false, 0.2)
+        self:guideSay(node)
+    elseif node.wait or node.anim then
+        g.mode = "wait"
+        self:playGuide(node.anim or "Skeletons_Idle", true)
+    elseif node.follow then
+        g.mode = "follow"
+        self:playGuide("Skeletons_Idle", true)
+    else
+        self:guideNext()
+    end
+end
+
+function WorldController:guideNext()
+    local g = self.guide
+    g.index = g.index + 1
+    if not g.route[g.index] then
+        self:guideVanish()
+        return
+    end
+    g.mode = "walk"
+    self:playGuide("Skeletons_Walking", true)
+end
+
+function WorldController:guideVanish()
+    self:hideGuide()
+    self.flash = math.max(self.flash or 0, 0.3)
+end
+
+-- Noite 3: Benedito deitou na primeira cova (ou o coveiro chegou antes): o morto do caso 5 toma o lugar
+function WorldController:finishGuide()
+    if self.guide then self:hideGuide() end
+    if not Flow.state.flags.benedito_rest then
+        Flow.state.flags.benedito_rest = true
+        self:refreshSpirits()
+    end
+end
+
+function WorldController:faceGuide(tx, tz, dt)
+    local g = self.guide
+    local p = g.object.position
+    local dx, dz = tx - p.x, tz - p.z
+    if dx * dx + dz * dz < 0.0001 then return end
+    local target = math.deg(math.atan(dx, dz))
+    local diff = (target - g.yaw + 540) % 360 - 180
+    g.yaw = g.yaw + diff * math.min(1, dt * 6)
+    g.object.rotation = Quaternion(g.yaw, UP)
+end
+
+function WorldController:updateGuide(dt, px, pz)
+    local g = self.guide
+    if not g or g.mode == "hidden" or g.mode == "done" then return end
+    local p = g.object.position
+    local pdx, pdz = px - p.x, pz - p.z
+    local playerDist = math.sqrt(pdx * pdx + pdz * pdz)
+
+    if g.mode == "finale" then
+        g.timer = g.timer - dt
+        if g.finaleKind == "preserve" and g.timer < 2.2 then
+            -- dá as costas e vai embora
+            if g.anim ~= "Skeletons_Walking" then
+                self:playGuide("Skeletons_Walking", true)
+                g.object.rotation = Quaternion(g.yaw, UP)
+            end
+            local rad = math.rad(g.yaw)
+            g.object.position = Vector3(p.x + math.sin(rad) * GUIDE_SPEED * dt, 0, p.z + math.cos(rad) * GUIDE_SPEED * dt)
+        end
+        if g.timer <= 0 then self:guideVanish() end
+        return
+    end
+
+    -- noite 3: se o coveiro já está na primeira cova, o vulto já está deitado lá
+    if g.night == 3 and g.mode ~= "lying" then
+        local last = g.route[#g.route]
+        local ldx, ldz = px - last.x, pz - last.z
+        local gdx, gdz = p.x - last.x, p.z - last.z
+        local guideFar = gdx * gdx + gdz * gdz > 36   -- o vulto ainda está a mais de 6 m da cova
+        if guideFar and ldx * ldx + ldz * ldz <= GUIDE_SKIP_RADIUS * GUIDE_SKIP_RADIUS then
+            self:finishGuide()
+            return
+        end
+    end
+
+    local node = g.route[g.index]
+    if g.mode == "walk" then
+        local dx, dz = node.x - p.x, node.z - p.z
+        local d = math.sqrt(dx * dx + dz * dz)
+        local step = GUIDE_SPEED * dt
+        if d <= step then
+            g.object.position = Vector3(node.x, 0, node.z)
+            self:guideArrive()
+        else
+            g.object.position = Vector3(p.x + dx / d * step, 0, p.z + dz / d * step)
+            self:faceGuide(node.x, node.z, dt)
+        end
+    elseif g.mode == "wait" then
+        g.waitTime = g.waitTime + dt
+        if node.faceX then self:faceGuide(node.faceX, node.faceZ, dt) else self:faceGuide(px, pz, dt) end
+        if g.waitTime >= (node.delay or 1.5) and playerDist <= node.wait.near then
+            self:guideSay(node)
+            if node.act then
+                g.mode, g.timer = "act", ANIM_LEN[node.act] or 1.2
+                self:playGuide(node.act, false, 0.15)
+            elseif node.vanish then
+                self:guideVanish()
+            else
+                self:guideNext()
+            end
+        end
+    elseif g.mode == "act" then
+        self:faceGuide(px, pz, dt)
+        g.timer = g.timer - dt
+        if g.timer <= 0 then
+            if node.vanish then self:guideVanish() else self:guideNext() end
+        end
+    elseif g.mode == "follow" then
+        self:faceGuide(px, pz, dt)
+        if playerDist <= node.follow then self:guideNext() end
+    elseif g.mode == "lying" then
+        g.timer = g.timer - dt
+        if g.timer <= 0 then self:finishGuide() end
+    end
+end
+
+-- Final: Benedito aparece diante do coveiro para se despedir
+function WorldController:guideFinale(kind)
+    local g = self.guide
+    if not g then return end
+    local cam = self.camera:getWorldPosition()
+    local rad = math.rad(self.yaw)
+    local x, z = cam.x - math.sin(rad) * 3.0, cam.z - math.cos(rad) * 3.0
+    g.object.position = Vector3(x, 0, z)
+    g.yaw = math.deg(math.atan(cam.x - x, cam.z - z))
+    g.object.rotation = Quaternion(g.yaw, UP)
+    g.object.visible = true
+    g.anim = nil
+    g.mode, g.finaleKind, g.timer = "finale", kind, 3.6
+    if kind == "reveal" then
+        self:playGuide("Waving", true, 0.1)
+    else
+        self:playGuide("Skeletons_Idle", true, 0.1)
+        g.yaw = g.yaw + 180   -- ao ir embora, anda para longe do coveiro
+    end
+    g.aimY = 0.9   -- sem painel na despedida: a câmera olha para o rosto dele
+    self.talkTarget = g
+    local line = N.beneditoFinale and N.beneditoFinale[kind]
+    if line then Flow.emit("guideSay", "Benedito", line) end
 end
 
 ----------------------------------------------------------------------
@@ -648,6 +871,7 @@ function WorldController:resetVisuals()
     self:hideTrail()
     self:refreshPapers()
     self:stopChisel()
+    if self.guide then self:hideGuide() end
     self.talkTarget = nil
     for _, sp in pairs(self.spirits) do
         sp.yaw = 0
@@ -688,6 +912,9 @@ function WorldController:onUpdate()
 
     local pp = self.player.position
     self:updateSpirits(dt, pp.x, pp.z, self:canInteract())
+    if self.guide and (Flow.state.phase == "playing" or self.guide.mode == "finale") then
+        self:updateGuide(dt, pp.x, pp.z)
+    end
 
     -- o cinzel só avança com a lápide certa na mira e E (ou o mouse) seguro
     if self.chisel then

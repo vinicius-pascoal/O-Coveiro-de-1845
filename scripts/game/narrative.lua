@@ -122,6 +122,52 @@ N.spirits = {
            rest = "...agora o livro é seu. Escolha melhor do que a Câmara." },
 }
 
+----------------------------------------------------------------------
+-- Benedito Ramos, o coveiro apagado: um vulto que guia cada noite.
+-- Cada rota é uma lista de pontos (x, z). Em cada ponto o vulto pode:
+--   anim  = animação em loop enquanto espera
+--   wait  = { near = r } espera o coveiro chegar a r metros
+--   follow = r: ao chegar, espera o coveiro se aproximar a r metros antes de seguir
+--   act   = animação que toca uma vez quando a espera acaba; say = fala nesse momento
+--   vanish = some depois; lie = deita-se ali (e vira o morto da cova 01)
+----------------------------------------------------------------------
+N.benedito = { entity = "Benedito", name = "Benedito Ramos" }
+
+N.guideRoutes = {
+    [1] = {
+        { x = 6.0, z = -16.1, faceX = 6.0, faceZ = -17.0, anim = "Use_Item", wait = { near = 7 },
+          say = { "Severino", "Havia alguém debruçado sobre o livro, escrevendo. Agora não há ninguém." }, vanish = true },
+    },
+    [2] = {
+        { x = 1.7, z = 16.4, anim = "Skeletons_Idle", wait = { near = 5 }, act = "Interact",
+          say = { "Sussurro", "...o canteiro deixou um recado na grade... leia antes que a chuva leve..." } },
+        { x = 2.5, z = 8.0 },
+        { x = 9.0, z = -4.0 },
+        { x = 11.0, z = -6.0, anim = "Skeletons_Idle", wait = { near = 4.5 }, act = "Interact",
+          say = { "Sussurro", "...o que tiraram da cova 04 ficou no chão. Ninguém quis guardar..." } },
+        { x = 9.0, z = -12.0 },
+        { x = 4.6, z = -15.3, anim = "Skeletons_Idle", wait = { near = 4.5 }, act = "Interact",
+          say = { "Sussurro", "...o padre escreveu mais do que contou..." }, vanish = true },
+    },
+    [3] = {
+        { x = 4.6, z = -15.3, anim = "Skeletons_Idle", wait = { near = 8 }, act = "Interact",
+          say = { "Benedito", "...siga as velas, coveiro. Eu sei o caminho de cor." } },
+        { x = 3.5, z = -13.9, follow = 8 },
+        { x = 0.5, z = -12.9, follow = 8 },
+        { x = -2.5, z = -12.4, follow = 8 },
+        { x = -5.5, z = -11.4, follow = 8 },
+        { x = -8.5, z = -10.4, follow = 8 },
+        { x = -10.4, z = -7.4, lie = true,
+          say = { "Benedito", "...aqui. Foi aqui que me deixaram, sem nome." } },
+    },
+}
+
+-- Despedida no final: ao revelar, ele acena e se desfaz; ao preservar, dá as costas e some
+N.beneditoFinale = {
+    reveal = "...obrigado. Agora eles podem discordar de mim também.",
+    preserve = "...então o livro continua com fome.",
+}
+
 -- O que o cemitério faz quando um registro é corrigido (além das velas na cova e do clarão da lua)
 -- shake = segundos de tremor da câmera; flash = força do clarão
 N.resolutionEffects = {

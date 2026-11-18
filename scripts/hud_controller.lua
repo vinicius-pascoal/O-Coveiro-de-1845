@@ -9,6 +9,7 @@ local HUDController = {
     properties = {
         { name = "selfTest", displayName = "Self Test", type = "bool", default = false },
         { name = "demo", displayName = "Visual Demo", type = "bool", default = false },
+        { name = "demoGuide", displayName = "Visual Demo (Guide)", type = "bool", default = false },
     }
 }
 
@@ -21,6 +22,7 @@ local TEXTS = {
 local CHISEL_FILL_W = 238
 local NOTEBOOK_W = 440
 local ADVANCE_MAX_DELAY = 12   -- segundos para ler a resolução antes de a noite acabar
+local ENDING_DELAY = 4.0       -- despedida de Benedito antes do epílogo
 local PROGRESS_ICONS = 6
 
 -- Ícones recortados da spritesheet (assets/ui/horror). Botões e títulos escolhem pelo nome.
@@ -244,6 +246,7 @@ function HUDController:init()
     Flow.on("reset", "hud", function()
         self.sayQueue = {}
         self.advanceTimer = nil
+        self.pendingEnding, self.endingDelay = nil, nil
         self.notebookOpen = false
         self:setChiselProgress(nil)
     end)
@@ -252,6 +255,15 @@ function HUDController:init()
         self:say(sp.name .. ": " .. sp.awaken, "spirit")
     end)
     Flow.on("caseResolved", "hud", function(case) self:onResolved(case) end)
+    Flow.on("guideSay", "hud", function(speaker, text)
+        if speaker == "Severino" then
+            self:say(text, "thought")
+        elseif speaker == "Benedito" then
+            self:say("Benedito: " .. text, "spirit")
+        else
+            self:say(text, "whisper")
+        end
+    end)
     Flow.on("chiselProgress", "hud", function(_, p) self:setChiselProgress(p) end)
     for _, ev in ipairs({ "clueNoted", "evidenceRead", "casesChanged", "chiselReady", "caseProven" }) do
         Flow.on(ev, "hud_notebook", function() self.notebookDirty = true end)
@@ -1393,8 +1405,22 @@ function HUDController:decide(case, index)
     if result.kind == "back" then
         self:openGrave(case.grave)
     elseif result.kind == "ending" then
-        self:showEnding(result.ending, 1)
+        -- antes do epílogo, Benedito aparece diante do coveiro para se despedir
+        self:closePanel()
+        self:setTopBarVisible(false)
+        self.pendingEnding = result.ending
+        self.endingDelay = ENDING_DELAY
+        Flow.emit("finale", result.ending)
     end
+end
+
+-- Mostra o epílogo que esperava a despedida (também usado pelo autoteste)
+function HUDController:flushEnding()
+    if not self.pendingEnding then return false end
+    local kind = self.pendingEnding
+    self.pendingEnding, self.endingDelay = nil, nil
+    self:showEnding(kind, 1)
+    return true
 end
 
 function HUDController:openHelp()
@@ -1710,10 +1736,11 @@ function HUDController:onUpdate()
             self:runSelfTest()
         end
     end
-    if self.demo and not self.demoSteps and (self.selfTestFrames or 0) >= 0 then
+    if (self.demo or self.demoGuide) and not self.demoSteps then
         self.demoFrames = (self.demoFrames or 0) + 1
         if self.demoFrames > 60 then
-            self.demoSteps = require("game.selftest").demoSteps(self)
+            local SelfTest = require("game.selftest")
+            self.demoSteps = self.demoGuide and SelfTest.demoGuideSteps(self) or SelfTest.demoSteps(self)
             self.demoIndex, self.demoWait = 1, self.demoSteps[1][1]
         end
     end
@@ -1728,6 +1755,10 @@ function HUDController:onUpdate()
         end
     end
     self.frame = self.frame + 1
+    if self.endingDelay then
+        self.endingDelay = self.endingDelay - dt
+        if self.endingDelay <= 0 then self:flushEnding() end
+    end
     if self.advanceTimer and Flow.state.phase == "playing" and not self.panelOpen and not self.overlayOpen then
         self.advanceTimer = self.advanceTimer - dt
         if self.advanceTimer <= 0 then self:flushAdvance() end

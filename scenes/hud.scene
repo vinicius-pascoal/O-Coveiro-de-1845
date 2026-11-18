@@ -73,6 +73,11 @@ entities:
                 type: Bool
                 value: false
                 defaultValue: false
+              - name: demoGuide
+                displayName: Visual Demo (Guide)
+                type: Bool
+                value: false
+                defaultValue: false
   - type: Entity
     entity: 1069
     name: TopBarBg
@@ -1021,7 +1026,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|19#66
+              id: font|19#67
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -6431,4 +6436,4 @@ entities:
             fixedHeight: false
             pivotBaseline: false
             pivotCentered: false
-shaderKeysHash: fba8e91ba7145006dd7fa48123372b148edb092f
+shaderKeysHash: 9ecc96684f1509441d39e46a44807fe3abf520cf

@@ -72,6 +72,28 @@ local function wakeSpirit(hud, case)
     check(hud.talking == nil and world.talkTarget == nil, "closing should end the talk: " .. case.id)
 end
 
+-- Benedito, o guia: o coveiro anda colado nele até a rota da noite acabar
+local function followGuide(night)
+    local world = Flow.worldController
+    local g = world and world.guide
+    if not g then return end
+    check(g.object.visible and g.mode ~= "hidden", "guide should appear on night " .. night)
+    local said = 0
+    Flow.on("guideSay", "selftest", function() said = said + 1 end)
+    for _ = 1, 3000 do
+        if g.mode == "hidden" or g.mode == "done" then break end
+        local p = g.object.position
+        world:updateGuide(0.05, p.x + 0.6, p.z + 0.6)
+    end
+    Flow.listeners.guideSay.selftest = nil
+    check(g.mode == "hidden", "guide route should end on night " .. night .. " (mode " .. tostring(g.mode) .. ")")
+    check(said > 0, "guide should speak on night " .. night)
+    if night == 3 then
+        check(Flow.state.flags.benedito_rest, "Benedito should lie in the first grave")
+        check(world.spirits.c5.state == "dormant", "the c5 spirit should take Benedito's place")
+    end
+end
+
 local function playCase(hud, case, makeMistake)
     if not case.decision then wakeSpirit(hud, case) end
     hud:onWorldClick({ kind = "grave", grave = case.grave })
@@ -256,6 +278,10 @@ function SelfTest.run(hud, endingKind)
         check(hud.overlayMode == "night", "night intro expected for night " .. night)
         clickOverlay(hud, "Começar")
         check(Flow.state.phase == "playing", "phase playing expected")
+        if night == 3 and Flow.worldController then
+            check(Flow.worldController.spirits.c5.state == "hidden", "Benedito's spirit waits for the guide")
+        end
+        followGuide(night)
         if night == 1 then
             hud:openPause()
             check(hud.overlayMode == "pause", "pause expected")
@@ -325,6 +351,14 @@ function SelfTest.run(hud, endingKind)
         end
     end
     check(Flow.state.phase == "ending", "ending phase expected")
+    -- despedida de Benedito antes do epílogo
+    check(not hud.overlayOpen and hud.pendingEnding == endingKind, "finale should come before the epilogue")
+    if Flow.worldController and Flow.worldController.guide then
+        local g = Flow.worldController.guide
+        check(g.mode == "finale" and g.object.visible, "Benedito should say goodbye")
+        check(g.anim == (endingKind == "reveal" and "Waving" or "Skeletons_Idle"), "finale animation for " .. endingKind)
+    end
+    hud:flushEnding()
     -- sussurros: dispara um pelo portão e confere que vai para a fila
     Flow.state.phase = "playing"; Flow.state.modalOpen = false
     Flow.state.whispersSeen = {}
@@ -381,6 +415,41 @@ function SelfTest.demoSteps(hud)
         { 2.0, function() world.forceChiselHold = false end },     -- 14: gravado: morto desaba, legenda conta
         { 1.0, function() hud:setNotebookOpen(true) end },         -- 15: caderno com Tab, sem pausa
         { 1.5, function() hud:setNotebookOpen(false) end },        -- 16: fim
+    }
+end
+
+-- Demonstração do guia: pula para a noite 3, acompanha Benedito pela trilha e mostra a despedida
+function SelfTest.demoGuideSteps(hud)
+    local world = Flow.worldController
+    local function place(x, z, yaw, pitch)
+        world.character.position = Vector3(x, 0.05, z)
+        world.yaw, world.pitch = yaw, pitch or -6
+        world:applyLook()
+    end
+    return {
+        { 0.5, function()
+            clickOverlay(hud, "Iniciar")
+            hud:finishReveal(); clickOverlay(hud, "Pular")
+            local s = Flow.state
+            s.night = 3
+            for _, id in ipairs({ "c1", "c2", "c3", "c4" }) do s.resolved[id] = true end
+            s.flags.night1_event, s.flags.night2_event = true, true
+            hud:finishReveal(); clickOverlay(hud, "Começar")
+            place(4.6, -11.0, 0)
+        end },
+        { 1.5, function() end },                                -- 2: o vulto espera na mesa
+        { 2.0, function() place(4.0, -10.5, 20) end },          -- 3: fala e começa a andar
+        { 3.0, function() end },                                -- 4: andando pela trilha de velas
+        { 2.5, function() place(-4.5, -6.0, 60, -10) end },     -- 5: o coveiro segue até perto da cova 01
+        { 6.0, function() end },                                -- 6: Benedito se deita na cova
+        { 2.0, function() end },                                -- 7: o morto do caso 5 no lugar dele
+        { 1.0, function()
+            Flow.state.phase = "ending"
+            place(-4.5, -6.0, 60, -6)
+            Flow.emit("finale", "reveal")
+        end },
+        { 1.2, function() end },                                -- 9: aceno de despedida
+        { 3.0, function() end },                                -- 10: se desfaz
     }
 end
 
