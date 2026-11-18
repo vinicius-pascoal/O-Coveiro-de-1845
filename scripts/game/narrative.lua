@@ -93,6 +93,35 @@ N.places = {
     grave04 = { entity = "PaperGrave04", label = "o papel no chão", where = "no chão, ao pé da sepultura 04" },
 }
 
+----------------------------------------------------------------------
+-- Os mortos de cada caso: um esqueleto deitado ao lado da cova que se levanta
+-- quando o coveiro chega perto. É a ele que se apresentam as provas.
+-- entity = nome na cena World; awaken = fala ao levantar; ask = pergunta no confronto;
+-- rest = última fala depois que o registro é corrigido.
+----------------------------------------------------------------------
+N.spirits = {
+    c1 = { entity = "Spirit_c1", name = "Antônio Ferreira",
+           awaken = "...a pedra diz que eu morri antes de mandar as redes para a minha filha. Quem mente, coveiro?",
+           ask = "\"Diga o que os papéis sustentam sobre mim, coveiro.\"",
+           rest = "...remos... agora a Rosa sabe onde eu estou." },
+    c2 = { entity = "Spirit_c2", name = "Maria das Dores",
+           awaken = "...Nunes, Santos... me partiram em duas mulheres, e nenhuma tem cova.",
+           ask = "\"Quem eu sou, afinal? Diga, e prove.\"",
+           rest = "...inteira de novo." },
+    c3 = { entity = "Spirit_c3", name = "José de Santana",
+           awaken = "...quarenta anos tocando o sino da Matriz. Quem é o outro José na minha linha?",
+           ask = "\"Quem está, de fato, debaixo desta pedra?\"",
+           rest = "...o moço da vala também tem nome agora. Toque por ele." },
+    c4 = { entity = "Spirit_c4", name = "Ana Beatriz de Almeida",
+           awaken = "...meus alunos me enterraram em 1845. Quem cortou um 6 na minha pedra?",
+           ask = "\"Por que a minha pedra diz 1846? Mostre-me.\"",
+           rest = "...a tinta ainda está úmida em outras páginas. Cuidado com o livro." },
+    c5 = { entity = "Spirit_c5", name = "Benedito Ramos",
+           awaken = "...você achou a primeira cova. Sabe por que me apagaram?",
+           ask = "\"Diga em voz alta o que fizeram comigo. E com o que você prova.\"",
+           rest = "...agora o livro é seu. Escolha melhor do que a Câmara." },
+}
+
 -- O que o cemitério faz quando um registro é corrigido (além das velas na cova e do clarão da lua)
 -- shake = segundos de tremor da câmera; flash = força do clarão
 N.resolutionEffects = {

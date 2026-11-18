@@ -55,6 +55,7 @@ local function freshState()
         whispersSeen = {},     -- whisperId -> true
         inscriptions = {},     -- graveIndex -> texto atual
         scars = {},            -- graveIndex -> correções erradas que ficaram riscadas na pedra
+        awakened = {},         -- caseId -> true (o morto do caso já se levantou)
     }
     for i, g in pairs(N.graves) do
         s.inscriptions[i] = g.inscription
@@ -110,6 +111,22 @@ function Flow.currentCase()
         if c.id == Flow.state.focus then return c end
     end
     return open[1]
+end
+
+-- O morto do caso (esqueleto) se levanta uma vez por campanha
+function Flow.spirit(case)
+    return case and N.spirits and N.spirits[case.id]
+end
+
+function Flow.isAwake(case)
+    return case and Flow.state.awakened[case.id] == true
+end
+
+function Flow.awaken(case)
+    if not Flow.spirit(case) or Flow.state.awakened[case.id] then return false end
+    Flow.state.awakened[case.id] = true
+    Flow.emit("spiritAwake", case)
+    return true
 end
 
 function Flow.setFocus(case)
@@ -348,16 +365,19 @@ function Flow.present(case, hypIndex, clueId)
     if not h then return nil end
     if not h.correct then
         mistake(case)
+        Flow.emit("spiritReact", case, "taunt")
         return { kind = "wrong", text = h.feedback, case = case }
     end
     if not Flow.isProofClue(case, clueId) then
         mistake(case)
+        Flow.emit("spiritReact", case, "hit")
         local fb = case.proof.feedback and case.proof.feedback[clueId]
         return { kind = "weak", case = case,
                  text = fb or "Essa anotação é verdadeira, mas não prova a conclusão." }
     end
     Flow.state.proven[case.id] = true
     Flow.emit("caseProven", case)
+    Flow.emit("spiritReact", case, "nod")
     return { kind = "proven", case = case }
 end
 
@@ -387,6 +407,7 @@ function Flow.fix(case, optionIndex)
         scars[#scars + 1] = fix.options[optionIndex]
         Flow.state.scars[case.grave] = scars
         mistake(case)
+        Flow.emit("spiritReact", case, "hit")
         local fb = fix.feedback and fix.feedback[optionIndex]
         return { kind = "fixWrong", case = case, text = fb or "Não foi isso que as provas mostraram." }
     end

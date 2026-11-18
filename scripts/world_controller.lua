@@ -7,6 +7,15 @@ local Flow = require("game.flow")
 local Settings = require("game.settings")
 local N = require("game.narrative")
 
+-- Esqueletos dos mortos: duração (s) das animações que tocam uma vez
+local ANIM_LEN = {
+    Skeletons_Awaken_Floor = 2.3, Skeletons_Death = 2.0, Skeletons_Taunt = 1.03,
+    Hit_A = 0.67, Interact = 1.3,
+}
+local REACTION_ANIM = { taunt = "Skeletons_Taunt", hit = "Hit_A", nod = "Interact" }
+local SPIRIT_WAKE_RADIUS = 4.5
+local SPIRIT_TURN_SPEED = 4.0   -- quão rápido o morto se vira para o coveiro
+
 local TRAIL_CANDLES = 6
 local TRAIL_STEP = 0.45   -- segundos entre uma vela da trilha e a próxima
 
@@ -103,6 +112,27 @@ function WorldController:init()
         end
     end
 
+    -- Os mortos de cada caso (esqueletos animados ao lado das covas)
+    self.spirits = {}
+    for caseId, data in pairs(N.spirits or {}) do
+        local e = find(s, data.entity)
+        if e then
+            local sp = { caseId = caseId, entity = e, model = Model(s, e), object = Object(s, e), state = "hidden" }
+            sp.home = sp.object.position
+            sp.yaw = 0
+            sp.object.visible = false
+            -- a mira usa uma caixa do tamanho de uma pessoa em volta do esqueleto
+            local h = { kind = "spirit", caseId = caseId, name = data.entity, enabled = false, spirit = sp }
+            h.box = function()
+                local p = sp.object.position
+                return AABB(Vector3(p.x - 0.45, p.y, p.z - 0.45), Vector3(p.x + 0.45, p.y + 1.7, p.z + 0.45))
+            end
+            sp.hotspot = h
+            self.hotspots[#self.hotspots + 1] = h
+            self.spirits[caseId] = sp
+        end
+    end
+
     -- Trilha de velas da noite 3 (da mesa até a primeira cova)
     self.trail = {}
     for i = 1, TRAIL_CANDLES do
@@ -175,7 +205,12 @@ function WorldController:init()
     Flow.on("casesChanged", "world", function()
         self:markCases(Flow.openCases())
         self:refreshPapers()
+        self:refreshSpirits()
     end)
+    Flow.on("spiritAwake", "world", function(case) self:wakeSpirit(case.id) end)
+    Flow.on("spiritReact", "world", function(case, kind) self:spiritReact(case.id, kind) end)
+    Flow.on("talk", "world", function(case) self.talkTarget = self.spirits[case.id] end)
+    Flow.on("talkEnd", "world", function() self.talkTarget = nil end)
     Flow.on("caseResolved", "world", function(case) self:onCaseResolved(case) end)
     Flow.on("mistake", "world", function() self:onMistake() end)
     Flow.on("ending", "world", function(kind) self:onEnding(kind) end)
@@ -261,7 +296,7 @@ function WorldController:pickCenter()
     local origin = ray.origin
     local best, bestDist = nil, math.huge
     for _, h in ipairs(self.hotspots) do
-        local hit = h.enabled and ray:intersects(h.mesh:getWorldAABB())
+        local hit = h.enabled and ray:intersects(h.box and h.box() or h.mesh:getWorldAABB())
         if hit and hit.hit then
             local d = (ray:getPoint(hit.distance) - origin):length()
             if d < bestDist then best, bestDist = h, d end
@@ -274,7 +309,7 @@ function WorldController:setFocus(h)
     if h == self.focused then return end
     self.focused = h
     if h then
-        local aabb = h.mesh:getWorldAABB()
+        local aabb = h.box and h.box() or h.mesh:getWorldAABB()
         local c, size = aabb:getCenter(), aabb:getSize()
         self.hoverLight.position = Vector3(c.x, c.y + size.y * 0.5 + 0.7, c.z + 0.6)
         self.hoverLight.intensity = self.hoverLightIntensity
@@ -347,6 +382,141 @@ function WorldController:refreshPapers()
     end
 end
 
+----------------------------------------------------------------------
+-- Os mortos
+----------------------------------------------------------------------
+local function caseById(id)
+    for _, c in ipairs(N.cases) do
+        if c.id == id then return c end
+    end
+end
+
+-- Toca uma animação do esqueleto; then = animação em loop que vem depois de uma que toca uma vez
+function WorldController:playSpirit(sp, name, loop, thenName, fade)
+    local ok, err = pcall(function()
+        local anim = sp.model:findAnimation(name)
+        anim.loop = loop and true or false
+        sp.model:playAnimation(name, fade or 0.2)
+    end)
+    if not ok then
+        Log.warn("Spirit animation failed (" .. name .. "): " .. tostring(err))
+        return
+    end
+    sp.anim = name
+    if thenName then
+        sp.timer = ANIM_LEN[name] or 1.0
+        sp.thenAnim = thenName
+    else
+        sp.timer, sp.thenAnim = nil, nil
+    end
+end
+
+function WorldController:setSpiritState(sp, state)
+    if sp.state == state then return end
+    sp.state = state
+    sp.object.visible = state ~= "hidden"
+    sp.hotspot.enabled = (state == "awake")
+    if state == "dormant" then
+        self:playSpirit(sp, "Skeletons_Inactive_Floor_Pose", true, nil, 0)
+    elseif state == "awake" then
+        self:playSpirit(sp, "Skeletons_Idle", true)
+    elseif state == "resting" then
+        self:playSpirit(sp, "Skeletons_Death_Pose", true, nil, 0)
+    end
+end
+
+-- Coloca cada morto no estado que o andamento da campanha pede
+function WorldController:refreshSpirits()
+    for id, sp in pairs(self.spirits) do
+        local case = caseById(id)
+        if Flow.isResolved(case) then
+            if sp.state ~= "resting" and sp.anim ~= "Skeletons_Death" then self:setSpiritState(sp, "resting") end
+        elseif Flow.isOpen(case) then
+            if Flow.isAwake(case) then
+                if sp.state == "hidden" or sp.state == "dormant" then self:wakeSpirit(id) end
+            elseif sp.state ~= "dormant" then
+                self:setSpiritState(sp, "dormant")
+            end
+        else
+            self:setSpiritState(sp, "hidden")
+        end
+    end
+end
+
+-- Levanta do chão; só depois de de pé ele responde à mira
+function WorldController:wakeSpirit(id)
+    local sp = self.spirits[id]
+    if not sp or sp.state == "awake" or sp.state == "rising" then return end
+    sp.state = "rising"
+    sp.object.visible = true
+    sp.hotspot.enabled = false
+    self:playSpirit(sp, "Skeletons_Awaken_Floor", false, "Skeletons_Idle", 0)
+end
+
+function WorldController:spiritReact(id, kind)
+    local sp = self.spirits[id]
+    local anim = REACTION_ANIM[kind]
+    if sp and anim and (sp.state == "awake" or sp.state == "rising") then
+        self:playSpirit(sp, anim, false, "Skeletons_Idle", 0.1)
+    end
+end
+
+-- Registro corrigido: o morto desaba em paz e fica deitado
+function WorldController:restSpirit(id)
+    local sp = self.spirits[id]
+    if not sp or sp.state == "hidden" then return end
+    sp.state = "resting"
+    sp.hotspot.enabled = false
+    self:playSpirit(sp, "Skeletons_Death", false, "Skeletons_Death_Pose", 0.2)
+end
+
+-- Chamado a cada quadro: acorda quem está perto, vira os de pé para o coveiro, encadeia animações
+function WorldController:updateSpirits(dt, px, pz, checkWake)
+    for id, sp in pairs(self.spirits) do
+        if sp.timer then
+            sp.timer = sp.timer - dt
+            if sp.timer <= 0 then
+                local nextAnim = sp.thenAnim
+                sp.timer, sp.thenAnim = nil, nil
+                self:playSpirit(sp, nextAnim, true)
+                if sp.state == "rising" then
+                    sp.state = "awake"
+                    sp.hotspot.enabled = true
+                end
+            end
+        end
+        if checkWake and sp.state == "dormant" then
+            local h = sp.home
+            local dx, dz = px - h.x, pz - h.z
+            if dx * dx + dz * dz <= SPIRIT_WAKE_RADIUS * SPIRIT_WAKE_RADIUS then
+                Flow.awaken(caseById(id))
+            end
+        end
+        if sp.state == "awake" or sp.state == "rising" then
+            local p = sp.object.position
+            local target = math.deg(math.atan(px - p.x, pz - p.z))
+            local diff = (target - sp.yaw + 540) % 360 - 180
+            sp.yaw = sp.yaw + diff * math.min(1, dt * SPIRIT_TURN_SPEED)
+            sp.object.rotation = Quaternion(sp.yaw, UP)
+        end
+    end
+
+    -- Conversa: a câmera se volta para o rosto do morto
+    local t = self.talkTarget
+    if t then
+        local cam = self.camera:getWorldPosition()
+        local p = t.object.position
+        -- mira abaixo do rosto: o morto fica na metade de cima da tela, acima do painel da conversa
+        local dx, dy, dz = p.x - cam.x, p.y - 0.15 - cam.y, p.z - cam.z
+        local wantYaw = math.deg(math.atan(-dx, -dz))
+        local wantPitch = math.deg(math.atan(dy, math.sqrt(dx * dx + dz * dz)))
+        local k = math.min(1, dt * 5)
+        self.yaw = self.yaw + ((wantYaw - self.yaw + 540) % 360 - 180) * k
+        self.pitch = self.pitch + (wantPitch - self.pitch) * k
+        self:applyLook()
+    end
+end
+
 -- Noite 3: as velas acendem uma a uma, da mesa até a primeira cova
 function WorldController:startTrail()
     for _, c in ipairs(self.trail) do c.visible = false end
@@ -365,6 +535,7 @@ function WorldController:onCaseResolved(case)
     end
     self:markCases(Flow.openCases())
     self:refreshPapers()
+    self:restSpirit(case.id)
     if case.id == "c5" then self:hideTrail() end
     -- Sobressalto sobrenatural: a lua pisca forte; em alguns casos o chão treme
     local fx = N.resolutionEffects and N.resolutionEffects[case.id] or {}
@@ -413,6 +584,13 @@ function WorldController:resetVisuals()
     self:clearMarkers()
     self:hideTrail()
     self:refreshPapers()
+    self.talkTarget = nil
+    for _, sp in pairs(self.spirits) do
+        sp.yaw = 0
+        sp.object.rotation = Quaternion(0, UP)
+        sp.timer, sp.thenAnim, sp.state = nil, nil, nil
+        self:setSpiritState(sp, "hidden")
+    end
     self.hoverLight.intensity = 0
     self.focused = nil
     -- jogador volta ao portão olhando para o norte
@@ -443,6 +621,9 @@ function WorldController:onUpdate()
     elseif self.focused then
         self:setFocus(nil)
     end
+
+    local pp = self.player.position
+    self:updateSpirits(dt, pp.x, pp.z, self:canInteract())
 
     -- Lua piscando após uma correção, ou sumindo após um erro (reage ao estado do jogo)
     local base = self.moonIntensity or 1.6

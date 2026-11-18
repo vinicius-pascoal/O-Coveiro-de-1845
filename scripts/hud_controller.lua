@@ -8,6 +8,7 @@ local Settings = require("game.settings")
 local HUDController = {
     properties = {
         { name = "selfTest", displayName = "Self Test", type = "bool", default = false },
+        { name = "demo", displayName = "Visual Demo", type = "bool", default = false },
     }
 }
 
@@ -76,6 +77,7 @@ local PAPER = {
 local SAY_STYLE = {
     thought = { color = { 0.98, 0.88, 0.70 }, prefix = "Severino: ", icon = "candle" },
     whisper = { color = { 0.70, 0.88, 0.92 }, prefix = "", icon = "ghost" },
+    spirit  = { color = { 0.74, 0.96, 0.86 }, prefix = "", icon = "ghost" },
     info    = { color = { 0.93, 0.89, 0.84 }, prefix = "" },
 }
 local TOAST_TEXT_X = 30       -- margem do texto sem ícone
@@ -93,6 +95,7 @@ local TOP_BUTTONS = { "BtnBook", "BtnHelp", "BtnPause" }
 local KEY_HINTS = "E examinar  ·  L livro  ·  H ajuda  ·  Esc pausa"
 
 local PANEL_SLOTS = 6
+local MODAL_DIM_ALPHA = 0.55
 local OVERLAY_SLOTS = 5
 local TOAST_SECONDS = 5.5
 
@@ -124,6 +127,12 @@ local KIND_LABEL = {
     testimony = "Testemunho",
     record = "Documento",
 }
+
+local function caseById(id)
+    for _, c in ipairs(N.cases) do
+        if c.id == id then return c end
+    end
+end
 
 local function findEntity(scene, name)
     local e = scene:findEntity(name)
@@ -221,6 +230,14 @@ function HUDController:init()
         self:say(w.text, w.speaker == "Severino" and "thought" or "whisper")
     end)
     Flow.on("reset", "hud", function() self.sayQueue = {} end)
+    Flow.on("spiritAwake", "hud", function(case)
+        local sp = Flow.spirit(case)
+        self:say(sp.name .. ": " .. sp.awaken, "spirit")
+    end)
+    Flow.on("caseResolved", "hud", function(case)
+        local sp = Flow.spirit(case)
+        if sp and sp.rest then self:say(sp.name .. ": " .. sp.rest, "spirit") end
+    end)
     Flow.on("mistake", "hud", function(_, count)
         local lines = N.mistakeWhispers or {}
         if #lines > 0 then self:say(lines[(count - 1) % #lines + 1], "whisper") end
@@ -465,6 +482,10 @@ end
 -- spec = { title, subtitle, body, small, paper, icon, reveal, buttons = { {label, action, disabled, icon}, ... } }
 function HUDController:showPanel(spec)
     local t = self.text
+    -- Conversa com um morto: o painel desce para a parte de baixo e o cemitério fica à vista
+    local compact = spec.talk and self.talking ~= nil
+    if not compact and self.talking then self:endTalk() end
+    self.panelCompact = compact
     local bodySize = fontSize(spec.small and "bodySmall" or "body")
     local w = panelWidthFor(spec, bodySize)
     self.panelWidth = w
@@ -484,7 +505,9 @@ function HUDController:showPanel(spec)
     t.PanelBody.fontSize = bodySize
     self:setRevealText(t.PanelBody, spec.body or "", spec.reveal)
     assignButtons(self, "PanelBtn", PANEL_SLOTS, spec.buttons)
+    -- o painel é filho do ModalDim: na conversa ele fica visível, só que transparente
     self.modalDim.visible = true
+    self.modalDim:setColor(0, 0, 0, compact and 0 or MODAL_DIM_ALPHA)
     self:setIcon(self.panelIcon, spec.icon)
     self.panelOpen = true
     self:layoutPanel()
@@ -516,10 +539,36 @@ function HUDController:layoutPanel()
         self:remeasureReveal(t.PanelBody)
         self.shrinkWait = MEASURE_FRAMES + 1
     end
-    setSize(self.panelBg, self.panelWidth or 900, math.min(y, maxH))
+    local h = math.min(y, maxH)
+    setSize(self.panelBg, self.panelWidth or 900, h)
+    if self.panelCompact then
+        self:place(self.panelBg, 0, Engine.canvasHeight / 2 - h / 2 - SCREEN_MARGIN)
+    else
+        self:place(self.panelBg, 0, 0)
+    end
+end
+
+-- Começa uma conversa com o morto do caso (a câmera se vira para ele)
+function HUDController:beginTalk(case)
+    if not Flow.spirit(case) or case.decision then return false end
+    Flow.awaken(case)
+    if self.talking ~= case then
+        self.talking = case
+        self:hideToast()   -- a legenda ocupa o mesmo lugar do painel da conversa
+        Flow.emit("talk", case)
+    end
+    return true
+end
+
+function HUDController:endTalk()
+    if self.talking then
+        self.talking = nil
+        Flow.emit("talkEnd")
+    end
 end
 
 function HUDController:closePanel()
+    self:endTalk()
     self.modalDim.visible = false
     self.panelOpen = false
     self.keySlots.PanelBtn = {}
@@ -785,6 +834,9 @@ function HUDController:onFocus(h)
         caption = "Ler o livro de registros"
     elseif h.kind == "paper" then
         caption = "Pegar " .. N.places[h.place].label
+    elseif h.kind == "spirit" then
+        local name = N.spirits[h.caseId].name
+        caption = (Flow.isProven(caseById(h.caseId)) and "Corrigir o registro diante de " or "Confrontar ") .. name
     else
         caption = "Arquivo da Câmara"
     end
@@ -811,6 +863,12 @@ function HUDController:onWorldClick(h)
         self:openBook()
     elseif h.kind == "paper" then
         self:openPlace(h.place)
+    elseif h.kind == "spirit" then
+        local c = caseById(h.caseId)
+        if c and Flow.isOpen(c) then
+            Flow.setFocus(c)
+            if Flow.isProven(c) then self:openFix(c) else self:openConfront(c) end
+        end
     else
         self:toast(N.toasts.crypt)
     end
@@ -921,7 +979,9 @@ function HUDController:openGrave(g)
         if not can then label = label .. string.format("  (%d/%d fontes lidas)", readCount, total) end
         buttons[#buttons + 1] = { label = label, icon = can and "question" or "minus", disabled = not can, action = function() self:openConfront(case) end }
     else
-        buttons[#buttons + 1] = { label = "Confrontar registros", icon = "question", action = function() self:openConfront(case) end }
+        local spirit = Flow.spirit(case)
+        local label = spirit and ("Confrontar " .. spirit.name) or "Confrontar registros"
+        buttons[#buttons + 1] = { label = label, icon = "question", action = function() self:openConfront(case) end }
     end
 
     local body = graveText(g) .. "\n\n" .. case.objective
@@ -1055,6 +1115,8 @@ end
 function HUDController:openConfront(case)
     case = case or Flow.currentCase()
     if not case then return end
+    local talking = self:beginTalk(case)
+    local spirit = Flow.spirit(case)
     local buttons = {}
     for i, h in ipairs(case.hypotheses) do
         buttons[#buttons + 1] = { label = h.text, action = function()
@@ -1065,14 +1127,20 @@ function HUDController:openConfront(case)
     if case.decision then
         body = case.question
     else
-        body = case.question .. "\n\nEscolha a conclusão. Em seguida, apresente a anotação do caderno que a prova."
+        if talking then
+            -- na conversa o texto é curto, para o morto continuar à vista acima do painel
+            body = spirit.ask .. "\n" .. case.question .. " Escolha e depois prove."
+        else
+            body = case.question .. "\n\nEscolha a conclusão. Em seguida, apresente a anotação do caderno que a prova."
+        end
         buttons[#buttons + 1] = { label = "Voltar à sepultura", icon = "home", action = function() self:openGrave(case.grave) end }
     end
     self:showPanel({
-        title = case.decision and "A última página" or ("Confrontar registros — sepultura " .. N.graves[case.grave].number),
-        subtitle = case.title,
+        title = case.decision and "A última página" or (talking and spirit.name or ("Confrontar registros — sepultura " .. N.graves[case.grave].number)),
+        subtitle = talking and ("Sepultura " .. N.graves[case.grave].number .. " — o morto espera a sua conclusão") or case.title,
         icon = "skull",
         body = body,
+        talk = true,
         buttons = buttons,
     })
 end
@@ -1098,6 +1166,7 @@ function HUDController:openPresent(case, hypIndex)
         subtitle = "Sepultura " .. N.graves[case.grave].number .. " — " .. case.title,
         icon = "skull",
         body = body,
+        talk = true,
         buttons = buttons,
     })
 end
@@ -1112,6 +1181,7 @@ function HUDController:present(case, hypIndex, clueId)
             icon = "wrong",
             subtitle = "O registro continua aberto",
             body = result.text .. "\n\nA névoa sobre o cemitério fica um pouco mais densa.",
+            talk = true,
             buttons = {
                 { label = "Tentar outra conclusão", icon = "question", action = function() self:openConfront(case) end },
                 review,
@@ -1123,6 +1193,7 @@ function HUDController:present(case, hypIndex, clueId)
             icon = "wrong",
             subtitle = "A conclusão pode estar certa, mas falta a prova",
             body = result.text .. "\n\nA névoa sobre o cemitério fica um pouco mais densa.",
+            talk = true,
             buttons = {
                 { label = "Apresentar outra anotação", icon = "candle", action = function() self:openPresent(case, hypIndex) end },
                 review,
@@ -1136,6 +1207,7 @@ end
 
 -- Passo 3: o jogador escreve a correção
 function HUDController:openFix(case, justProven)
+    self:beginTalk(case)
     local fix = case.fix
     if not fix then
         self:applyFix(case, nil)
@@ -1152,6 +1224,7 @@ function HUDController:openFix(case, justProven)
         subtitle = "Sepultura " .. N.graves[case.grave].number .. " — " .. case.title,
         icon = "tomb",
         body = intro .. "\n\n" .. fix.prompt,
+        talk = true,
         buttons = buttons,
     })
 end
@@ -1165,6 +1238,7 @@ function HUDController:applyFix(case, optionIndex)
             icon = "wrong",
             subtitle = case.fix.title,
             body = result.text,
+            talk = true,
             buttons = { { label = "Escrever de novo", icon = "question", action = function() self:openFix(case) end } },
         })
         return
@@ -1176,6 +1250,7 @@ function HUDController:applyFix(case, optionIndex)
         subtitle = "Sepultura " .. N.graves[case.grave].number .. " — " .. case.title,
         body = result.text,
         reveal = true,
+        talk = true,
         buttons = { { label = "Continuar", icon = "play", action = function()
             self:closePanel()
             Flow.advance()
@@ -1494,6 +1569,23 @@ function HUDController:onUpdate()
         if self.selfTestFrames > 90 then
             self.selfTestDone = true
             self:runSelfTest()
+        end
+    end
+    if self.demo and not self.demoSteps and (self.selfTestFrames or 0) >= 0 then
+        self.demoFrames = (self.demoFrames or 0) + 1
+        if self.demoFrames > 60 then
+            self.demoSteps = require("game.selftest").demoSteps(self)
+            self.demoIndex, self.demoWait = 1, self.demoSteps[1][1]
+        end
+    end
+    if self.demoSteps and self.demoIndex <= #self.demoSteps then
+        self.demoWait = self.demoWait - dt
+        if self.demoWait <= 0 then
+            local ok, err = pcall(self.demoSteps[self.demoIndex][2])
+            Log.print("DEMO step " .. self.demoIndex .. (ok and "" or (" FAILED: " .. tostring(err))))
+            self.demoIndex = self.demoIndex + 1
+            local nextStep = self.demoSteps[self.demoIndex]
+            self.demoWait = nextStep and nextStep[1] or 0
         end
     end
     Flow.tick(dt)

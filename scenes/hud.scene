@@ -68,6 +68,11 @@ entities:
                 type: Bool
                 value: false
                 defaultValue: false
+              - name: demo
+                displayName: Visual Demo
+                type: Bool
+                value: false
+                defaultValue: false
   - type: Entity
     entity: 1069
     name: TopBarBg
@@ -239,7 +244,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|18#76
+          id: font|18#77
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -427,7 +432,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#76
+              id: font|18#77
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -615,7 +620,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#76
+              id: font|18#77
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -803,7 +808,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#76
+              id: font|18#77
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -1016,7 +1021,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|19#52
+              id: font|19#57
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -1950,7 +1955,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#76
+                      id: font|18#77
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2206,7 +2211,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#76
+                      id: font|18#77
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2462,7 +2467,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#76
+                      id: font|18#77
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2718,7 +2723,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#76
+                      id: font|18#77
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -3042,7 +3047,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#76
+                      id: font|18#77
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -3298,7 +3303,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#76
+                      id: font|18#77
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -6076,4 +6081,4 @@ entities:
         fixedHeight: false
         pivotBaseline: false
         pivotCentered: false
-shaderKeysHash: db5b40e03b42df0e5c8ffab7900ceaed78a93d01
+shaderKeysHash: cbd6e74db50dfd57dc1a4fa23c1e0f60bbeffb47

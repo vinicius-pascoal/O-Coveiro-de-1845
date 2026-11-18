@@ -52,7 +52,28 @@ local function noteAll(hud, sourceId)
     end
 end
 
+-- O morto do caso: deitado até o coveiro chegar perto, de pé depois de levantar, conversa pela mira
+local function wakeSpirit(hud, case)
+    local world = Flow.worldController
+    local sp = world and world.spirits[case.id]
+    if not sp then return end
+    check(sp.state == "dormant" and sp.object.visible, "spirit should lie dormant: " .. case.id)
+    check(not sp.hotspot.enabled, "dormant spirit should not be aimable: " .. case.id)
+    world:updateSpirits(0, sp.home.x + 1, sp.home.z + 1, true)
+    check(Flow.isAwake(case) and sp.state == "rising", "spirit should rise when near: " .. case.id)
+    world:updateSpirits(3.0, sp.home.x + 1, sp.home.z + 1, false)
+    check(sp.state == "awake" and sp.hotspot.enabled, "spirit should stand and be aimable: " .. case.id)
+    -- mirar no morto e apertar E abre a conversa compacta, com a câmera voltada para ele
+    hud:closePanel()
+    hud:onWorldClick({ kind = "spirit", caseId = case.id })
+    check(hud.talking == case and hud.panelCompact and world.talkTarget == sp, "talk mode expected: " .. case.id)
+    check(hud.modalDim.visible, "talk panel lives under ModalDim and must stay visible: " .. case.id)
+    hud:closePanel()
+    check(hud.talking == nil and world.talkTarget == nil, "closing should end the talk: " .. case.id)
+end
+
 local function playCase(hud, case, makeMistake)
+    if not case.decision then wakeSpirit(hud, case) end
     hud:onWorldClick({ kind = "grave", grave = case.grave })
     check(hud.panelOpen, "grave panel should be open")
     check(Flow.currentCase() == case, "opening the grave should focus " .. case.id)
@@ -167,6 +188,12 @@ local function playCase(hud, case, makeMistake)
     end
     clickPanel(hud, case.fix.options[case.fix.correct])
     check(Flow.isResolved(case), "case should be resolved: " .. case.id)
+    local world = Flow.worldController
+    if world and world.spirits[case.id] then
+        local sp = world.spirits[case.id]
+        check(hud.panelCompact, "resolution should stay in talk mode: " .. case.id)
+        check(sp.state == "resting" and not sp.hotspot.enabled, "spirit should rest after the fix: " .. case.id)
+    end
     if case.newInscription then
         check(Flow.inscription(case.grave) == case.newInscription, "inscription should change: " .. case.id)
     end
@@ -279,6 +306,36 @@ function SelfTest.run(hud, endingKind)
     Log.print("SELFTEST: PASS (" .. endingKind .. ")")
 end
 
+-- Demonstração visual (desenvolvimento): executa passos com pausas para conferir a cena em capturas.
+-- Cada passo é { segundos de espera, função }; o log anuncia "DEMO step n" ao executar.
+function SelfTest.demoSteps(hud)
+    local world = Flow.worldController
+    return {
+        { 0.5, function()
+            clickOverlay(hud, "Iniciar")
+            hud:finishReveal(); clickOverlay(hud, "Pular")
+            hud:finishReveal(); clickOverlay(hud, "Começar")
+            world.character.position = Vector3(7.6, 0.05, 9.6)
+            world.yaw, world.pitch = 0, -4
+            world:applyLook()
+        end },
+        { 1.5, function() end },                                   -- 2: morto deitado à vista
+        { 0.5, function() world.character.position = Vector3(7.6, 0.05, 8.4) end },
+        { 1.0, function() end },                                   -- 4: levantando
+        { 2.5, function() end },                                   -- 5: de pé, virado para o coveiro
+        { 0.5, function()
+            Flow.markRead("grave:07"); Flow.noteClue("c1_lapide"); Flow.noteClue("c1_tosse"); Flow.noteClue("c1_carta")
+            hud:onWorldClick({ kind = "spirit", caseId = "c1" })
+        end },                                                     -- 6: conversa compacta
+        { 1.5, function() hud:pressSlot(2) end },                  -- 7: conclusão errada -> apresentar
+        { 1.0, function() hud:pressSlot(1) end },                  -- 8: zombaria (Taunt)
+        { 1.5, function() clickPanel(hud, "Tentar outra"); hud:pressSlot(1) end },
+        { 1.0, function() clickPanel(hud, "Carta de junho") end }, -- 10: aceita (Interact) -> correção
+        { 1.5, function() clickPanel(hud, "1845") end },           -- 11: registro corrigido: desaba (Death)
+        { 2.5, function() end },                                   -- 12: deitado em paz
+    }
+end
+
 -- Mira a câmera em cada objeto interativo e confere se a seleção pelo centro da tela o encontra
 function SelfTest.aimTest(world)
     local cam = world.camera
@@ -288,7 +345,7 @@ function SelfTest.aimTest(world)
     local savedYaw, savedPitch = world.yaw, world.pitch
     for _, h in ipairs(world.hotspots) do
       if h.enabled then
-        local c = h.mesh:getWorldAABB():getCenter()
+        local c = (h.box and h.box() or h.mesh:getWorldAABB()):getCenter()
         local dx, dy, dz = c.x - p.x, c.y - p.y, c.z - p.z
         world.yaw = math.deg(math.atan(-dx, -dz))
         world.pitch = math.deg(math.atan(dy, math.sqrt(dx * dx + dz * dz)))
