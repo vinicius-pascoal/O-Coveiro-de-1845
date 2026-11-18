@@ -182,7 +182,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|28#17
+          id: font|28#22
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -254,7 +254,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|18#52
+          id: font|18#69
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -442,7 +442,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#52
+              id: font|18#69
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -630,7 +630,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#52
+              id: font|18#69
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -818,7 +818,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|18#52
+              id: font|18#69
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -890,7 +890,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|20#34
+          id: font|20#65
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -1031,7 +1031,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|19#28
+              id: font|19#65
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -1445,7 +1445,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|30#18
+                  id: font|30#29
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -1517,7 +1517,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|17#23
+                  id: font|17#34
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -1589,7 +1589,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#34
+                  id: font|20#65
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -1777,7 +1777,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|20#34
+                      id: font|20#65
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -1965,7 +1965,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#52
+                      id: font|18#69
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2221,7 +2221,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#52
+                      id: font|18#69
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2477,7 +2477,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#52
+                      id: font|18#69
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -2733,7 +2733,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#52
+                      id: font|18#69
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -3057,7 +3057,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#52
+                      id: font|18#69
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -3313,7 +3313,7 @@ entities:
                     texture:
                       textureType: 2D
                       source: id
-                      id: font|18#52
+                      id: font|18#69
                       minFilter: linear
                       magFilter: linear
                       wrapU: repeat
@@ -3590,7 +3590,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|48#14
+              id: font|48#30
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -3662,7 +3662,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|22#14
+              id: font|22#31
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -3734,7 +3734,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|21#40
+              id: font|21#69
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -3922,7 +3922,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#34
+                  id: font|20#65
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -4178,7 +4178,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#34
+                  id: font|20#65
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -4434,7 +4434,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#34
+                  id: font|20#65
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -4690,7 +4690,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#34
+                  id: font|20#65
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -4898,7 +4898,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|15#40
+              id: font|15#58
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -5086,7 +5086,7 @@ entities:
                 texture:
                   textureType: 2D
                   source: id
-                  id: font|20#34
+                  id: font|20#65
                   minFilter: linear
                   magFilter: linear
                   wrapU: repeat
@@ -5498,7 +5498,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|28#17
+          id: font|28#22
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -5570,7 +5570,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|16#43
+          id: font|16#46
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -6050,7 +6050,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|15#40
+          id: font|15#58
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -6328,7 +6328,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|20#34
+              id: font|20#65
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -6400,7 +6400,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|16#43
+              id: font|16#46
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -6441,4 +6441,217 @@ entities:
             fixedHeight: false
             pivotBaseline: false
             pivotCentered: false
-shaderKeysHash: 48a83b9f4b71697185d0ab3b1ae3d5bd5715bf89
+  - type: Entity
+    entity: 1104
+    name: SpeechBubble
+    components:
+      transform:
+        position: [400, 200, 0]
+        rotation: [1, 0, 0, 0]
+        scale: [1, 1, 1]
+        worldPosition: [400, 200, 0]
+        worldRotation: [1, 0, 0, 0]
+        worldScale: [1, 1, 1]
+        localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [400, 200, 0, 1]]
+        modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [400, 200, 0, 1]]
+        normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        visible: true
+        billboardRotation: [1, 0, 0, 0]
+        billboard: false
+        fakeBillboard: false
+        cylindricalBillboard: false
+      ui:
+        primitiveType: triangles
+        vertexCount: 54
+        aabb:
+          min: [0, 0, 0]
+          max: [360, 90, 0]
+        worldAABB:
+          min: [400, 200, 0]
+          max: [760, 290, 0]
+        texture:
+          textureType: 2D
+          source: path
+          path: ui/horror/toast.png
+          minFilter: nearest
+          magFilter: nearest
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        color: [1, 1, 1, 0.97]
+        automaticFlipY: true
+        flipY: false
+        pointerMoved: false
+        focused: false
+      uilayout:
+        width: 360
+        height: 90
+        anchorPointLeft: 0
+        anchorPointTop: 0
+        anchorPointRight: 0
+        anchorPointBottom: 0
+        anchorOffsetLeft: 0
+        anchorOffsetTop: 0
+        anchorOffsetRight: 360
+        anchorOffsetBottom: 90
+        positionOffset: [400, 200]
+        pivot: [0, 0]
+        anchorPreset: TOP_LEFT
+        usingAnchors: true
+        panel: 0
+        containerBoxIndex: -1
+        scissor: [364.6578, 240.30583, 166.38126, 22.397476]
+        ignoreScissor: false
+        ignoreEvents: true
+      image:
+        patchMarginLeft: 24
+        patchMarginRight: 24
+        patchMarginTop: 24
+        patchMarginBottom: 24
+        textureScaleFactor: 0
+    children:
+      - type: Entity
+        entity: 1105
+        name: SpeechName
+        components:
+          transform:
+            position: [24, 14, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [424, 214, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [24, 14, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [424, 214, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 24
+            aabb:
+              min: [0, 0, 0]
+              max: [35, 12.875, 0]
+            worldAABB:
+              min: [424, 214, 0]
+              max: [459, 226.875, 0]
+            texture:
+              textureType: 2D
+              source: id
+              id: font|15#58
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: false
+            color: [0.8932889, 0.6120656, 0.26840952, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 35
+            height: 15
+            anchorPointLeft: 0
+            anchorPointTop: 0
+            anchorPointRight: 0
+            anchorPointBottom: 0
+            anchorOffsetLeft: 0
+            anchorOffsetTop: 0
+            anchorOffsetRight: 35
+            anchorOffsetBottom: 15
+            positionOffset: [24, 14]
+            pivot: [0, 0]
+            anchorPreset: TOP_LEFT
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [364.6578, 240.30583, 166.38126, 22.397476]
+            ignoreScissor: true
+            ignoreEvents: true
+          text:
+            font: []
+            text: Nome
+            fontSize: 15
+            multiline: true
+            maxTextSize: 2000
+            fixedWidth: false
+            fixedHeight: false
+            pivotBaseline: false
+            pivotCentered: false
+      - type: Entity
+        entity: 1106
+        name: SpeechText
+        components:
+          transform:
+            position: [24, 38, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [424, 238, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [24, 38, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [424, 238, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 3
+            aabb:
+              min: [0, 0, 0]
+              max: [0, 14.25, 0]
+            worldAABB:
+              min: [424, 238, 0]
+              max: [424, 252.25, 0]
+            texture:
+              textureType: 2D
+              source: id
+              id: font|18#69
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: false
+            color: [0.6120656, 0.9141063, 0.7548521, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 312
+            height: 18
+            anchorPointLeft: 0
+            anchorPointTop: 0
+            anchorPointRight: 0
+            anchorPointBottom: 0
+            anchorOffsetLeft: 0
+            anchorOffsetTop: 0
+            anchorOffsetRight: 312
+            anchorOffsetBottom: 18
+            positionOffset: [24, 38]
+            pivot: [0, 0]
+            anchorPreset: TOP_LEFT
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [364.6578, 240.30583, 166.38126, 22.397476]
+            ignoreScissor: true
+            ignoreEvents: true
+          text:
+            font: []
+            text: ""
+            fontSize: 18
+            multiline: true
+            maxTextSize: 2000
+            fixedWidth: true
+            fixedHeight: false
+            pivotBaseline: false
+            pivotCentered: false
+shaderKeysHash: 40c0dc43a114be7b9be69e37a728f66dc2d20848

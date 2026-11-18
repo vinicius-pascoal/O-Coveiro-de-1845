@@ -18,8 +18,12 @@ local TEXTS = {
     "NightText", "ObjectiveText", "ProgressLabel", "KeysText", "HoverLabel", "Crosshair", "ToastText",
     "PanelTitle", "PanelSubtitle", "PanelBody",
     "OverlayTitle", "OverlaySubtitle", "OverlayBody", "OverlayFooter",
-    "NotebookTitle", "NotebookText",
+    "NotebookTitle", "NotebookText", "SpeechName", "SpeechText",
 }
+local BUBBLE_MAX_TEXT_W = 330   -- largura máxima do texto do balão de fala
+local BUBBLE_PAD_X = 24
+local BUBBLE_TEXT_Y = 38
+local BUBBLE_SIDE_GAP = 70      -- distância da cabeça quando o balão vai para o lado
 local CHISEL_FILL_W = 238
 local NOTEBOOK_W = 440
 local ADVANCE_MAX_DELAY = 12   -- segundos para ler a resolução antes de a noite acabar
@@ -218,6 +222,9 @@ function HUDController:init()
     self.chiselBar = Image(s, findEntity(s, "ChiselBar"))
     self.chiselFill = Image(s, findEntity(s, "ChiselFill"))
     self.chiselBar.visible = false
+    self.bubbleBg = Image(s, findEntity(s, "SpeechBubble"))
+    self.bubbleBg.visible = false
+    self.bubble = nil
     self.notebookBg = Image(s, findEntity(s, "NotebookBg"))
     self.notebookBg.visible = false
     self.notebookOpen = false
@@ -254,17 +261,18 @@ function HUDController:init()
     end)
     Flow.on("spiritAwake", "hud", function(case)
         local sp = Flow.spirit(case)
-        self:say(sp.name .. ": " .. sp.awaken, "spirit", true)
+        self:speak(case.id, sp.name, sp.awaken)
     end)
     Flow.on("caseResolved", "hud", function(case) self:onResolved(case) end)
-    Flow.on("guideSay", "hud", function(speaker, text)
-        -- falas do vulto e dos mortos passam na frente da fila (não chegam atrasadas)
+    Flow.on("guideSay", "hud", function(speaker, text, source)
+        -- pensamentos do coveiro continuam na legenda; o que o vulto e os mortos dizem
+        -- aparece num balão sobre a cabeça de quem fala
         if speaker == "Severino" then
             self:say(text, "thought", true)
-        elseif speaker == "Sussurro" then
-            self:say(text, "whisper", true)
+        elseif source then
+            self:speak(source, speaker == "Sussurro" and "O vulto" or speaker, text)
         else
-            self:say(speaker .. ": " .. text, "spirit", true)
+            self:say(text, "whisper", true)
         end
     end)
     Flow.on("chiselProgress", "hud", function(_, p) self:setChiselProgress(p) end)
@@ -595,6 +603,11 @@ function HUDController:beginTalk(case)
     if self.talking ~= case then
         self.talking = case
         self:hideToast()   -- a legenda ocupa o mesmo lugar do painel da conversa
+        -- na conversa a barra do objetivo sai de cena: sobra o morto, o balão e as escolhas
+        if self.topBarShown then
+            self.topBarHiddenByTalk = true
+            self:setTopBarVisible(false)
+        end
         Flow.emit("talk", case)
     end
     return true
@@ -603,6 +616,12 @@ end
 function HUDController:endTalk()
     if self.talking then
         self.talking = nil
+        -- a fala fixa da conversa sai junto; falas com tempo (ex.: última fala do morto) continuam
+        if self.bubble and not self.bubble.timer then self:clearBubble() end
+        if self.topBarHiddenByTalk then
+            self.topBarHiddenByTalk = nil
+            self:setTopBarVisible(Flow.state.phase == "playing")
+        end
         Flow.emit("talkEnd")
     end
 end
@@ -863,6 +882,73 @@ function HUDController:onCasesOpened(list)
 end
 
 ----------------------------------------------------------------------
+-- Balão de fala sobre a cabeça de quem fala (mortos, Benedito, escrivão)
+----------------------------------------------------------------------
+-- key = "guide" ou o id do caso; persistent = fica até a conversa mudar (falas do confronto)
+function HUDController:speak(key, name, text, persistent)
+    if not text or text == "" then return end
+    local len = (utf8 and utf8.len(text)) or #text
+    self.bubble = { key = key, timer = (not persistent) and math.max(3.5, 2.5 + len / 14) or nil }
+    local t = self.text
+    t.SpeechName.text = name or ""
+    fitTextWidth(t.SpeechText, text, t.SpeechText.fontSize, BUBBLE_MAX_TEXT_W)
+    t.SpeechText.text = text
+end
+
+function HUDController:clearBubble()
+    self.bubble = nil
+    self.bubbleBg.visible = false
+end
+
+function HUDController:updateBubble(dt)
+    local b = self.bubble
+    if not b then
+        self.bubbleBg.visible = false
+        return
+    end
+    if b.timer then
+        b.timer = b.timer - dt
+        if b.timer <= 0 then
+            self:clearBubble()
+            return
+        end
+    end
+    -- some atrás de telas cheias e painéis grandes; na conversa (painel embaixo) continua
+    local world = Flow.worldController
+    if self.overlayOpen or (self.panelOpen and not self.panelCompact) or not world then
+        self.bubbleBg.visible = false
+        return
+    end
+    local t = self.text
+    local textW = math.max(t.SpeechText.width, estimateWidth(t.SpeechName.text, t.SpeechName.fontSize))
+    local w = textW + 2 * BUBBLE_PAD_X
+    local h = BUBBLE_TEXT_Y + self:textHeight(t.SpeechText) + 20
+    setSize(self.bubbleBg, w, h)
+
+    local cw, ch = Engine.canvasWidth, Engine.canvasHeight
+    local anchor = world:speakerAnchor(b.key)
+    local sx, sy
+    if anchor then sx, sy = world:projectToCanvas(anchor) end
+    local x, y
+    if sx and sx > -40 and sx < cw + 40 and sy > 0 and sy < ch then
+        -- centralizado acima da cabeça; se não couber (cabeça no alto da tela), ao lado dela
+        x, y = sx - w / 2, sy - h - 6
+        if y < SCREEN_MARGIN then
+            y = sy - 24
+            x = sx + BUBBLE_SIDE_GAP
+            if x + w > cw - SCREEN_MARGIN then x = sx - BUBBLE_SIDE_GAP - w end
+        end
+    else
+        -- quem fala está fora de vista: o balão fica no alto, ao centro
+        x, y = (cw - w) / 2, 110
+    end
+    x = clamp(x, SCREEN_MARGIN, cw - w - SCREEN_MARGIN)
+    y = clamp(y, SCREEN_MARGIN, ch - h - SCREEN_MARGIN)
+    self:place(self.bubbleBg, x, y)
+    self.bubbleBg.visible = true
+end
+
+----------------------------------------------------------------------
 -- Cinzel e resolução sem painel
 ----------------------------------------------------------------------
 -- p = 0..1 enquanto o cinzel trabalha; nil esconde a barra
@@ -881,7 +967,7 @@ function HUDController:onResolved(case)
     self:hideToast()   -- a instrução do cinzel dá lugar à história na hora
     self:say("Registro corrigido. " .. case.resolution, "info")
     local sp = Flow.spirit(case)
-    if sp and sp.rest then self:say(sp.name .. ": " .. sp.rest, "spirit") end
+    if sp and sp.rest then self:speak(case.id, sp.name, sp.rest) end
     self:refreshObjective()
     self.notebookDirty = true
     if #Flow.openCases() > 0 then
@@ -1277,6 +1363,22 @@ function HUDController:openNotes()
     })
 end
 
+-- Na conversa, o que o morto diz vai para o balão sobre a cabeça dele;
+-- o painel de baixo fica só com as escolhas do coveiro.
+function HUDController:spiritSays(case, line)
+    local spirit = Flow.spirit(case)
+    if self.talking == case and spirit and line then
+        self:speak(case.id, spirit.name, line, true)
+        return true
+    end
+    return false
+end
+
+local function talkSubtitle(case)
+    local spirit = Flow.spirit(case)
+    return "Diante de " .. (spirit and spirit.name or case.title) .. " — sepultura " .. N.graves[case.grave].number
+end
+
 -- Passo 1 do confronto: escolher a conclusão
 function HUDController:openConfront(case)
     case = case or Flow.currentCase()
@@ -1286,11 +1388,16 @@ function HUDController:openConfront(case)
     -- a decisão final só é tomada depois de ler tudo
     if case.decision and not Flow.canConfront(case) then
         local readCount, total = Flow.progress(case)
+        local body = Flow.hintText()
+        if talking then
+            self:spiritSays(case, spirit.notReady)
+            body = "Leia a última página do livro e o bilhete de Benedito antes de responder."
+        end
         self:showPanel({
-            title = talking and spirit.name or "A última página",
+            title = talking and "Sua resposta" or "A última página",
             subtitle = string.format("Fontes lidas: %d de %d", readCount, total),
             icon = "skull",
-            body = (talking and spirit.notReady or "Leia tudo antes de decidir.") .. "\n\n" .. Flow.hintText(),
+            body = body,
             talk = true,
             buttons = { { label = "Voltar à sepultura", icon = "home", action = function() self:openGrave(case.grave) end } },
         })
@@ -1303,20 +1410,20 @@ function HUDController:openConfront(case)
         end }
     end
     local body
-    if case.decision then
-        body = talking and (spirit.ask .. "\n" .. case.question) or case.question
+    if talking then
+        self:spiritSays(case, spirit.ask)
+        body = case.question
+    elseif case.decision then
+        body = case.question
     else
-        if talking then
-            -- na conversa o texto é curto, para o morto continuar à vista acima do painel
-            body = spirit.ask .. "\n" .. case.question .. " Escolha e depois prove."
-        else
-            body = case.question .. "\n\nEscolha a conclusão. Em seguida, apresente a anotação do caderno que a prova."
-        end
+        body = case.question .. "\n\nEscolha a conclusão. Em seguida, apresente a anotação do caderno que a prova."
+    end
+    if not case.decision then
         buttons[#buttons + 1] = { label = "Voltar à sepultura", icon = "home", action = function() self:openGrave(case.grave) end }
     end
     self:showPanel({
-        title = talking and spirit.name or (case.decision and "A última página" or ("Confrontar registros — sepultura " .. N.graves[case.grave].number)),
-        subtitle = talking and ("Sepultura " .. N.graves[case.grave].number .. (case.decision and " — a última página" or " — o morto espera a sua conclusão")) or case.title,
+        title = talking and "Sua resposta" or (case.decision and "A última página" or ("Confrontar registros — sepultura " .. N.graves[case.grave].number)),
+        subtitle = talking and talkSubtitle(case) or case.title,
         icon = "skull",
         body = body,
         talk = true,
@@ -1331,9 +1438,11 @@ function HUDController:openPresent(case, hypIndex)
     local buttons = {}
     local body
     if #noted == 0 then
+        self:spiritSays(case, "\"Você não anotou nada sobre mim. Volte quando tiver provas.\"")
         body = "\"" .. h.text .. "\"\n\nSeu caderno ainda não tem nada sobre este caso. Leia a lápide e os documentos e anote os detalhes que importam."
     else
-        body = "\"" .. h.text .. "\"\n\nQual anotação do caderno prova isso?"
+        self:spiritSays(case, "\"E com o que você prova isso, coveiro?\"")
+        body = "\"" .. h.text .. "\"\nQual anotação do caderno prova isso?"
         for i = 1, math.min(#noted, PANEL_SLOTS - 1) do
             local c = noted[i]
             buttons[#buttons + 1] = { label = c.text, icon = "candle", action = function() self:present(case, hypIndex, c.id) end }
@@ -1341,8 +1450,8 @@ function HUDController:openPresent(case, hypIndex)
     end
     buttons[#buttons + 1] = { label = "Voltar às conclusões", icon = "home", action = function() self:openConfront(case) end }
     self:showPanel({
-        title = "Apresentar a prova",
-        subtitle = "Sepultura " .. N.graves[case.grave].number .. " — " .. case.title,
+        title = self.talking == case and "Sua prova" or "Apresentar a prova",
+        subtitle = self.talking == case and talkSubtitle(case) or ("Sepultura " .. N.graves[case.grave].number .. " — " .. case.title),
         icon = "skull",
         body = body,
         talk = true,
@@ -1354,12 +1463,15 @@ function HUDController:present(case, hypIndex, clueId)
     local result = Flow.present(case, hypIndex, clueId)
     if not result then return end
     local review = { label = "Rever os documentos", icon = "home", action = function() self:openGrave(case.grave) end }
+    local fog = "A névoa sobre o cemitério fica um pouco mais densa."
+    -- na conversa, a resposta vem da boca do morto
+    local said = (result.kind == "wrong" or result.kind == "weak") and self:spiritSays(case, result.text)
     if result.kind == "wrong" then
         self:showPanel({
             title = "As provas não sustentam isso",
             icon = "wrong",
             subtitle = "O registro continua aberto",
-            body = result.text .. "\n\nA névoa sobre o cemitério fica um pouco mais densa.",
+            body = said and fog or (result.text .. "\n\n" .. fog),
             talk = true,
             buttons = {
                 { label = "Tentar outra conclusão", icon = "question", action = function() self:openConfront(case) end },
@@ -1371,7 +1483,7 @@ function HUDController:present(case, hypIndex, clueId)
             title = "Essa anotação não prova isso",
             icon = "wrong",
             subtitle = "A conclusão pode estar certa, mas falta a prova",
-            body = result.text .. "\n\nA névoa sobre o cemitério fica um pouco mais densa.",
+            body = said and fog or (result.text .. "\n\n" .. fog),
             talk = true,
             buttons = {
                 { label = "Apresentar outra anotação", icon = "candle", action = function() self:openPresent(case, hypIndex) end },
@@ -1397,10 +1509,16 @@ function HUDController:openFix(case, justProven)
         buttons[#buttons + 1] = { label = opt, icon = "plus", action = function() self:applyFix(case, i) end }
     end
     buttons[#buttons + 1] = { label = "Voltar à sepultura", icon = "home", action = function() self:openGrave(case.grave) end }
-    local intro = justProven and "As provas sustentam a sua conclusão. Agora corrija com a sua própria mão:" or "Complete a correção:"
+    local said = self:spiritSays(case, justProven and "\"...é isso. Agora escreva, com a sua mão.\"" or "\"Escreva, coveiro.\"")
+    local intro
+    if said then
+        intro = "Complete a inscrição:"
+    else
+        intro = justProven and "As provas sustentam a sua conclusão. Agora corrija com a sua própria mão:" or "Complete a correção:"
+    end
     self:showPanel({
         title = fix.title,
-        subtitle = "Sepultura " .. N.graves[case.grave].number .. " — " .. case.title,
+        subtitle = said and talkSubtitle(case) or ("Sepultura " .. N.graves[case.grave].number .. " — " .. case.title),
         icon = "tomb",
         body = intro .. "\n\n" .. fix.prompt,
         talk = true,
@@ -1412,11 +1530,12 @@ function HUDController:applyFix(case, optionIndex)
     local result = Flow.fix(case, optionIndex)
     if not result then return end
     if result.kind == "fixWrong" then
+        local said = self:spiritSays(case, result.text)
         self:showPanel({
             title = "A mão hesita",
             icon = "wrong",
             subtitle = case.fix.title,
-            body = result.text,
+            body = said and "A pedra recusa o que você ia escrever. Escolha de novo." or result.text,
             talk = true,
             buttons = { { label = "Escrever de novo", icon = "question", action = function() self:openFix(case) end } },
         })
@@ -1801,6 +1920,7 @@ function HUDController:onUpdate()
     Flow.tick(dt)
     self:updateReveal(dt)
     self:updateNotebook()
+    self:updateBubble(dt)
 
     -- O motor mede os textos depois que eles mudam: refaz a diagramação com as medidas atuais
     if self.shrinkWait > 0 then self.shrinkWait = self.shrinkWait - 1 end

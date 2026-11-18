@@ -588,7 +588,7 @@ function WorldController:playGuide(name, loop, fade)
 end
 
 function WorldController:guideSay(node)
-    if node.say then Flow.emit("guideSay", node.say[1], node.say[2]) end
+    if node.say then Flow.emit("guideSay", node.say[1], node.say[2], "guide") end
 end
 
 function WorldController:hideGuide()
@@ -684,7 +684,7 @@ function WorldController:updateGuide(dt, px, pz)
         if g.finaleLine then
             g.finaleLineDelay = g.finaleLineDelay - dt
             if g.finaleLineDelay <= 0 then
-                Flow.emit("guideSay", "Benedito", g.finaleLine)
+                Flow.emit("guideSay", "Benedito", g.finaleLine, "guide")
                 g.finaleLine = nil
             end
         end
@@ -768,7 +768,7 @@ function WorldController:scribeFinale(kind)
                 self:playSpirit(sp, "Skeletons_Taunt", false, "Skeletons_Idle", 0.15)
             end
             local line = data.finale and data.finale[kind]
-            if line then Flow.emit("guideSay", data.name, line) end
+            if line then Flow.emit("guideSay", data.name, line, id) end
         end
     end
 end
@@ -799,6 +799,48 @@ function WorldController:guideFinale(kind)
     -- a fala dele vem depois da do escrivão, para as duas serem lidas
     g.finaleLine = N.beneditoFinale and N.beneditoFinale[kind]
     g.finaleLineDelay = 1.8
+end
+
+----------------------------------------------------------------------
+-- Balões de fala: posição de quem fala e projeção na tela
+----------------------------------------------------------------------
+-- key = "guide" (Benedito) ou o id do caso do morto. Devolve o ponto acima da cabeça (ou nil)
+function WorldController:speakerAnchor(key)
+    local obj, height
+    if key == "guide" then
+        local g = self.guide
+        if not g or not g.object.visible then return nil end
+        obj, height = g.object, (g.mode == "lying") and 0.7 or 1.6
+    else
+        local sp = self.spirits[key]
+        if not sp or not sp.object.visible then return nil end
+        local data = N.spirits[key] or {}
+        obj = sp.object
+        if data.standing then
+            height = 2.0
+        elseif sp.state == "dormant" or (sp.state == "resting" and sp.anim == "Skeletons_Death_Pose") then
+            height = 0.7
+        else
+            height = 1.6
+        end
+    end
+    local p = obj.position
+    return Vector3(p.x, p.y + height, p.z)
+end
+
+-- Ponto do mundo -> pixels do canvas da interface (nil se estiver atrás da câmera)
+function WorldController:projectToCanvas(pos)
+    local m = self.camera:getViewProjectionMatrix()
+    local v = { pos.x, pos.y, pos.z, 1 }
+    local c = {}
+    for j = 0, 3 do
+        local s = 0
+        for i = 0, 3 do s = s + m:get(i, j) * v[i + 1] end
+        c[j + 1] = s
+    end
+    if c[4] <= 0.05 then return nil end
+    local nx, ny = c[1] / c[4], c[2] / c[4]
+    return (nx + 1) * 0.5 * Engine.canvasWidth, (1 - ny) * 0.5 * Engine.canvasHeight
 end
 
 ----------------------------------------------------------------------

@@ -67,12 +67,19 @@ local function wakeSpirit(hud, case)
     hud:closePanel()
     hud:onWorldClick({ kind = "spirit", caseId = case.id })
     check(hud.talking == case and hud.panelCompact and world.talkTarget == sp, "talk mode expected: " .. case.id)
+    -- o que o morto diz fica num balão sobre ele; o painel de baixo traz só as escolhas
+    check(hud.bubble and hud.bubble.key == case.id and hud.bubble.timer == nil, "the dead should speak in a bubble: " .. case.id)
+    check(hud.text.PanelTitle.text == "Sua resposta", "the bottom panel should hold the player's answer: " .. case.id)
+    hud:updateBubble(0)
+    local ax = world:speakerAnchor(case.id)
+    check(ax ~= nil, "speaker anchor expected: " .. case.id)
     check(hud.modalDim.visible, "talk panel lives under ModalDim and must stay visible: " .. case.id)
     if case.decision then
-        check(hud.text.PanelBody.text:find("Ninguém assina", 1, true) ~= nil, "the scribe should refuse before the reading")
+        check(hud.text.SpeechText.text:find("Ninguém assina", 1, true) ~= nil, "the scribe should refuse (in a speech bubble) before the reading")
     end
     hud:closePanel()
     check(hud.talking == nil and world.talkTarget == nil, "closing should end the talk: " .. case.id)
+    check(hud.bubble == nil, "closing the talk should clear the dead's line: " .. case.id)
 end
 
 -- Benedito, o guia: o coveiro anda colado nele até a rota da noite acabar
