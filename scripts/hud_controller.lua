@@ -1346,7 +1346,7 @@ function HUDController:openNotes()
         lines[1] = "Nenhuma anotação ainda. Os detalhes que você anotar nos documentos e cada registro corrigido ficarão aqui."
     end
     local buttons = { { label = "Voltar ao livro", icon = "home", action = function() self:openBook() end } }
-    if Flow.state.flags.night2_event then
+    if Flow.isRead("testemunho_vigario") then
         table.insert(buttons, 1, {
             label = "Reler o testemunho do Padre Inácio", icon = "check",
             action = function() self:openEvidence("testemunho_vigario", function() self:openNotes() end) end,
@@ -1391,7 +1391,7 @@ function HUDController:openConfront(case)
         local body = Flow.hintText()
         if talking then
             self:spiritSays(case, spirit.notReady)
-            body = "Leia a última página do livro e o bilhete de Benedito antes de responder."
+            body = "Leia a última página do livro e a ordem da Câmara, na cripta, antes de responder."
         end
         self:showPanel({
             title = talking and "Sua resposta" or "A última página",

@@ -1,5 +1,10 @@
 -- NarrativeData: todo o texto do jogo. Pessoas, lugares e acontecimentos são ficcionais.
 -- A lógica (game/flow.lua) e a interface (hud_controller.lua) apenas leem esta tabela.
+-- Roteiro de referência: ROTEIRO_O_COVEIRO_DE_1845_JAM (v1.0).
+--
+-- Cânone: o livro altera seus próprios registros e as lápides; por isso o livro e a pedra
+-- costumam contar a mesma mentira. Só papéis independentes (cartas, assentos paroquiais,
+-- folhas da irmandade) sobrevivem como vestígio, e são eles que provam cada caso.
 
 local N = {}
 
@@ -12,74 +17,86 @@ N.nightCount = 3
 ----------------------------------------------------------------------
 N.graves = {
     [1] = { number = "01", entity = "Grave01", name = "Sepultura sem nome",
-            inscription = "AQUI JAZ\n(o nome foi raspado da pedra)\nFaleceu em 1844" },
-    [2] = { number = "02", entity = "Grave02", name = "Maria das Dores",
-            inscription = "MARIA DAS DORES SANTOS\nLavadeira do Paramopama\nFaleceu em 1845" },
+            inscription = "COVA 01\nSEM NOME\n(a pedra foi raspada)" },
+    [2] = { number = "02", entity = "Grave02", name = "Maria Nunes",
+            inscription = "MARIA NUNES\nLavadeira do Paramopama\nFaleceu em 1845" },
     [3] = { number = "03", entity = "Grave03", name = "Joaquina de Jesus",
             inscription = "JOAQUINA DE JESUS\nRendeira\nFaleceu em 1844" },
     [4] = { number = "04", entity = "Grave04", name = "José de Santana",
-            inscription = "JOSÉ DE SANTANA\nTocou o sino da Matriz por quarenta anos\nFaleceu em 1844" },
+            inscription = "JOSÉ DE SANTANA\nCarpinteiro\nFaleceu em 1844" },
     [5] = { number = "05", entity = "Grave05", name = "Ana Beatriz de Almeida",
             inscription = "ANA BEATRIZ DE ALMEIDA\nProfessora de primeiras letras\nFaleceu em 1846" },
     [6] = { number = "06", entity = "Grave06", name = "Lápide lisa",
             inscription = "(A pedra está lisa. Nenhum nome, nenhuma data.)" },
     [7] = { number = "07", entity = "Grave07", name = "Antônio Ferreira",
-            inscription = "ANTÔNIO FERREIRA\nMestre do saveiro Bom Jesus\nFaleceu em 1843" },
+            inscription = "ANTÔNIO FERREIRA\nMestre do saveiro Bom Jesus\nFaleceu em 12/06/1843" },
 }
 
 ----------------------------------------------------------------------
 -- Documentos (livro de registros e papéis avulsos)
 -- kind: "book" (entrada do livro) | "letter" | "testimony" | "record"
+-- place: lugar do cemitério onde o papel espera (sem place, é lido na própria sepultura)
 -- variants: textos que substituem/complementam o corpo quando uma flag é ativada
 ----------------------------------------------------------------------
 N.evidence = {
+    -- Nomeação de Severino, presa no portão na primeira noite (não pertence a nenhum caso)
+    ["oficio_nomeacao"] = { kind = "record", place = "gate", title = "Ofício de nomeação",
+        subtitle = "Câmara Municipal, novembro de 1845",
+        body = "\"Por ordem da Câmara Municipal, Severino Lopes assume o ofício de coveiro e zelador do campo-santo desta vila, com a obrigação de manter em ordem o livro de registros, conforme o que nele estiver escrito.\"\n\nNo lugar do nome do antigo zelador, alguém deixou um espaço em branco." },
+
+    -- c1: Antônio Ferreira
     ["book:07"] = { kind = "book", title = "Livro de registros — nº 07",
-        body = "Registro nº 07 — Antônio Ferreira, 52 anos, mestre do saveiro Bom Jesus. Falecido de febre em 3 de março de 1845. Sepultado no mesmo dia.\n\nAo pé da linha: \"Lançado por ordem da Câmara.\"" },
-    ["carta_rosa"] = { kind = "letter", place = "desk", title = "Carta de Rosa Ferreira",
-        subtitle = "Estância, 20 de junho de 1844",
-        body = "\"Meu pai, recebi as redes que o senhor mandou no Bom Jesus em maio. Mãe diz que o senhor tosse demais e que é para largar o sal das velas antes da chuva. Mande notícias pelo próximo saveiro.\n\nSua filha, Rosa Ferreira.\"" },
+        body = "Registro nº 07 — Antônio Ferreira, mestre do saveiro Bom Jesus. Falecido em 12 de junho de 1843.\n\nA tinta é a mesma da pedra: firme, sem rasura." },
+    ["bilhete_rosa"] = { kind = "letter", title = "Bilhete de Rosa Ferreira",
+        subtitle = "Deixado ao pé da cova 07",
+        body = "\"Pai deixou o barco depois da travessia. Ainda tenho sua última carta, guardada com as redes. Não sei mais em que ano ela chegou; só sei que ele ainda ria do rio.\n\nRosa\"" },
+    ["assento_antonio"] = { kind = "record", place = "desk", title = "Assento de sepultamento",
+        subtitle = "Assinado pelo vigário, Padre Inácio",
+        body = "\"Antônio Ferreira, mestre do saveiro Bom Jesus, falecido em 12 de junho de 1845. Sepultamento autorizado no dia seguinte, no campo-santo desta vila.\"\n\nO papel é da paróquia, não da Câmara. O livro nunca o tocou." },
 
+    -- c2: Maria das Dores Nunes Santos
     ["book:02"] = { kind = "book", title = "Livro de registros — nº 02",
-        body = "Registro nº 02 — Maria das Dores Nunes, 34 anos, lavadeira. Sepultada em 12 de agosto de 1845.\n\nÀ margem, em outra tinta: \"Não confundir com M. das Dores Santos — sem registro de óbito.\"" },
-    ["assento_casamento"] = { kind = "record", place = "crypt", title = "Assento de casamento",
-        subtitle = "Livro de casamentos da Matriz, 1840",
-        body = "\"Aos nove dias de maio de 1840, recebem-se em matrimônio Firmino dos Santos e Maria das Dores Nunes, lavadeira, que daqui em diante passa a assinar Maria das Dores Santos.\"\n\nAssina o Padre Inácio." },
+        body = "Registro nº 02 — Maria Nunes, lavadeira. Sepultada em 1845.\n\nSó isso. Nem o dia, nem o mês." },
+    ["bilhete_firmino"] = { kind = "letter", title = "Bilhete de Firmino dos Santos",
+        subtitle = "Canteiro, marido de Maria — preso à cruz da cova 02",
+        body = "\"Chamavam-na Maria Nunes, mas em casa era Das Dores. Depois da febre, mandaram gravar somente o nome curto. Eu, que talho pedra para a vila inteira, não tive licença de talhar a dela.\n\nFirmino\"" },
+    ["extrato_paroquial"] = { kind = "record", place = "crypt", title = "Extrato paroquial",
+        subtitle = "Livros da Matriz — casamentos e sepultamentos",
+        body = "Casamento, maio de 1840: \"Firmino dos Santos e Maria das Dores Nunes, lavadeira.\"\n\nSepultamento, agosto de 1844: \"Maria das Dores Nunes Santos, mulher de Firmino dos Santos. Febre.\"\n\nAssina o Padre Inácio." },
 
+    -- c3: José de Santana
     ["book:04"] = { kind = "book", title = "Livro de registros — nº 04",
-        body = "Duas linhas para o mesmo número, na mesma letra:\n\n• José de Santana, 61 anos, sineiro. Sepultado em 9 de abril de 1844.\n• José de Santana, 27 anos, carpinteiro. Sepultado em 9 de abril de 1844." },
-    ["testemunho_vigario"] = { kind = "testimony", place = "desk", title = "Testemunho do Padre Inácio",
-        subtitle = "Escrito em abril de 1844",
-        body = "\"Enterrei o velho José com a corda do sino nas mãos, como ele pediu. O moço carpinteiro, do mesmo nome, foi levado junto com os outros da febre para a vala do fundo, sem cruz.\"",
-        variants = {
-            { flag = "night2_event", append = "\n\nUma frase nova surgiu ao pé da página, na mesma letra:\n\"Quem lançava os mortos da febre era Benedito Ramos, o zelador. Dizia que a Câmara mandava escrever menos. Depois do São João, ninguém o viu mais.\"" },
-        } },
-    ["inventario_04"] = { kind = "record", place = "grave04", title = "Inventário da sepultura 04",
-        subtitle = "Reforma do muro, 1845",
-        body = "Objetos achados ao reabrir a sepultura 04:\n\n• um pedaço de corda de sino, trançada;\n• um rosário de contas pretas;\n• nenhuma ferramenta." },
+        body = "Lista de óbitos resumida pela Câmara:\n\n\"José de Santana. Sepultado no nº 04.\"\n\nNenhuma idade. Nenhum ofício. Uma linha só." },
+    ["folha_irmandade"] = { kind = "record", place = "grave04", title = "Folha da Irmandade do Sino",
+        subtitle = "Caída ao pé da sepultura 04",
+        body = "Irmãos falecidos, pela ordem:\n\n• José de Santana, carpinteiro, 27 anos. Febre, 1844. Levado à vala do fundo.\n• José de Santana, sineiro da Matriz por quarenta anos. Sepultado no nº 04, em 1845, com a corda do sino nas mãos." },
 
+    -- c4: Ana Beatriz de Almeida
     ["book:05"] = { kind = "book", title = "Livro de registros — nº 05",
-        body = "Registro nº 05 — Ana Beatriz de Almeida, 29 anos, professora de primeiras letras. Falecida em 2 de setembro de 1845, sepultada no dia seguinte." },
-    ["carta_tomas"] = { kind = "letter", title = "Carta de Tomás de Almeida",
-        subtitle = "4 de setembro de 1845",
-        body = "\"Meu tio, enterramos Ana ontem, ao lado da cova do sineiro. Os alunos levaram flores de algodão. Não sei como contar à mãe.\"" },
-    ["bilhete_canteiro"] = { kind = "letter", place = "gate", title = "Bilhete do canteiro Firmino",
-        subtitle = "Preso à grade do portão",
-        body = "\"Gravei 1845, como me pediram, e cobrei por isso. Se a pedra agora diz outra coisa, não foi a minha mão. Os sulcos do 6 são novos — qualquer um vê.\"" },
+        body = "Registro nº 05 — Ana Beatriz de Almeida, professora de primeiras letras. Falecida em 1846.\n\nO ano ainda não chegou. A tinta não sabe disso." },
+    ["carta_tomas"] = { kind = "letter", place = "gate", title = "Carta de Tomás de Almeida",
+        subtitle = "Presa na grade do portão",
+        body = "\"Voltei à escola meses depois do seu enterro. Suas crianças ainda desenhavam a palavra 'lembrar' nas lousas, do jeito que ela ensinou. Ninguém teve coragem de apagar.\n\nTomás\"" },
+    ["comprovante_ana"] = { kind = "record", place = "crypt", title = "Comprovante paroquial de enterro",
+        subtitle = "Guardado no arquivo da Câmara",
+        body = "\"Ana Beatriz de Almeida, professora de primeiras letras, falecida em 1844, sepultada no mês de outubro do mesmo ano.\"\n\nAssina o Padre Inácio. O papel está úmido, mas a data não mudou." },
 
+    -- c5: a primeira cova
     ["book:01"] = { kind = "book", title = "Livro de registros — nº 01",
-        body = "Registro nº 01 — a linha está em branco desde 1844.\n\nEsta noite, letra por letra, um nome aparece: \"Benedito Ramos, zelador e coveiro. Causa da morte: —\"\n\nO resto continua em branco." },
+        body = "Registro nº 01 — a linha está em branco desde 1844.\n\nHá marcas de raspagem no papel, como se alguém tivesse tirado um nome com a ponta de uma faca." },
     ["pagina_rasgada"] = { kind = "letter", title = "Página rasgada",
         subtitle = "Presa entre as últimas folhas do livro",
-        body = "\"...os mortos da febre não cabem no número que a Câmara quer. Mandam lançar com datas espalhadas, para o porto não fechar. Não escrevo mais o que me mandam. Se eu sumir, procurem na primeira cova.\"\n\n— B. R." },
-    ["oficio_camara"] = { kind = "record", place = "crypt", title = "Ofício da Câmara Municipal",
-        subtitle = "Julho de 1844 — achado no arquivo da cripta",
-        body = "\"Ordena-se ao zelador que os óbitos da febre sejam lançados com datas diversas e em números separados, para não alarmar o porto nem afastar os navios. O desobediente será dispensado, e seu nome, riscado.\"" },
+        body = "\"...os mortos da febre não cabem no número que a Câmara quer. Não escrevo mais o que me mandam. Se eu sumir, procurem na primeira cova.\"\n\n— B. R." },
+    ["testemunho_vigario"] = { kind = "testimony", place = "crypt", title = "Testemunho do Padre Inácio",
+        subtitle = "Apareceu no arquivo da Câmara",
+        body = "\"Benedito Ramos, zelador do campo-santo, foi enterrado na primeira cova no inverno de 1844. Aceitei que seu nome não fosse escrito.\"\n\nA última linha está fresca:\n\"Era ele quem guardava este livro. Recusei-me a falar quando pediram silêncio.\"" },
 
+    -- c6: a lápide lisa
     ["book:06"] = { kind = "book", title = "Livro de registros — última página",
-        body = "Uma linha nova, na mesma letra de todos os registros:\n\n\"Registro nº 06 — Severino Lopes, coveiro. Sepultado em 25 de novembro de 1845.\"\n\nHoje é 17 de novembro de 1845." },
-    ["nota_benedito"] = { kind = "letter", title = "Bilhete de Benedito Ramos",
-        subtitle = "Dobrado dentro do ofício da Câmara",
-        body = "\"O livro guarda a vila inteira. Quem o mantém em ordem acaba escrito nele. Para que uma história fique limpa, outra precisa ser esquecida.\n\nEu escolhi não esquecer. Agora é a sua vez de escolher.\"" },
+        body = "Uma linha nova, na mesma letra de todos os registros:\n\n\"Severino Lopes, coveiro. Sepultado em 25 de novembro de 1845.\"\n\nHoje é 17 de novembro de 1845." },
+    ["oficio_camara"] = { kind = "record", place = "crypt", title = "Ordem da Câmara sobre a febre",
+        subtitle = "Julho de 1844 — achada no arquivo da cripta",
+        body = "\"Ordena-se ao zelador que os falecimentos sejam lançados em datas diversas e em números separados, para que o porto não sofra alarme nem perca os navios. O desobediente será dispensado, e seu nome, riscado.\"" },
 }
 
 ----------------------------------------------------------------------
@@ -93,6 +110,11 @@ N.places = {
     grave04 = { entity = "PaperGrave04", label = "o papel no chão", where = "no chão, ao pé da sepultura 04" },
 }
 
+-- Papéis avulsos que não pertencem a caso nenhum: ficam no lugar durante a noite indicada
+N.looseDocs = {
+    { id = "oficio_nomeacao", night = 1 },
+}
+
 ----------------------------------------------------------------------
 -- Os mortos de cada caso: um esqueleto deitado ao lado da cova que se levanta
 -- quando o coveiro chega perto. É a ele que se apresentam as provas.
@@ -101,30 +123,30 @@ N.places = {
 ----------------------------------------------------------------------
 N.spirits = {
     c1 = { entity = "Spirit_c1", name = "Antônio Ferreira",
-           awaken = "...a pedra diz que eu morri antes de mandar as redes para a minha filha. Quem mente, coveiro?",
-           ask = "\"Diga o que os papéis sustentam sobre mim, coveiro.\"",
-           rest = "...remos... agora a Rosa sabe onde eu estou." },
+           awaken = "...tiraram-me dois anos. O rio ainda lembra.",
+           ask = "\"De que ano é a minha morte, coveiro?\"",
+           rest = "...agora a minha filha pode contar os dias certos." },
     c2 = { entity = "Spirit_c2", name = "Maria das Dores",
-           awaken = "...Nunes, Santos... me partiram em duas mulheres, e nenhuma tem cova.",
-           ask = "\"Quem eu sou, afinal? Diga, e prove.\"",
-           rest = "...inteira de novo." },
+           awaken = "...levaram meu sobrenome como se fosse roupa no rio.",
+           ask = "\"Quem sou eu neste chão?\"",
+           rest = "...meu nome inteiro. Que não me lavem da memória." },
     c3 = { entity = "Spirit_c3", name = "José de Santana",
-           awaken = "...quarenta anos tocando o sino da Matriz. Quem é o outro José na minha linha?",
-           ask = "\"Quem está, de fato, debaixo desta pedra?\"",
-           rest = "...o moço da vala também tem nome agora. Toque por ele." },
+           awaken = "...um nome, dois homens. Nem o meu sino me reconhece.",
+           ask = "\"De quem é o ofício escrito nesta pedra?\"",
+           rest = "...que o outro José também seja lembrado, mesmo sem cruz." },
     c4 = { entity = "Spirit_c4", name = "Ana Beatriz de Almeida",
-           awaken = "...meus alunos me enterraram em 1845. Quem cortou um 6 na minha pedra?",
-           ask = "\"Por que a minha pedra diz 1846? Mostre-me.\"",
-           rest = "...a tinta ainda está úmida em outras páginas. Cuidado com o livro." },
+           awaken = "...até o futuro me roubaram.",
+           ask = "\"Que ano a pedra deveria contar?\"",
+           rest = "...ensinei letras para que os nomes não se perdessem." },
     c5 = { entity = "Spirit_c5", name = "Benedito Ramos",
-           awaken = "...você achou a primeira cova. Sabe por que me apagaram?",
-           ask = "\"Diga em voz alta o que fizeram comigo. E com o que você prova.\"",
-           rest = "...agora o livro é seu. Escolha melhor do que a Câmara." },
+           awaken = "...passei a vida pondo nome nos outros. Não guardei o meu.",
+           ask = "\"Quem repousa na primeira cova?\"",
+           rest = "...agora já não precisas que eu te guie." },
     -- A mão que escreve o livro: não se levanta do chão, está de pé escrevendo ao lado da lápide lisa
     c6 = { entity = "Spirit_c6", name = "O escrivão do livro", standing = true,
-           awaken = "...toda vila precisa de alguém que escreva por ela, coveiro. Benedito recusou. Você vai recusar?",
-           ask = "\"A última página espera a sua letra. O que esta vila vai lembrar?\"",
-           notReady = "\"Ainda não leu a página inteira, coveiro. Ninguém assina o que não leu.\"",
+           awaken = "...sem o livro, a vila terá de lembrar. Sozinha.",
+           ask = "\"Teu nome já tem data. Queres mesmo riscá-la?\"",
+           notReady = "\"A ordem preservou o porto; o porto preservou a vila. Ninguém assina o que não leu.\"",
            finale = {
                reveal = "...não! Sem mim, cada um vai lembrar de um jeito...",
                preserve = "...bom coveiro. A página do dia 25 já está pronta.",
@@ -139,28 +161,33 @@ N.spirits = {
 --   follow = r: ao chegar, espera o coveiro se aproximar a r metros antes de seguir
 --   act   = animação que toca uma vez quando a espera acaba; say = fala nesse momento
 --   vanish = some depois; lie = deita-se ali (e vira o morto da cova 01)
+-- Nas noites 1 e 2 o nome dele ainda não é conhecido: fala como "Sussurro" (balão "O vulto").
 ----------------------------------------------------------------------
 N.benedito = { entity = "Benedito", name = "Benedito Ramos" }
 
 N.guideRoutes = {
     [1] = {
         { x = 6.0, z = -16.1, faceX = 6.0, faceZ = -17.0, anim = "Use_Item", wait = { near = 7 },
-          say = { "Severino", "Havia alguém debruçado sobre o livro, escrevendo. Agora não há ninguém." }, vanish = true },
+          say = { "Severino", "Ouvi o raspar de uma pena. Havia alguém debruçado sobre o livro. Agora não há ninguém." }, vanish = true },
     },
+    -- mesa → cova 04 → porta da cripta
     [2] = {
-        { x = 1.7, z = 16.4, anim = "Skeletons_Idle", wait = { near = 5 }, act = "Interact",
-          say = { "Sussurro", "...o canteiro deixou um recado na grade... leia antes que a chuva leve..." } },
-        { x = 2.5, z = 8.0 },
-        { x = 9.0, z = -4.0 },
-        { x = 11.0, z = -6.0, anim = "Skeletons_Idle", wait = { near = 4.5 }, act = "Interact",
-          say = { "Sussurro", "...o que tiraram da cova 04 ficou no chão. Ninguém quis guardar..." } },
+        { x = 4.6, z = -15.3, anim = "Skeletons_Idle", wait = { near = 5 }, act = "Interact",
+          say = { "Sussurro", "...o livro diz pouco; procura o que caiu dele..." } },
         { x = 9.0, z = -12.0 },
-        { x = 4.6, z = -15.3, anim = "Skeletons_Idle", wait = { near = 4.5 }, act = "Interact",
-          say = { "Sussurro", "...o padre escreveu mais do que contou..." }, vanish = true },
+        { x = 11.0, z = -6.0, anim = "Skeletons_Idle", wait = { near = 4.5 }, act = "Interact",
+          say = { "Sussurro", "...dois Josés. Só um ganhou a pedra..." } },
+        { x = 9.0, z = -12.0 },
+        { x = 3.5, z = -13.9 },
+        { x = 0.5, z = -12.9 },
+        { x = -2.5, z = -12.4 },
+        { x = -5.5, z = -11.4 },
+        { x = -8.5, z = -11.0, faceX = -11.0, faceZ = -13.5, anim = "Skeletons_Idle", wait = { near = 4.5 }, act = "Interact",
+          say = { "Sussurro", "...o vigário escreveu mais do que contou..." }, vanish = true },
     },
     [3] = {
         { x = 4.6, z = -15.3, anim = "Skeletons_Idle", wait = { near = 8 }, act = "Interact",
-          say = { "Benedito", "...siga as velas, coveiro. Eu sei o caminho de cor." } },
+          say = { "Benedito", "...fui eu quem te trouxe até aqui. Siga as velas, coveiro." } },
         { x = 3.5, z = -13.9, follow = 8 },
         { x = 0.5, z = -12.9, follow = 8 },
         { x = -2.5, z = -12.4, follow = 8 },
@@ -180,20 +207,20 @@ N.beneditoFinale = {
 -- O que o cemitério faz quando um registro é corrigido (além das velas na cova e do clarão da lua)
 -- shake = segundos de tremor da câmera; flash = força do clarão
 N.resolutionEffects = {
-    c1 = { flash = 0.6 },                -- remos n'água, velas acesas
-    c2 = { flash = 0.5 },
-    c3 = { flash = 0.4, shake = 0.35 },  -- o sino toca uma vez
-    c4 = { flash = 0.8 },                -- tinta úmida: alguém continua escrevendo
-    c5 = { flash = 1.0, shake = 0.8 },   -- a pedra da primeira cova range
+    c1 = { flash = 0.6 },                -- água ao longe
+    c2 = { flash = 0.5 },                -- pingos de roupa torcida; o livro treme
+    c3 = { flash = 0.4, shake = 0.35 },  -- uma badalada solitária
+    c4 = { flash = 0.8 },                -- o 6 perde o brilho; a pena risca sozinha
+    c5 = { flash = 1.0, shake = 0.8 },   -- as velas apagam; luz fria na lápide 06
 }
 
 -- Sussurros depois de uma conclusão errada (em ordem, um por erro)
 N.mistakeWhispers = {
-    "...não foi assim que aconteceu...",
-    "...a pedra lembra o que você escreve...",
-    "...mais um nome torto no livro...",
-    "...nós vimos. nós estávamos lá...",
-    "...quem escreve errado também é escrito...",
+    "...uma pedra lembra o que lhe mandam...",
+    "...nem toda tinta é testemunha...",
+    "...há nomes demais para tão poucas datas...",
+    "...o livro prefere uma história sem falhas...",
+    "...teu nome também cabe numa linha...",
 }
 
 ----------------------------------------------------------------------
@@ -201,52 +228,42 @@ N.mistakeWhispers = {
 -- Alguns provam a conclusão do caso; outros são verdadeiros mas não provam nada.
 ----------------------------------------------------------------------
 N.clues = {
-    ["grave:07"] = { { id = "c1_lapide", text = "Lápide: \"Faleceu em 1843\"" } },
-    ["book:07"] = {
-        { id = "c1_livro", text = "Livro: morto de febre em março de 1845" },
-        { id = "c1_camara", text = "Livro: \"Lançado por ordem da Câmara\"" },
-    },
-    ["carta_rosa"] = {
-        { id = "c1_carta", text = "Carta de junho de 1844: o pai mandou redes" },
-        { id = "c1_tosse", text = "Carta: \"o senhor tosse demais\"" },
+    ["grave:07"] = { { id = "c1_lapide", text = "Lápide: \"Faleceu em 12/06/1843\"" } },
+    ["book:07"] = { { id = "c1_livro", text = "Livro: falecido em junho de 1843, como a pedra" } },
+    ["bilhete_rosa"] = { { id = "c1_rosa", text = "Rosa se lembra do pai navegando há pouco" } },
+    ["assento_antonio"] = {
+        { id = "c1_assento", text = "Assento do vigário: morto em 12/06/1845" },
+        { id = "c1_autorizado", text = "Assento: sepultamento autorizado no dia seguinte" },
     },
 
-    ["grave:02"] = { { id = "c2_lapide", text = "Lápide: \"Maria das Dores Santos\"" } },
-    ["book:02"] = {
-        { id = "c2_livro", text = "Livro: \"Maria das Dores Nunes, lavadeira\"" },
-        { id = "c2_margem", text = "Margem: \"Santos — sem registro de óbito\"" },
-    },
-    ["assento_casamento"] = {
-        { id = "c2_assento", text = "Assento: \"passa a assinar ... Santos\"" },
-        { id = "c2_padre", text = "Assento: assinado pelo Padre Inácio" },
+    ["grave:02"] = { { id = "c2_lapide", text = "Lápide: \"Maria Nunes — 1845\"" } },
+    ["book:02"] = { { id = "c2_livro", text = "Livro: \"Maria Nunes\", sepultada em 1845" } },
+    ["bilhete_firmino"] = { { id = "c2_firmino", text = "Firmino: o nome da lápide está incompleto" } },
+    ["extrato_paroquial"] = {
+        { id = "c2_extrato", text = "Paróquia: Maria das Dores Nunes Santos, morta em 1844" },
+        { id = "c2_casamento", text = "Paróquia: casou com Firmino dos Santos em 1840" },
     },
 
-    ["book:04"] = { { id = "c3_livro", text = "Livro: dois José de Santana no nº 04" } },
-    ["testemunho_vigario"] = {
-        { id = "c3_padre_corda", text = "Padre: enterrou o velho com a corda do sino" },
-        { id = "c3_padre_vala", text = "Padre: o moço foi para a vala do fundo" },
-    },
-    ["inventario_04"] = {
-        { id = "c3_corda", text = "Inventário: corda de sino dentro da cova" },
-        { id = "c3_ferramenta", text = "Inventário: \"nenhuma ferramenta\"" },
+    ["grave:04"] = { { id = "c3_lapide", text = "Lápide: \"José de Santana, carpinteiro, 1844\"" } },
+    ["book:04"] = { { id = "c3_lista", text = "Câmara: um só José de Santana, sem ofício" } },
+    ["folha_irmandade"] = {
+        { id = "c3_irmandade", text = "Irmandade: dois Josés, carpinteiro (1844) e sineiro (1845)" },
+        { id = "c3_corda", text = "Irmandade: o sineiro foi enterrado com a corda do sino" },
     },
 
-    ["grave:05"] = { { id = "c4_lapide", text = "Lápide: \"Faleceu em 1846\"" } },
-    ["book:05"] = { { id = "c4_livro", text = "Livro: falecida em setembro de 1845" } },
-    ["carta_tomas"] = { { id = "c4_tomas", text = "Tomás: \"enterramos Ana ontem\" (1845)" } },
-    ["bilhete_canteiro"] = {
-        { id = "c4_gravei", text = "Firmino: \"Gravei 1845, como me pediram\"" },
-        { id = "c4_sulcos", text = "Firmino: \"Os sulcos do 6 são novos\"" },
-    },
+    ["grave:05"] = { { id = "c4_lapide", text = "Lápide: \"1846\" — o 6 parece recém-cortado" } },
+    ["book:05"] = { { id = "c4_livro", text = "Livro: falecida em 1846" } },
+    ["carta_tomas"] = { { id = "c4_tomas", text = "Tomás: voltou à escola meses depois do enterro" } },
+    ["comprovante_ana"] = { { id = "c4_comprovante", text = "Comprovante paroquial: morta em 1844" } },
 
     ["grave:01"] = { { id = "c5_raspado", text = "Lápide: o nome foi raspado da pedra" } },
     ["pagina_rasgada"] = {
-        { id = "c5_recusa", text = "B. R.: \"Não escrevo mais o que me mandam\"" },
+        { id = "c5_iniciais", text = "B. R.: \"Não escrevo mais o que me mandam\"" },
         { id = "c5_sumir", text = "B. R.: \"Se eu sumir, procurem na primeira cova\"" },
     },
-    ["oficio_camara"] = {
-        { id = "c5_riscado", text = "Ofício: o desobediente terá o nome riscado" },
-        { id = "c5_datas", text = "Ofício: lançar a febre com datas diversas" },
+    ["testemunho_vigario"] = {
+        { id = "c5_padre", text = "Padre: Benedito Ramos foi enterrado na primeira cova" },
+        { id = "c5_silencio", text = "Padre: \"Recusei-me a falar quando pediram silêncio\"" },
     },
 }
 
@@ -259,197 +276,198 @@ N.clues = {
 N.cases = {
     {
         id = "c1", night = 1, grave = 7,
-        title = "Antônio Ferreira",
-        objective = "Sepultura 07 — Antônio Ferreira: a data da lápide não confere com o livro.",
-        evidence = { "book:07", "carta_rosa" },
-        hint = "Compare as três datas: a lápide diz 1843, o livro diz 1845 e a carta da filha foi escrita em 1844. A pedra e o livro se contradizem; qual fonte independente desempata?",
+        title = "O mestre que morreu duas vezes",
+        objective = "Sepultura 07 — descubra em que ano Antônio Ferreira realmente morreu.",
+        evidence = { "book:07", "bilhete_rosa", "assento_antonio" },
+        hint = "A pedra e o livro dizem a mesma coisa, e é isso que levanta suspeita. Um assento de sepultamento, não a lembrança da família, pode confirmar a data. Procure na mesa do livro.",
         proof = {
-            accept = { "c1_carta" },
+            accept = { "c1_assento" },
             feedback = {
-                c1_lapide = "Essa é justamente a data em dúvida. Ela não pode provar a si mesma.",
-                c1_livro = "O livro diz 1845, a pedra diz 1843: é a palavra de um contra a do outro. Que fonte de fora desempata?",
-                c1_camara = "Estranho, sim: quem lançou foi a Câmara, não o coveiro. Mas isso não diz quando Antônio morreu.",
-                c1_tosse = "Tosse não é morte. O que mostra que ele ainda estava vivo depois de 1843?",
+                c1_lapide = "\"A pedra diz o que lhe mandaram dizer. Ela não pode provar a si mesma.\"",
+                c1_livro = "\"O livro e a pedra falam com a mesma tinta. Quero uma voz de fora.\"",
+                c1_rosa = "\"A memória de Rosa não basta, coveiro. Ela nem sabe o ano.\"",
+                c1_autorizado = "\"Um dia depois de quê? Leia a data que vem antes.\"",
             },
         },
         fix = {
             title = "Corrigir a lápide",
-            prompt = "ANTÔNIO FERREIRA\nMestre do saveiro Bom Jesus\nFaleceu em ____",
-            options = { "1843", "1844", "1845" },
-            correct = 3,
+            prompt = "ANTÔNIO FERREIRA\nMestre do saveiro Bom Jesus\nFaleceu em 12/06/____",
+            options = { "1843", "1845", "1846" },
+            correct = 2,
             feedback = {
                 [1] = "É a data que você acabou de provar errada. O cinzel para no ar.",
-                [2] = "Em junho de 1844 ele ainda mandava redes à filha. O livro diz março de 1845.",
+                [3] = "O assento do vigário diz 1845. Não troque uma mentira por outra.",
             },
         },
         question = "O que os documentos sustentam sobre Antônio Ferreira?",
         hypotheses = {
-            { text = "A lápide está errada: Antônio morreu em 1845, como diz o livro.", correct = true },
-            { text = "O livro registra outro homem com o mesmo nome.",
-              feedback = "Você folheia o ano inteiro: não há outro Antônio Ferreira. E a carta da filha fala do mesmo saveiro, o Bom Jesus." },
-            { text = "Não há provas suficientes para corrigir nada.",
-              feedback = "A carta de Rosa tem data — junho de 1844 — e fala do pai vivo. Um homem morto em 1843 não manda redes para a filha." },
+            { text = "Morreu em 1843, como dizem a pedra e o livro.",
+              feedback = "\"O vigário pôs outro ano no papel; não o ignores.\"" },
+            { text = "A lápide foi antecipada em dois anos: ele morreu em 1845.", correct = true },
+            { text = "Nunca foi sepultado: partiu no saveiro.",
+              feedback = "\"Barco não carrega quem já deitou na terra.\"" },
         },
-        resolution = "Você raspa o musgo e corrige a inscrição: 1845.\n\nPor um instante, ouve remos batendo n'água — longe demais do rio. Quando olha de novo, há velas acesas ao pé da cova, embora ninguém as tenha acendido.",
-        newInscription = "ANTÔNIO FERREIRA\nMestre do saveiro Bom Jesus\nFaleceu em 1845",
-        summary = "Sepultura 07: a lápide de Antônio Ferreira dizia 1843; ele morreu em 1845.",
+        resolution = "Você corrige a data: 1845.\n\nPor um instante, ouve água batendo num casco, longe demais do rio. A lápide brilha de leve e se apaga.",
+        newInscription = "ANTÔNIO FERREIRA\nMestre do saveiro Bom Jesus\nFaleceu em 12/06/1845",
+        summary = "Sepultura 07: a lápide de Antônio Ferreira foi antecipada em dois anos; ele morreu em 1845.",
     },
     {
         id = "c2", night = 1, grave = 2,
-        title = "Maria das Dores",
-        objective = "Sepultura 02 — Maria das Dores: o nome da lápide não é o nome do livro.",
-        evidence = { "book:02", "assento_casamento" },
-        hint = "O livro fala de Maria das Dores Nunes; a lápide, de Maria das Dores Santos. O assento de casamento explica por que um nome virou o outro.",
+        title = "O nome inteiro",
+        objective = "Sepultura 02 — devolva o nome e a data corretos à sepultura de Maria.",
+        evidence = { "book:02", "bilhete_firmino", "extrato_paroquial" },
+        hint = "A lembrança do marido não basta. O registro da paróquia, guardado na cripta, confirma o nome e o ano sem depender do livro da Câmara.",
         proof = {
-            accept = { "c2_assento" },
+            accept = { "c2_extrato" },
             feedback = {
-                c2_lapide = "Isso só mostra um dos nomes. O que liga um ao outro?",
-                c2_livro = "Isso só mostra o outro nome. Alguma fonte liga os dois?",
-                c2_margem = "A nota à margem é justamente o que separa as duas mulheres. E foi escrita depois, em outra tinta.",
-                c2_padre = "Quem assinou importa pouco. O que o assento diz sobre o nome dela?",
+                c2_lapide = "\"Isso é o que me deixaram. Não é o que eu era.\"",
+                c2_livro = "\"O livro só repete a pedra. Procure outra escrita.\"",
+                c2_firmino = "\"Firmino me conhecia; mas onde está a escrita?\"",
+                c2_casamento = "\"Isso diz com quem casei. Não diz quando me enterraram.\"",
             },
         },
         fix = {
-            title = "Corrigir o livro e a lápide",
-            prompt = "Registro nº 02 — Maria das Dores ____\nLavadeira do Paramopama",
-            options = { "Santos", "Nunes", "Nunes Santos" },
-            correct = 3,
+            title = "Corrigir a lápide",
+            prompt = "Sepultura 02 — ____\nLavadeira do Paramopama",
+            options = { "Maria Nunes — 1845", "Maria das Dores Nunes Santos — 1844", "Maria das Dores — 1846" },
+            correct = 2,
             feedback = {
-                [1] = "Ficar só com Santos apaga a moça que nasceu Nunes. O assento liga os dois nomes.",
-                [2] = "Ficar só com Nunes apaga a mulher casada que a vila conheceu. O assento liga os dois nomes.",
+                [1] = "É o nome curto e o ano errado: exatamente o que a Câmara mandou gravar.",
+                [3] = "Metade do nome e um ano que ainda não chegou. O extrato diz outra coisa.",
             },
         },
-        question = "Como resolver a diferença entre os dois nomes?",
+        question = "Como resolver a diferença entre a pedra e a vida de Maria?",
         hypotheses = {
-            { text = "Há duas mulheres: o corpo foi enterrado na sepultura errada.",
-              feedback = "Abrir uma cova por causa de um sobrenome? O assento de casamento explica a diferença sem tocar em ninguém." },
-            { text = "É a mesma mulher: o livro deve ligar os dois nomes.", correct = true },
-            { text = "A lápide foi feita para alguém que ainda está viva.",
-              feedback = "Ninguém na vila viu Maria das Dores Santos desde agosto. O assento mostra que ela e a Nunes são a mesma pessoa." },
+            { text = "Maria Nunes e Maria das Dores eram pessoas diferentes.",
+              feedback = "\"Meu nome não era outra pessoa.\"" },
+            { text = "Ela morreu em 1845 e a família se confunde.",
+              feedback = "\"O ano da febre não sai do peito.\"" },
+            { text = "O nome foi reduzido e a morte, transferida de 1844 para 1845.", correct = true },
         },
-        resolution = "Você escreve à margem: \"Nunes, depois Santos — a mesma.\"\n\nA nota em outra tinta escurece até sumir, como se alguém do outro lado do papel a apagasse. Na lápide, o nome agora aparece inteiro.",
-        newInscription = "MARIA DAS DORES NUNES SANTOS\nLavadeira do Paramopama\nFaleceu em 1845",
-        summary = "Sepultura 02: Maria das Dores Nunes e Maria das Dores Santos eram a mesma mulher.",
+        resolution = "Você grava o nome inteiro: Maria das Dores Nunes Santos, 1844.\n\nOuve pingos, como roupa torcida sobre uma pedra. Na mesa, ao fundo, o livro treme sozinho.",
+        newInscription = "MARIA DAS DORES NUNES SANTOS\nLavadeira do Paramopama\nFaleceu em 1844",
+        summary = "Sepultura 02: o nome de Maria das Dores Nunes Santos foi encurtado e sua morte, de 1844, mudada para 1845.",
     },
     {
         id = "c3", night = 2, grave = 4,
-        title = "José de Santana",
-        objective = "Sepultura 04 — José de Santana: dois homens com o mesmo nome no mesmo número.",
-        evidence = { "book:04", "testemunho_vigario", "inventario_04" },
-        hint = "Um José era sineiro, o outro carpinteiro. O que foi encontrado dentro da cova 04? E para onde o padre diz que levaram o moço?",
+        title = "Dois Josés, uma lápide",
+        objective = "Sepultura 04 — diferencie os dois homens chamados José de Santana.",
+        evidence = { "book:04", "folha_irmandade" },
+        hint = "A lista da Câmara é a origem da confusão. Procure uma fonte que fale explicitamente dos dois homônimos: há um papel caído ao pé da sepultura 04.",
         proof = {
-            accept = { "c3_corda", "c3_padre_vala" },
+            accept = { "c3_irmandade" },
             feedback = {
-                c3_livro = "As duas linhas são o problema, não a resposta.",
-                c3_padre_corda = "É a palavra do padre sobre o próprio enterro que ele fez. Há algo dentro da cova que confirme?",
-                c3_ferramenta = "Um carpinteiro pode ser enterrado sem ferramentas. O que foi de fato encontrado lá dentro?",
+                c3_lapide = "\"Essa pedra é justamente o que está errado.\"",
+                c3_lista = "\"O livro só conhece o que deixaram escrever.\"",
+                c3_corda = "\"A corda diz quem eu era. Mas quem era o outro?\"",
             },
         },
         fix = {
-            title = "Corrigir o livro",
-            prompt = "Registro nº 04 — riscar a linha de ____",
-            options = { "José de Santana, 61 anos, sineiro", "José de Santana, 27 anos, carpinteiro", "as duas linhas" },
+            title = "Corrigir a lápide",
+            prompt = "JOSÉ DE SANTANA\n____",
+            options = { "carpinteiro — 1844", "sineiro — 1845", "sineiro — 1846" },
             correct = 2,
             feedback = {
-                [1] = "Riscar o sineiro tiraria do livro o homem que está de fato na cova, com a corda nas mãos.",
-                [3] = "Riscar as duas deixaria a cova 04 sem ninguém. A corda do sino ainda está lá dentro.",
+                [1] = "O carpinteiro foi para a vala. A pedra continuaria com o homem errado.",
+                [3] = "O ofício está certo, o ano não. A Irmandade diz 1845.",
             },
         },
         question = "Quem está, de fato, na sepultura 04?",
         hypotheses = {
-            { text = "Os dois Josés foram enterrados na mesma cova.",
-              feedback = "O inventário achou uma só corda de sino e nenhuma ferramenta. E o padre diz que o moço foi para a vala do fundo." },
-            { text = "A cova 04 é do sineiro; o carpinteiro foi lançado no número errado.", correct = true },
-            { text = "A cova é do carpinteiro; a lápide mente sobre o sino.",
-              feedback = "Um carpinteiro de 27 anos não levaria uma corda de sino trançada nas mãos. O testemunho e o inventário apontam para o sineiro." },
+            { text = "O sineiro e o carpinteiro são o mesmo homem.",
+              feedback = "\"Eu tocava o sino enquanto ele talhava portas.\"" },
+            { text = "Dois homens homônimos foram fundidos num só registro.", correct = true },
+            { text = "O sineiro nunca existiu.",
+              feedback = "\"Quarenta anos me ouviram do alto da Matriz.\"" },
         },
-        resolution = "Você risca a segunda linha e escreve: \"José de Santana, carpinteiro — vala da febre, sem cruz.\"\n\nDo fundo do cemitério vem um som curto de sino, uma vez só. A vila nunca contou quantos foram para aquela vala.",
-        summary = "Sepultura 04: é do sineiro. O carpinteiro de mesmo nome foi para a vala da febre, sem cruz.",
+        resolution = "Você grava: José de Santana, sineiro, 1845.\n\nDo fundo do cemitério vem uma badalada solitária. Alguém sussurra: \"O outro ficou na vala.\"",
+        newInscription = "JOSÉ DE SANTANA\nSineiro da Matriz por quarenta anos\nFaleceu em 1845",
+        summary = "Sepultura 04: é do sineiro. O carpinteiro de mesmo nome morreu na febre de 1844 e foi para a vala.",
     },
     {
         id = "c4", night = 2, grave = 5,
-        title = "Ana Beatriz de Almeida",
-        objective = "Sepultura 05 — Ana Beatriz: a lápide marca um ano que ainda não chegou.",
-        evidence = { "book:05", "carta_tomas", "bilhete_canteiro" },
-        hint = "O livro e a carta do irmão concordam em 1845. O canteiro jura que gravou 1845. Então quem mudou o 6 — e quando?",
+        title = "O ano que ainda não chegou",
+        objective = "Sepultura 05 — descubra por que a pedra anuncia a morte de Ana num ano futuro.",
+        evidence = { "book:05", "carta_tomas", "comprovante_ana" },
+        hint = "É 1845: o ano na pedra é impossível, e o livro repete o erro. Procure um enterro registrado fora do livro, no arquivo da cripta.",
         proof = {
-            accept = { "c4_sulcos" },
+            accept = { "c4_comprovante" },
             feedback = {
-                c4_lapide = "É justamente o que precisa de explicação.",
-                c4_livro = "Isso confirma 1845, mas não explica como um 6 foi parar na pedra.",
-                c4_tomas = "Isso confirma 1845, mas não explica como um 6 foi parar na pedra.",
-                c4_gravei = "Isso mostra o que a pedra dizia. Mas há algo na própria pedra que mostre quando ela mudou?",
+                c4_lapide = "\"É justamente o que precisa de explicação.\"",
+                c4_livro = "\"O livro também mente. Ele já sabe de um ano que ninguém viveu.\"",
+                c4_tomas = "\"Tomás me amava, mas o amor não data o enterro.\"",
             },
         },
         fix = {
             title = "Corrigir a lápide",
             prompt = "ANA BEATRIZ DE ALMEIDA\nProfessora de primeiras letras\nFaleceu em ____",
-            options = { "1846", "1845", "deixar a data em branco" },
-            correct = 2,
+            options = { "1844", "1845", "1846" },
+            correct = 1,
             feedback = {
-                [1] = "O 6 é o sulco novo, a mentira. Você não vai repeti-la.",
-                [3] = "O livro, o irmão e o canteiro concordam em 1845. Apagar a data é esquecer de outro jeito.",
+                [2] = "É o ano de agora, não o do enterro. O comprovante diz 1844.",
+                [3] = "O 6 é o sulco novo, a mentira. Você não vai repeti-la.",
             },
         },
         question = "Por que a lápide de Ana Beatriz diz 1846?",
         hypotheses = {
-            { text = "O canteiro errou a data ao gravar a pedra.",
-              feedback = "Firmino diz que gravou 1845 e aponta os sulcos novos do 6. O erro não estava na mão dele." },
-            { text = "Ana ainda vive; o enterro foi encenado.",
-              feedback = "O irmão escreveu no dia seguinte ao enterro. Ninguém encena um enterro para a vila inteira e conta isso à própria família." },
-            { text = "Alguém alterou a lápide de propósito, depois do enterro.", correct = true },
+            { text = "A pedra prevê uma morte em 1846.",
+              feedback = "\"Ninguém morre num ano que ainda não nasceu.\"" },
+            { text = "Ana nunca foi enterrada.",
+              feedback = "\"O recibo guarda a data da terra sobre mim.\"" },
+            { text = "A data foi reescrita para um ano que ainda não chegou.", correct = true },
         },
-        resolution = "Você passa os dedos pelo 6: a pedra ainda está áspera, recém-cortada. Corrige para 1845.\n\nEntão percebe: em outras páginas do livro, a tinta também está úmida. Alguém — ou alguma coisa — continua escrevendo depois de você.",
-        newInscription = "ANA BEATRIZ DE ALMEIDA\nProfessora de primeiras letras\nFaleceu em 1845",
-        summary = "Sepultura 05: a data de Ana Beatriz foi alterada de propósito, depois do enterro.",
+        resolution = "Você corrige para 1844. O 6 perde o brilho de pedra recém-cortada.\n\nO sino toca fora de hora. Na mesa, ao fundo, uma pena risca o livro sozinha.",
+        newInscription = "ANA BEATRIZ DE ALMEIDA\nProfessora de primeiras letras\nFaleceu em 1844",
+        summary = "Sepultura 05: a data de Ana Beatriz foi reescrita para um ano que ainda não chegou; ela morreu em 1844.",
     },
     {
         id = "c5", night = 3, grave = 1,
-        title = "A primeira cova",
-        objective = "Sepultura 01 — a cova sem nome: descubra o que aconteceu com Benedito Ramos.",
-        evidence = { "book:01", "pagina_rasgada", "oficio_camara" },
-        hint = "Releia a página rasgada com as iniciais B. R. e o ofício da Câmara. O que acontecia com quem desobedecia?",
+        title = "O nome raspado",
+        objective = "Sepultura 01 — descubra quem foi sepultado na primeira cova.",
+        evidence = { "book:01", "pagina_rasgada", "testemunho_vigario" },
+        hint = "A página rasgada indica onde procurar, mas as iniciais não bastam. O testemunho do padre, no arquivo da cripta, dá o nome por inteiro.",
         proof = {
-            accept = { "c5_recusa", "c5_riscado" },
+            accept = { "c5_padre" },
             feedback = {
-                c5_raspado = "A pedra foi raspada, isso você já sabia. Por quem, e por quê?",
-                c5_sumir = "Ele previa que ia sumir. Mas o que ele fez para merecer isso?",
-                c5_datas = "Isso explica o que a Câmara queria esconder, não o que aconteceu com quem se recusou.",
+                c5_raspado = "\"Raspar é fácil. Quero saber de quem era o nome.\"",
+                c5_iniciais = "\"B. R. eram só duas letras. Precisas de alguém que me tenha visto.\"",
+                c5_sumir = "\"Eu disse onde procurar. Não disse quem ia achar.\"",
+                c5_silencio = "\"O padre se calou, sim. Mas sobre quem?\"",
             },
         },
         fix = {
             title = "Completar o registro",
-            prompt = "Registro nº 01 — Benedito Ramos, zelador e coveiro.\nCausa da morte: ____",
-            options = { "febre", "fugiu da vila", "recusou-se a escrever o que mandavam" },
-            correct = 3,
+            prompt = "Sepultura 01 — ____",
+            options = { "Sepultura desconhecida", "Benedito Ramos — 1844", "José de Santana — 1844" },
+            correct = 2,
             feedback = {
-                [1] = "Seria escrever exatamente o que a Câmara queria: mais um morto da febre, sem nome.",
-                [2] = "Ele avisou onde procurá-lo: na primeira cova. Ninguém foge para dentro de uma cova.",
+                [1] = "Seria escrever exatamente o que a Câmara queria: mais uma cova sem nome.",
+                [3] = "O José da febre está na vala do fundo. Esta cova tem outro dono.",
             },
         },
-        question = "Por que Benedito Ramos desapareceu dos registros?",
+        question = "Quem repousa na primeira cova?",
         hypotheses = {
-            { text = "Benedito fugiu da vila levando o arquivo.",
-              feedback = "O arquivo continua na cripta, com o ofício dentro. E a página rasgada diz onde procurá-lo: na primeira cova." },
-            { text = "Benedito morreu da febre e ninguém o registrou, por descuido.",
-              feedback = "Descuido não raspa um nome da pedra. O ofício promete riscar o nome do desobediente — e foi o que fizeram." },
-            { text = "Benedito se recusou a falsificar os registros e foi apagado.", correct = true },
+            { text = "A primeira cova guarda Benedito Ramos, o antigo coveiro.", correct = true },
+            { text = "A primeira cova é de um morto da febre, sem identidade.",
+              feedback = "\"Eu nomeava os outros. O meu foi o primeiro que levaram.\"" },
+            { text = "A cova pertence ao escrivão invisível.",
+              feedback = "\"Quem escreve ainda está em pé.\"" },
         },
-        resolution = "Você completa a linha: \"Benedito Ramos — recusou-se a escrever o que mandavam.\"\n\nA pedra da sepultura 01 range. O nome reaparece sob a raspagem, fundo, como se nunca tivesse saído dali.",
+        resolution = "Você grava: Benedito Ramos, 1844.\n\nAs velas do caminho apagam uma a uma. Por um instante, o cemitério fica sem som. Então uma luz fria cai sobre a lápide lisa, a 06.",
         newInscription = "BENEDITO RAMOS\nZelador e coveiro\nFaleceu em 1844\n\"Escreveu o que viu.\"",
-        summary = "Sepultura 01: Benedito Ramos recusou-se a falsificar os mortos da febre e teve o nome apagado.",
+        summary = "Sepultura 01: Benedito Ramos, o antigo coveiro, recusou-se a falsificar os mortos da febre e foi enterrado sem nome.",
     },
     {
         id = "c6", night = 3, grave = 6, requires = "c5",
-        title = "O nome que falta",
-        objective = "Sepultura 06 — a lápide lisa. Leia a última página e encare quem escreve o livro.",
-        evidence = { "book:06", "nota_benedito" },
-        hint = "Não há resposta certa aqui. Leia a última página e o bilhete de Benedito, depois encare o escrivão ao lado da lápide lisa e decida o que a vila deve lembrar.",
+        title = "A lápide lisa",
+        objective = "Sepultura 06 — decida o destino do livro e das memórias da vila.",
+        evidence = { "book:06", "oficio_camara" },
+        hint = "Não há resposta certa aqui. Leia a última página do livro e a ordem da Câmara, na cripta; depois encare o escrivão ao lado da lápide lisa.",
         question = "O livro guarda uma versão da vila. O que você fará com ele?",
         decision = true,
         hypotheses = {
             { text = "Preservar o livro: uma história coerente, mesmo incompleta.", ending = "preserve" },
-            { text = "Revelar a verdade: entregar o livro e o ofício à vila.", ending = "reveal" },
+            { text = "Revelar a verdade: entregar o livro e a ordem da Câmara à vila.", ending = "reveal" },
             { text = "Ainda não. Quero rever os documentos.", back = true },
         },
         summary = "Sepultura 06: a última página traz o seu nome.",
@@ -458,24 +476,25 @@ N.cases = {
 
 ----------------------------------------------------------------------
 -- Noites
+-- subtitle aparece na barra de cima ("Noite 1/3 — ..."): manter curto.
 ----------------------------------------------------------------------
 N.nights = {
     {
         title = "Noite 1",
         subtitle = "O primeiro nome",
-        intro = "Seu primeiro turno no cemitério. O livro de registros está aberto na mesa, ao fundo, perto da estante. Duas lápides, marcadas pela luz fria, não batem com o que está escrito nele. Resolva-as na ordem que quiser.\n\nComo jogar: ande com W A S D e olhe com o mouse; mire numa sepultura e aperte E. Leia a lápide e os documentos e anote no caderno os detalhes que importam; alguns papéis não estão na cova, e sim espalhados pelo cemitério, brilhando no escuro. Em \"Confrontar registros\", escolha uma conclusão e apresente a anotação que a prova. Depois, escolha a correção e grave-a na pedra com a sua própria mão: segure E diante da lápide. O Tab abre o caderno sem pausar.",
-        outro = "Ao fechar o livro, você nota que a inscrição da sepultura 03 mudou. Ninguém passou pelo portão.\n\nEntre as últimas folhas, há uma página rasgada assinada com as iniciais B. R. — Benedito Ramos, o coveiro antes de você.",
+        intro = "\"Uma pedra não pode mentir. Pode?\"\n\nDois registros não combinam com suas sepulturas. Severino resolve começar pelo que está diante dos olhos.\n\nComo jogar: ande com W A S D e olhe com o mouse; mire numa sepultura e aperte E. Leia a lápide e os documentos e anote no caderno os detalhes que importam; alguns papéis não estão na cova, e sim espalhados pelo cemitério, brilhando no escuro. Fale com o morto: escolha uma conclusão e apresente a anotação que a prova. Depois, escolha a correção e grave-a na pedra com a sua própria mão: segure E diante da lápide. O Tab abre o caderno sem pausar.",
+        outro = "A lamparina da mesa se apaga e volta a acender.\n\nA lápide 03, de Joaquina de Jesus, agora diz: \"Viu o zelador sair com o livro.\" Entre as últimas folhas do livro, há uma página rasgada: \"Não escrevo mais o que me mandam. Se eu sumir, procurem na primeira cova. — B. R.\"\n\n— Severino pensa: \"Não são só os mortos que mudam de nome. Quem escreveu esta página ainda está aqui.\"",
     },
     {
         title = "Noite 2",
         subtitle = "As histórias trocadas",
-        intro = "Esta noite, dois registros parecem contar a história errada — e um deles, de propósito.\n\nNem todo papel fica junto da cova. Quando a sepultura pedir um documento que não está ali, procure o brilho de papel pelo cemitério.",
-        outro = "Ao reler o testemunho do Padre Inácio, você encontra uma frase que não estava lá antes. Ela fala de Benedito Ramos, o antigo zelador, e de mortos que a Câmara mandava esconder.\n\nA primeira cova, a 01, nunca teve nome.",
+        intro = "\"Dois homens, um nome. Uma morte, dois anos.\"\n\nA página rasgada não explica a mão invisível. Um vulto, porém, deixa três sussurros pelo caminho: a mesa, o chão da quarta cova e a porta da cripta.\n\nNem todo papel fica junto da cova. Quando a sepultura pedir um documento que não está ali, procure o brilho de papel pelo cemitério.",
+        outro = "No arquivo da Câmara, aparece um papel do Padre Inácio que não estava lá antes. A última linha ainda está fresca:\n\n\"Benedito Ramos. Era ele quem guardava este livro. Recusei-me a falar quando pediram silêncio.\"\n\n— Severino pensa: \"O padre sabia. Se o nome apareceu só agora, quantas outras linhas esperam ser lembradas?\"",
     },
     {
         title = "Noite 3",
         subtitle = "O nome que falta",
-        intro = "A primeira cova espera um nome. A última também.\n\nDa mesa do livro, uma fileira de velas que você não acendeu leva até a sepultura 01.",
+        intro = "\"A primeira cova espera.\"\n\nO vulto deixa de fugir. Entre a mesa e a primeira cova, velas acendem uma a uma, sem que ninguém as toque.",
     },
 }
 
@@ -483,9 +502,9 @@ N.nights = {
 N.nightEvents = {
     [1] = { flags = { "night1_event" },
             inscriptions = { [3] = "JOAQUINA DE JESUS\nRendeira\nFaleceu em 1844\n\"Viu o zelador sair com o livro.\"" },
-            note = "Sepultura 03: a inscrição de Joaquina de Jesus mudou sozinha. Uma página rasgada apareceu no livro." },
+            note = "Sepultura 03: a inscrição de Joaquina de Jesus mudou sozinha. Uma página rasgada, assinada B. R., apareceu no livro." },
     [2] = { flags = { "night2_event" },
-            note = "O testemunho do Padre Inácio ganhou uma frase nova sobre Benedito Ramos." },
+            note = "Um testemunho do Padre Inácio apareceu no arquivo da Câmara. Ele fala de Benedito Ramos, o antigo zelador." },
 }
 
 ----------------------------------------------------------------------
@@ -495,15 +514,15 @@ N.endings = {
     preserve = {
         title = "Preservar o livro",
         pages = {
-            "Você costura a página rasgada de volta, apaga as margens corrigidas e devolve o livro à mesa.\n\nPela manhã, a vila acorda com uma história limpa: poucos mortos, datas em ordem, nenhum zelador desaparecido.",
-            "A lápide 06 continua lisa. Toda noite você confere os nomes, e toda noite um deles é um pouco menos verdadeiro.\n\nNo dia 25 de novembro, ninguém estranha que o coveiro não apareça. O livro já sabia.\n\nA cidade lembra de forma coerente. Só não lembra de tudo.",
+            "Severino fecha o livro. O escrivão recolhe a pena, satisfeito.\n\nA febre de 1844 continua espalhada por datas diferentes. Os mortos guardam alguns nomes nas pedras corrigidas, mas a vila não conhecerá o número verdadeiro de ausentes.\n\nAo longe, um sino soa uma vez.",
+            "Dias depois, na última página, a tinta seca sob um nome novo: \"Severino Lopes, coveiro. Sepultado em 25 de novembro de 1845.\"\n\nNão há testemunha do que ocorreu entre a assinatura e a terra. Sob a luz fraca, Benedito sussurra: \"Um livro em paz não é o mesmo que um morto em paz.\"",
         },
     },
     reveal = {
         title = "Revelar a verdade",
         pages = {
-            "Você leva o livro, a página de Benedito e o ofício da Câmara até a porta da Matriz.\n\nEm poucos dias, a vila discute nomes que não queria ouvir: a febre, a vala sem cruz, Benedito Ramos.",
-            "As lembranças agora se contradizem — e por isso pertencem a muitas pessoas, não a um só livro.\n\nA linha com o seu nome desbota até virar uma mancha de tinta. Você será lembrado de outro jeito: como o coveiro que deixou os mortos discordarem.",
+            "Severino abre o livro na página da febre. Em vez de repartir os mortos entre estações, escreve o que os papéis dispersos confirmam: 1844, muitos nomes, uma só calamidade.\n\nO escrivão tenta continuar a frase oficial, mas a pena deixa de riscar o papel.",
+            "A linha reservada para Severino perde a data. No cemitério, as pedras já não precisam responder ao livro.\n\nA vila acordará lembrando os que não tiveram cruz, ainda que não saiba o que fazer com a lembrança. Benedito se despede: \"Não devolveste a vida. Devolveste o direito de serem chorados.\"",
         },
     },
     mistakesNote = "\n\n(Algumas correções erradas também ficaram no livro. A memória da vila carrega as suas dúvidas.)",
@@ -515,7 +534,7 @@ N.endings = {
 N.menu = {
     title = "O Coveiro de 1845",
     subtitle = "Os Nomes Esquecidos",
-    body = "Vila de Santa Luzia do Paramopama, Sergipe, novembro de 1845.\n\nVocê é Severino Lopes, o novo coveiro. O livro de registros não concorda com as lápides, e as cartas da vila não concordam com nenhum dos dois.\n\nQuem decide o que a cidade lembra dos seus mortos?",
+    body = "Vila de Santa Luzia do Paramopama, Sergipe, novembro de 1845.\n\nVocê é Severino Lopes, o novo coveiro. O livro de registros não concorda com as cartas da vila, e as lápides mudam quando ninguém está olhando.\n\nQuem decide o que a cidade lembra dos seus mortos?",
 }
 
 N.controls = "W A S D (ou setas): andar   ·   Shift: correr   ·   Mouse: olhar\nE ou clique: examinar, pegar papéis e falar com os mortos sob a mira\nSegurar E diante da lápide: gravar a correção com o cinzel\nTab: caderno (sem pausar)   ·   L: livro de registros   ·   H: ajuda (sem penalidade)\nE ou Esc: fecha o painel aberto   ·   Esc: pausa o jogo\n\nControls (EN): WASD to walk, Shift to run, mouse to look. E or click to inspect, pick up papers and talk to the dead. Hold E at a gravestone to carve the correction. Tab toggles the notebook without pausing, L opens the record book, H gives a hint, E or Esc closes panels, Esc pauses. Game text is in Portuguese."
@@ -526,40 +545,42 @@ N.credits = "O Coveiro de 1845: Os Nomes Esquecidos\nDoriax Flash Jam 2026\n\nMo
 -- Prólogo (antes da Noite 1)
 ----------------------------------------------------------------------
 N.prologue = {
-    { title = "Santa Luzia do Paramopama", subtitle = "Sergipe, novembro de 1845",
-      body = "A febre do ano passado levou gente demais. A Câmara Municipal jura que foram poucos, e o porto continuou aberto.\n\nNo mesmo inverno, o coveiro Benedito Ramos sumiu sem deixar recado. Ninguém foi procurá-lo." },
-    { title = "Ofício da Câmara", subtitle = "Lido em voz alta na porta da Matriz", paper = "record",
-      body = "\"Nomeia-se Severino Lopes para o cargo de coveiro e zelador do cemitério desta vila, com a obrigação de manter em ordem o livro de registros de sepultamento, conforme o que nele estiver escrito.\"\n\nVocê assinou sem perguntar quem escreveu o livro antes de você." },
-    { title = "A primeira noite", subtitle = "17 de novembro de 1845",
-      body = "Você chega ao portão depois do toque de recolher. A lamparina da mesa já está acesa.\n\nDizem na vila que o livro de registros nunca fica fechado." },
+    { title = "Santa Luzia do Paramopama", subtitle = "Sergipe, 1845",
+      body = "Santa Luzia do Paramopama vivia do rio.\n\nEm 1844, quando a febre visitou suas casas, os sinos tocaram menos do que as famílias choraram. A Câmara chamou aquilo de prudência." },
+    { title = "A nomeação", subtitle = "Ofício da Câmara Municipal", paper = "record",
+      body = "\"Por ordem da Câmara Municipal, Severino Lopes assume o ofício de coveiro e zelador do campo-santo.\"\n\nO lugar estava vago. O nome do antigo responsável não constava no ofício." },
+    { title = "O portão", subtitle = "17 de novembro de 1845",
+      body = "Uma lamparina ardia ao fundo do cemitério. Sobre a mesa, um livro estava aberto.\n\nSeverino ouviu o raspar de uma pena — e não viu mão alguma." },
 }
 
 ----------------------------------------------------------------------
 -- Pensamentos de Severino ao ler um documento pela primeira vez
 ----------------------------------------------------------------------
 N.thoughts = {
-    ["book:07"] = "Lançado por ordem da Câmara. Não pelo coveiro.",
-    ["carta_rosa"] = "Em junho de 1844, Antônio mandava redes para a filha. A pedra diz que ele já estava morto.",
-    ["book:02"] = "Essa nota à margem foi escrita depois. A tinta é outra.",
-    ["assento_casamento"] = "Nunes antes do casamento, Santos depois. Uma mulher, dois nomes.",
-    ["book:04"] = "Dois homens, o mesmo nome, o mesmo dia, a mesma cova. Alguém teve pressa.",
-    ["testemunho_vigario"] = "A vala do fundo. Nenhuma pedra marca onde fica.",
-    ["inventario_04"] = "Uma corda de sino. Nenhuma ferramenta de carpinteiro.",
-    ["book:05"] = "O livro diz 1845. Sem rasura.",
-    ["carta_tomas"] = "Escrita um dia depois do enterro. Não há como inventar uma dor dessas.",
-    ["bilhete_canteiro"] = "Se não foi a mão dele, foi outra mão. E recente.",
-    ["book:01"] = "O nome aparece como se o papel se lembrasse sozinho.",
+    ["oficio_nomeacao"] = "Um espaço em branco onde devia estar o nome de quem veio antes de mim.",
+    ["book:07"] = "O livro e a pedra concordam. Concordam demais.",
+    ["bilhete_rosa"] = "Ela lembra do pai vivo, mas não sabe dizer quando.",
+    ["assento_antonio"] = "1845. Um papel da paróquia, fora do alcance do livro.",
+    ["book:02"] = "Nem dia, nem mês. Alguém teve pressa de esquecer.",
+    ["bilhete_firmino"] = "Um canteiro que não pôde gravar o nome da própria mulher.",
+    ["extrato_paroquial"] = "Nunes antes do casamento, Santos depois. E morta em 1844, na febre.",
+    ["book:04"] = "Uma linha só para dois homens. A Câmara contava menos mortos do que havia.",
+    ["folha_irmandade"] = "Dois Josés. Um na cova, outro na vala, sem cruz.",
+    ["book:05"] = "O livro já conhece um ano que ainda não chegou.",
+    ["carta_tomas"] = "Meses depois do enterro. Ele não diz o ano, mas diz o bastante.",
+    ["comprovante_ana"] = "1844. A paróquia guardou o que o livro tentou apagar.",
+    ["book:01"] = "Rasparam o nome do papel também, não só da pedra.",
     ["pagina_rasgada"] = "\"Procurem na primeira cova.\" Ele sabia o que ia acontecer.",
-    ["oficio_camara"] = "Datas diversas, números separados. A febre foi apagada por decreto.",
+    ["testemunho_vigario"] = "O padre enterrou um homem e aceitou esquecer o nome dele.",
     ["book:06"] = "Vinte e cinco de novembro. Daqui a oito dias.",
-    ["nota_benedito"] = "Ele também teve que escolher. E a escolha dele está na primeira cova.",
+    ["oficio_camara"] = "Primeiro trocaram datas. Depois misturaram nomes. Agora há uma linha reservada para mim.",
 }
 
 -- Pensamento ao começar cada caso
 N.caseThoughts = {
-    c1 = "Antônio Ferreira, mestre de saveiro. A pedra e o livro não concordam nem no ano.",
-    c2 = "Maria das Dores. O nome da pedra não é o nome do livro.",
-    c3 = "Dois homens chamados José de Santana na mesma linha. Um deles não devia estar aqui.",
+    c1 = "Antônio Ferreira, mestre de saveiro. A pedra e o livro concordam no ano. Por que isso me incomoda?",
+    c2 = "Maria Nunes. Só isso. Nenhuma lavadeira tinha um nome tão curto.",
+    c3 = "José de Santana, carpinteiro. Mas é o sino que eu ouço perto desta cova.",
     c4 = "Ana Beatriz morreu num ano que ainda não chegou. Alguém mexeu nessa pedra.",
     c5 = "A primeira cova. A página rasgada mandou procurar aqui.",
     c6 = "A última pedra está lisa. O livro, não. E há alguém escrevendo nele.",
@@ -576,8 +597,8 @@ N.whispers = {
       text = "O livro está aberto numa página que eu não abri." },
     { id = "crypt", x = -11, z = -13.5, radius = 5, night = 1, speaker = "Severino",
       text = "Do arquivo vem cheiro de cera velha. A Câmara guarda aqui o que não quer ver." },
-    { id = "grave03", x = 5, z = -6.5, radius = 3.5, night = 2, flag = "night1_event", speaker = "Sussurro",
-      text = "...ele saiu com o livro debaixo do braço... e voltou sem ele..." },
+    { id = "grave03", x = 5, z = -6.5, radius = 3.5, night = 2, flag = "night1_event", speaker = "Severino",
+      text = "Joaquina viu o zelador com o livro. Tentava escondê-lo, ou levá-lo a alguém?" },
     { id = "bell", x = -2.2, z = -2, radius = 4, night = 2, speaker = "Severino",
       text = "Um sino, uma vez só. A Matriz fica a meia légua daqui." },
     { id = "grave01", x = -12, z = -6.5, radius = 4, night = 2, flag = "night2_event", speaker = "Sussurro",

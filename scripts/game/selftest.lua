@@ -409,13 +409,13 @@ function SelfTest.demoSteps(hud)
         { 1.0, function() end },                                   -- 4: levantando
         { 2.5, function() end },                                   -- 5: de pé, virado para o coveiro
         { 0.5, function()
-            Flow.markRead("grave:07"); Flow.noteClue("c1_lapide"); Flow.noteClue("c1_tosse"); Flow.noteClue("c1_carta")
+            Flow.markRead("grave:07"); Flow.noteClue("c1_lapide"); Flow.noteClue("c1_rosa"); Flow.noteClue("c1_assento")
             hud:onWorldClick({ kind = "spirit", caseId = "c1" })
         end },                                                     -- 6: conversa compacta
-        { 1.5, function() hud:pressSlot(2) end },                  -- 7: conclusão errada -> apresentar
+        { 1.5, function() hud:pressSlot(1) end },                  -- 7: conclusão errada -> apresentar
         { 1.0, function() hud:pressSlot(1) end },                  -- 8: zombaria (Taunt)
-        { 1.5, function() clickPanel(hud, "Tentar outra"); hud:pressSlot(1) end },
-        { 1.0, function() clickPanel(hud, "Carta de junho") end }, -- 10: aceita (Interact) -> correção
+        { 1.5, function() clickPanel(hud, "Tentar outra"); hud:pressSlot(2) end },
+        { 1.0, function() clickPanel(hud, "Assento do vigário") end }, -- 10: aceita (Interact) -> correção
         { 1.5, function() clickPanel(hud, "1845") end },           -- 11: correção decidida, controle de volta
         { 1.0, function()                                          -- 12: mira na lápide e segura o cinzel
             local h = world:graveHotspot(7)
@@ -480,7 +480,7 @@ function SelfTest.demoFinaleSteps(hud)
             s.night = 3
             for _, id in ipairs({ "c1", "c2", "c3", "c4", "c5" }) do s.resolved[id] = true end
             s.flags.night1_event, s.flags.night2_event, s.flags.benedito_rest = true, true, true
-            for _, id in ipairs({ "grave:06", "book:06", "nota_benedito" }) do s.read[id] = true end
+            for _, id in ipairs({ "grave:06", "book:06", "oficio_camara" }) do s.read[id] = true end
             hud:finishReveal(); clickOverlay(hud, "Começar")
             world.character.position = Vector3(-2.9, 0.05, 10.5)
             world.yaw, world.pitch = 0, -6

@@ -193,6 +193,10 @@ function Flow.docsAt(place)
             if N.evidence[id].place == place then list[#list + 1] = id end
         end
     end
+    -- papéis soltos da noite, que não pertencem a nenhum caso
+    for _, d in ipairs(N.looseDocs or {}) do
+        if d.night == Flow.state.night and N.evidence[d.id].place == place then list[#list + 1] = d.id end
+    end
     return list
 end
 
