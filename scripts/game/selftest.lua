@@ -187,17 +187,37 @@ local function playCase(hud, case, makeMistake)
         clickPanel(hud, "Escrever de novo")
     end
     clickPanel(hud, case.fix.options[case.fix.correct])
-    check(Flow.isResolved(case), "case should be resolved: " .. case.id)
+    -- a correção certa não resolve sozinha: precisa ser gravada na pedra com o cinzel
+    check(Flow.isChiseling(case) and not Flow.isResolved(case), "fix should wait for the chisel: " .. case.id)
+    check(not hud.panelOpen and hud.talking == nil, "choosing the fix should return control: " .. case.id)
     local world = Flow.worldController
+    if world then
+        local h = world:graveHotspot(case.grave)
+        world:startChisel(h, case)
+        world:updateChisel(1.0, true)
+        check(world.chisel and world.chisel.progress > 0.3 and hud.chiselBar.visible, "chisel should progress: " .. case.id)
+        local before = world.chisel.progress
+        world:updateChisel(0.2, false)
+        check(world.chisel and world.chisel.progress < before, "releasing E should lose progress: " .. case.id)
+        world:updateChisel(3.0, true)
+        check(world.chisel == nil and not hud.chiselBar.visible, "chisel should finish: " .. case.id)
+    else
+        Flow.completeChisel(case)
+    end
+    check(Flow.isResolved(case), "case should be resolved: " .. case.id)
+    check(not hud.panelOpen, "resolution is told in the subtitle, not a panel: " .. case.id)
     if world and world.spirits[case.id] then
         local sp = world.spirits[case.id]
-        check(hud.panelCompact, "resolution should stay in talk mode: " .. case.id)
         check(sp.state == "resting" and not sp.hotspot.enabled, "spirit should rest after the fix: " .. case.id)
     end
     if case.newInscription then
         check(Flow.inscription(case.grave) == case.newInscription, "inscription should change: " .. case.id)
     end
-    clickPanel(hud, "Continuar")
+    -- último registro da noite: a noite só termina depois do tempo de leitura
+    if #Flow.openCases() == 0 then
+        check(hud.advanceTimer ~= nil and Flow.state.phase == "playing", "night should wait for the reading time")
+        hud:flushAdvance()
+    end
 end
 
 function SelfTest.run(hud, endingKind)
@@ -253,6 +273,21 @@ function SelfTest.run(hud, endingKind)
         hud:closePanel()
         hud:openHelp()
         hud:closePanel()
+        -- E fecha o painel (mas não no mesmo quadro em que ele abriu)
+        hud:openBook()
+        hud:onKeyDown(Input.KEY_E, false, 0)
+        check(hud.panelOpen, "the E that opened a panel must not close it")
+        hud.frame = hud.frame + 1
+        hud:onKeyDown(Input.KEY_E, false, 0)
+        check(not hud.panelOpen, "E should close the panel")
+        -- Tab: caderno lateral sem pausar
+        hud:onKeyDown(Input.KEY_TAB, false, 0)
+        hud:updateNotebook()
+        check(hud.notebookOpen and hud.notebookBg.visible and not Flow.state.modalOpen, "Tab should show the notebook without pausing")
+        check(hud.text.NotebookText.text:find("Sepultura", 1, true) ~= nil, "notebook should list the open graves")
+        hud:onKeyDown(Input.KEY_TAB, false, 0)
+        hud:updateNotebook()
+        check(not hud.notebookBg.visible, "Tab again should hide the notebook")
         -- clicar numa sepultura fora do caso
         hud:onWorldClick({ kind = "grave", grave = 3 })
         check(hud.panelOpen, "non-case grave panel should open")
@@ -331,8 +366,21 @@ function SelfTest.demoSteps(hud)
         { 1.0, function() hud:pressSlot(1) end },                  -- 8: zombaria (Taunt)
         { 1.5, function() clickPanel(hud, "Tentar outra"); hud:pressSlot(1) end },
         { 1.0, function() clickPanel(hud, "Carta de junho") end }, -- 10: aceita (Interact) -> correção
-        { 1.5, function() clickPanel(hud, "1845") end },           -- 11: registro corrigido: desaba (Death)
-        { 2.5, function() end },                                   -- 12: deitado em paz
+        { 1.5, function() clickPanel(hud, "1845") end },           -- 11: correção decidida, controle de volta
+        { 1.0, function()                                          -- 12: mira na lápide e segura o cinzel
+            local h = world:graveHotspot(7)
+            local c = h.mesh:getWorldAABB():getCenter()
+            local p = world.camera:getWorldPosition()
+            world.yaw = math.deg(math.atan(-(c.x - p.x), -(c.z - p.z)))
+            world.pitch = math.deg(math.atan(c.y - p.y, math.sqrt((c.x - p.x) ^ 2 + (c.z - p.z) ^ 2)))
+            world:applyLook()
+            world.forceChiselHold = true
+            world:startChisel(h, Flow.chiselCaseForGrave(7))
+        end },
+        { 1.2, function() end },                                   -- 13: barra do cinzel pela metade
+        { 2.0, function() world.forceChiselHold = false end },     -- 14: gravado: morto desaba, legenda conta
+        { 1.0, function() hud:setNotebookOpen(true) end },         -- 15: caderno com Tab, sem pausa
+        { 1.5, function() hud:setNotebookOpen(false) end },        -- 16: fim
     }
 end
 

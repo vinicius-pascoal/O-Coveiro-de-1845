@@ -56,6 +56,7 @@ local function freshState()
         inscriptions = {},     -- graveIndex -> texto atual
         scars = {},            -- graveIndex -> correções erradas que ficaram riscadas na pedra
         awakened = {},         -- caseId -> true (o morto do caso já se levantou)
+        chisel = {},           -- caseId -> true (correção escolhida; falta gravar na pedra com o cinzel)
     }
     for i, g in pairs(N.graves) do
         s.inscriptions[i] = g.inscription
@@ -411,6 +412,27 @@ function Flow.fix(case, optionIndex)
         local fb = fix.feedback and fix.feedback[optionIndex]
         return { kind = "fixWrong", case = case, text = fb or "Não foi isso que as provas mostraram." }
     end
+    -- a correção certa ainda precisa ser gravada na pedra (segurar E diante da lápide)
+    Flow.state.chisel[case.id] = true
+    Flow.emit("chiselReady", case)
+    return { kind = "chisel", case = case }
+end
+
+function Flow.isChiseling(case)
+    return case and Flow.state.chisel[case.id] == true
+end
+
+-- Caso esperando o cinzel nesta sepultura (ou nil)
+function Flow.chiselCaseForGrave(graveIndex)
+    local case = Flow.caseForGrave(graveIndex)
+    if Flow.isChiseling(case) and Flow.isOpen(case) then return case end
+    return nil
+end
+
+-- O cinzel terminou: o registro está corrigido
+function Flow.completeChisel(case)
+    if not Flow.isChiseling(case) then return nil end
+    Flow.state.chisel[case.id] = nil
     resolve(case)
     return { kind = "correct", text = case.resolution, case = case }
 end
@@ -483,6 +505,9 @@ function Flow.hintText()
     end
     local tail = #others > 0 and ("\n\nTambém aberta esta noite: sepultura " .. table.concat(others, ", ") .. ".") or ""
 
+    if Flow.isChiseling(case) then
+        return head .. "A correção está decidida. Fique diante da lápide " .. number .. ", mire nela e segure E até o cinzel terminar." .. tail
+    end
     if Flow.isProven(case) then
         return head .. "Você já provou o que aconteceu. Examine a sepultura " .. number .. " e use \"Corrigir o registro\"." .. tail
     end

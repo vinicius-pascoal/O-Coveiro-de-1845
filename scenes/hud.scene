@@ -1021,7 +1021,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|19#57
+              id: font|19#66
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -4888,7 +4888,7 @@ entities:
             texture:
               textureType: 2D
               source: id
-              id: font|15#42
+              id: font|15#44
               minFilter: linear
               magFilter: linear
               wrapU: repeat
@@ -5560,7 +5560,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|16#7
+          id: font|16#47
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -6040,7 +6040,7 @@ entities:
         texture:
           textureType: 2D
           source: id
-          id: font|15#42
+          id: font|15#44
           minFilter: linear
           magFilter: linear
           wrapU: repeat
@@ -6081,4 +6081,354 @@ entities:
         fixedHeight: false
         pivotBaseline: false
         pivotCentered: false
-shaderKeysHash: cbd6e74db50dfd57dc1a4fa23c1e0f60bbeffb47
+  - type: Entity
+    entity: 1099
+    name: ChiselBar
+    components:
+      transform:
+        position: [518, 410, 0]
+        rotation: [1, 0, 0, 0]
+        scale: [1, 1, 1]
+        worldPosition: [518, 410, 0]
+        worldRotation: [1, 0, 0, 0]
+        worldScale: [1, 1, 1]
+        localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [518, 410, 0, 1]]
+        modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [518, 410, 0, 1]]
+        normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        visible: true
+        billboardRotation: [1, 0, 0, 0]
+        billboard: false
+        fakeBillboard: false
+        cylindricalBillboard: false
+      ui:
+        primitiveType: triangles
+        vertexCount: 54
+        aabb:
+          min: [0, 0, 0]
+          max: [244, 16, 0]
+        worldAABB:
+          min: [518, 410, 0]
+          max: [762, 426, 0]
+        texture:
+          textureType: 2D
+          source: path
+          path: ui/white.png
+          minFilter: nearest
+          magFilter: nearest
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        color: [0.0013732007, 0.0008404889, 0.0013732007, 0.75]
+        automaticFlipY: true
+        flipY: false
+        pointerMoved: false
+        focused: false
+      uilayout:
+        width: 244
+        height: 16
+        anchorPointLeft: 0.5
+        anchorPointTop: 0.5
+        anchorPointRight: 0.5
+        anchorPointBottom: 0.5
+        anchorOffsetLeft: -122
+        anchorOffsetTop: -8
+        anchorOffsetRight: 122
+        anchorOffsetBottom: 8
+        positionOffset: [0, 58]
+        pivot: [0, 0]
+        anchorPreset: CENTER
+        usingAnchors: true
+        panel: 0
+        containerBoxIndex: -1
+        scissor: [380.96402, 318.9441, 143.13052, 9.38562]
+        ignoreScissor: false
+        ignoreEvents: true
+      image:
+        patchMarginLeft: 0
+        patchMarginRight: 0
+        patchMarginTop: 0
+        patchMarginBottom: 0
+        textureScaleFactor: 0
+    children:
+      - type: Entity
+        entity: 1100
+        name: ChiselFill
+        components:
+          transform:
+            position: [3, 3, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [521, 413, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [3, 3, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [521, 413, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 54
+            aabb:
+              min: [0, 0, 0]
+              max: [238, 10, 0]
+            worldAABB:
+              min: [521, 413, 0]
+              max: [759, 423, 0]
+            texture:
+              textureType: 2D
+              source: path
+              path: ui/white.png
+              minFilter: nearest
+              magFilter: nearest
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: true
+            color: [0.5789061, 0.017744508, 0.0094232075, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 238
+            height: 10
+            anchorPointLeft: 0
+            anchorPointTop: 0
+            anchorPointRight: 0
+            anchorPointBottom: 0
+            anchorOffsetLeft: 0
+            anchorOffsetTop: 0
+            anchorOffsetRight: 238
+            anchorOffsetBottom: 10
+            positionOffset: [3, 3]
+            pivot: [0, 0]
+            anchorPreset: TOP_LEFT
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [382.72385, 320.7039, 139.61087, 5.866028]
+            ignoreScissor: true
+            ignoreEvents: true
+          image:
+            patchMarginLeft: 0
+            patchMarginRight: 0
+            patchMarginTop: 0
+            patchMarginBottom: 0
+            textureScaleFactor: 0
+  - type: Entity
+    entity: 1101
+    name: NotebookBg
+    components:
+      transform:
+        position: [824, 210, 0]
+        rotation: [1, 0, 0, 0]
+        scale: [1, 1, 1]
+        worldPosition: [824, 210, 0]
+        worldRotation: [1, 0, 0, 0]
+        worldScale: [1, 1, 1]
+        localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [824, 210, 0, 1]]
+        modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [824, 210, 0, 1]]
+        normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+        visible: true
+        billboardRotation: [1, 0, 0, 0]
+        billboard: false
+        fakeBillboard: false
+        cylindricalBillboard: false
+      ui:
+        primitiveType: triangles
+        vertexCount: 54
+        aabb:
+          min: [0, 0, 0]
+          max: [440, 300, 0]
+        worldAABB:
+          min: [824, 210, 0]
+          max: [1264, 510, 0]
+        texture:
+          textureType: 2D
+          source: path
+          path: ui/horror/toast.png
+          minFilter: nearest
+          magFilter: nearest
+          wrapU: repeat
+          wrapV: repeat
+          releaseDataAfterLoad: true
+        color: [1, 1, 1, 0.96]
+        automaticFlipY: true
+        flipY: false
+        pointerMoved: false
+        focused: false
+      uilayout:
+        width: 440
+        height: 300
+        anchorPointLeft: 1
+        anchorPointTop: 0.5
+        anchorPointRight: 1
+        anchorPointBottom: 0.5
+        anchorOffsetLeft: -440
+        anchorOffsetTop: -150
+        anchorOffsetRight: 0
+        anchorOffsetBottom: 150
+        positionOffset: [-16, 0]
+        pivot: [0, 0]
+        anchorPreset: CENTER_RIGHT
+        usingAnchors: true
+        panel: 0
+        containerBoxIndex: -1
+        scissor: [574.5422, 215.70241, 229.94745, 147.82332]
+        ignoreScissor: false
+        ignoreEvents: true
+      image:
+        patchMarginLeft: 24
+        patchMarginRight: 24
+        patchMarginTop: 24
+        patchMarginBottom: 24
+        textureScaleFactor: 0
+    children:
+      - type: Entity
+        entity: 1102
+        name: NotebookTitle
+        components:
+          transform:
+            position: [26, 18, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [850, 228, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [26, 18, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [850, 228, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 108
+            aabb:
+              min: [0, 0, 0]
+              max: [146, 16.833334, 0]
+            worldAABB:
+              min: [850, 228, 0]
+              max: [996, 244.83333, 0]
+            texture:
+              textureType: 2D
+              source: id
+              id: font|20#85
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: false
+            color: [0.8932889, 0.6120656, 0.26840952, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 147
+            height: 20
+            anchorPointLeft: 0
+            anchorPointTop: 0
+            anchorPointRight: 0
+            anchorPointBottom: 0
+            anchorOffsetLeft: 0
+            anchorOffsetTop: 0
+            anchorOffsetRight: 147
+            anchorOffsetBottom: 20
+            positionOffset: [26, 18]
+            pivot: [0, 0]
+            anchorPreset: TOP_LEFT
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [574.5422, 215.70241, 229.94745, 147.82332]
+            ignoreScissor: true
+            ignoreEvents: true
+          text:
+            font: []
+            text: Caderno do coveiro
+            fontSize: 20
+            multiline: true
+            maxTextSize: 2000
+            fixedWidth: false
+            fixedHeight: false
+            pivotBaseline: false
+            pivotCentered: false
+      - type: Entity
+        entity: 1103
+        name: NotebookText
+        components:
+          transform:
+            position: [26, 50, 0]
+            rotation: [1, 0, 0, 0]
+            scale: [1, 1, 1]
+            worldPosition: [850, 260, 0]
+            worldRotation: [1, 0, 0, 0]
+            worldScale: [1, 1, 1]
+            localMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [26, 50, 0, 1]]
+            modelMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [850, 260, 0, 1]]
+            normalMatrix: [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+            visible: true
+            billboardRotation: [1, 0, 0, 0]
+            billboard: false
+            fakeBillboard: false
+            cylindricalBillboard: false
+          ui:
+            primitiveType: triangles
+            vertexCount: 3
+            aabb:
+              min: [0, 0, 0]
+              max: [0, 12.666667, 0]
+            worldAABB:
+              min: [850, 260, 0]
+              max: [850, 272.66666, 0]
+            texture:
+              textureType: 2D
+              source: id
+              id: font|16#47
+              minFilter: linear
+              magFilter: linear
+              wrapU: repeat
+              wrapV: repeat
+              releaseDataAfterLoad: false
+            color: [0.8324022, 0.77385217, 0.6814193, 1]
+            automaticFlipY: true
+            flipY: false
+            pointerMoved: false
+            focused: false
+          uilayout:
+            width: 388
+            height: 16
+            anchorPointLeft: 0
+            anchorPointTop: 0
+            anchorPointRight: 0
+            anchorPointBottom: 0
+            anchorOffsetLeft: 0
+            anchorOffsetTop: 0
+            anchorOffsetRight: 388
+            anchorOffsetBottom: 16
+            positionOffset: [26, 50]
+            pivot: [0, 0]
+            anchorPreset: TOP_LEFT
+            usingAnchors: true
+            panel: 0
+            containerBoxIndex: -1
+            scissor: [574.5422, 215.70241, 229.94745, 147.82332]
+            ignoreScissor: true
+            ignoreEvents: true
+          text:
+            font: []
+            text: ""
+            fontSize: 16
+            multiline: true
+            maxTextSize: 2000
+            fixedWidth: true
+            fixedHeight: false
+            pivotBaseline: false
+            pivotCentered: false
+shaderKeysHash: fba8e91ba7145006dd7fa48123372b148edb092f

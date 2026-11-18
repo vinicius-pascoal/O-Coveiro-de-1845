@@ -16,7 +16,11 @@ local TEXTS = {
     "NightText", "ObjectiveText", "ProgressLabel", "KeysText", "HoverLabel", "Crosshair", "ToastText",
     "PanelTitle", "PanelSubtitle", "PanelBody",
     "OverlayTitle", "OverlaySubtitle", "OverlayBody", "OverlayFooter",
+    "NotebookTitle", "NotebookText",
 }
+local CHISEL_FILL_W = 238
+local NOTEBOOK_W = 440
+local ADVANCE_MAX_DELAY = 12   -- segundos para ler a resolução antes de a noite acabar
 local PROGRESS_ICONS = 6
 
 -- Ícones recortados da spritesheet (assets/ui/horror). Botões e títulos escolhem pelo nome.
@@ -92,7 +96,7 @@ local REVEAL_CHARS_PER_SECOND = 70
 -- mouse fica preso e os atalhos L / H / Esc fazem o mesmo papel.
 local TOP_BUTTONS = { "BtnBook", "BtnHelp", "BtnPause" }
 -- Atalhos aparecem na barra só durante a primeira noite; depois ficam na Pausa > Controles
-local KEY_HINTS = "E examinar  ·  L livro  ·  H ajuda  ·  Esc pausa"
+local KEY_HINTS = "E examinar  ·  Tab caderno  ·  L livro  ·  H ajuda  ·  Esc pausa"
 
 local PANEL_SLOTS = 6
 local MODAL_DIM_ALPHA = 0.55
@@ -207,6 +211,14 @@ function HUDController:init()
     for i = 1, PROGRESS_ICONS do
         self.progressIcons[i] = Image(s, findEntity(s, "ProgressIcon" .. i))
     end
+    self.chiselBar = Image(s, findEntity(s, "ChiselBar"))
+    self.chiselFill = Image(s, findEntity(s, "ChiselFill"))
+    self.chiselBar.visible = false
+    self.notebookBg = Image(s, findEntity(s, "NotebookBg"))
+    self.notebookBg.visible = false
+    self.notebookOpen = false
+    self.notebookDirty = true
+    self.frame = 0
     self.iconPaths = {}      -- imagem -> textura atual (evita recarregar a cada frame)
     self.placed = {}         -- objeto -> "x,y" já aplicado
     self.topBarShown = false
@@ -229,14 +241,26 @@ function HUDController:init()
     Flow.on("whisper", "hud", function(w)
         self:say(w.text, w.speaker == "Severino" and "thought" or "whisper")
     end)
-    Flow.on("reset", "hud", function() self.sayQueue = {} end)
+    Flow.on("reset", "hud", function()
+        self.sayQueue = {}
+        self.advanceTimer = nil
+        self.notebookOpen = false
+        self:setChiselProgress(nil)
+    end)
     Flow.on("spiritAwake", "hud", function(case)
         local sp = Flow.spirit(case)
         self:say(sp.name .. ": " .. sp.awaken, "spirit")
     end)
-    Flow.on("caseResolved", "hud", function(case)
-        local sp = Flow.spirit(case)
-        if sp and sp.rest then self:say(sp.name .. ": " .. sp.rest, "spirit") end
+    Flow.on("caseResolved", "hud", function(case) self:onResolved(case) end)
+    Flow.on("chiselProgress", "hud", function(_, p) self:setChiselProgress(p) end)
+    for _, ev in ipairs({ "clueNoted", "evidenceRead", "casesChanged", "chiselReady", "caseProven" }) do
+        Flow.on(ev, "hud_notebook", function() self.notebookDirty = true end)
+    end
+    Flow.on("nightIntro", "hud_clear", function()
+        -- histórias da noite anterior não atravessam a abertura da próxima
+        self.sayQueue = {}
+        self:hideToast()
+        self.advanceTimer = nil
     end)
     Flow.on("mistake", "hud", function(_, count)
         local lines = N.mistakeWhispers or {}
@@ -510,6 +534,7 @@ function HUDController:showPanel(spec)
     self.modalDim:setColor(0, 0, 0, compact and 0 or MODAL_DIM_ALPHA)
     self:setIcon(self.panelIcon, spec.icon)
     self.panelOpen = true
+    self.panelFrame = self.frame   -- o E que abriu o painel não pode fechá-lo no mesmo quadro
     self:layoutPanel()
     self:updateModalFlag()
 end
@@ -763,7 +788,9 @@ function HUDController:refreshObjective()
 
     local objective = case and case.objective or ""
     if case then
-        if Flow.isProven(case) then
+        if Flow.isChiseling(case) then
+            objective = objective .. "\nCorreção decidida: mire na lápide e segure E para gravar."
+        elseif Flow.isProven(case) then
             objective = objective .. "\nProvado. Falta corrigir o registro."
         end
         for _, other in ipairs(Flow.openCases()) do
@@ -809,6 +836,100 @@ function HUDController:onCasesOpened(list)
     end
 end
 
+----------------------------------------------------------------------
+-- Cinzel e resolução sem painel
+----------------------------------------------------------------------
+-- p = 0..1 enquanto o cinzel trabalha; nil esconde a barra
+function HUDController:setChiselProgress(p)
+    if not p then
+        self.chiselBar.visible = false
+        return
+    end
+    self.chiselBar.visible = true
+    setSize(self.chiselFill, math.max(1, CHISEL_FILL_W * math.min(1, p)))
+end
+
+-- Registro gravado na pedra: a história é contada na legenda e o jogo segue
+function HUDController:onResolved(case)
+    self:setChiselProgress(nil)
+    self:hideToast()   -- a instrução do cinzel dá lugar à história na hora
+    self:say("Registro corrigido. " .. case.resolution, "info")
+    local sp = Flow.spirit(case)
+    if sp and sp.rest then self:say(sp.name .. ": " .. sp.rest, "spirit") end
+    self:refreshObjective()
+    self.notebookDirty = true
+    if #Flow.openCases() > 0 then
+        Flow.advance()
+        self:refreshObjective()
+    else
+        -- último registro da noite: tempo para ler antes de a noite terminar
+        local len = (utf8 and utf8.len(case.resolution)) or #case.resolution
+        self.advanceTimer = math.min(ADVANCE_MAX_DELAY, 3 + len / 16)
+    end
+end
+
+-- Encerra a espera pela próxima noite (também usado pelo autoteste)
+function HUDController:flushAdvance()
+    if not self.advanceTimer then return false end
+    self.advanceTimer = nil
+    Flow.advance()
+    self:refreshObjective()
+    return true
+end
+
+----------------------------------------------------------------------
+-- Caderno (Tab): folha lateral que não pausa o jogo
+----------------------------------------------------------------------
+function HUDController:notebookBody()
+    local lines = {}
+    local open = Flow.openCases()
+    for _, case in ipairs(open) do
+        local number = N.graves[case.grave].number
+        lines[#lines + 1] = "Sepultura " .. number .. " — " .. case.title
+        if Flow.isChiseling(case) then
+            lines[#lines + 1] = "   Correção decidida: segure E diante da lápide."
+        elseif Flow.isProven(case) then
+            lines[#lines + 1] = "   Provado. Falta escrever a correção."
+        elseif not case.decision then
+            local readCount, total = Flow.progress(case)
+            lines[#lines + 1] = string.format("   Fontes lidas: %d de %d", readCount, total)
+        end
+        for _, c in ipairs(Flow.notedCaseClues(case)) do
+            lines[#lines + 1] = "   • " .. c.text
+        end
+        for _, id in ipairs(case.evidence) do
+            local place = Flow.placeOf(id)
+            if place and not Flow.isRead(id) then
+                lines[#lines + 1] = "   ? " .. N.evidence[id].title .. ": " .. N.places[place].where
+            end
+        end
+        lines[#lines + 1] = ""
+    end
+    if #open == 0 then lines[#lines + 1] = "Nenhum registro aberto agora." end
+    local resolved = 0
+    for _, c in ipairs(N.cases) do if Flow.isResolved(c) then resolved = resolved + 1 end end
+    lines[#lines + 1] = string.format("Registros corrigidos: %d de %d   ·   Tab fecha", resolved, #N.cases)
+    return table.concat(lines, "\n")
+end
+
+function HUDController:setNotebookOpen(open)
+    self.notebookOpen = open and true or false
+    self.notebookDirty = true
+end
+
+function HUDController:updateNotebook()
+    local show = self.notebookOpen and Flow.state.phase == "playing" and not self.panelOpen and not self.overlayOpen
+    self.notebookBg.visible = show
+    if not show then return end
+    local t = self.text.NotebookText
+    if self.notebookDirty then
+        self.notebookDirty = false
+        setTextWidth(t, NOTEBOOK_W - 52)
+        t.text = self:notebookBody()
+    end
+    setSize(self.notebookBg, NOTEBOOK_W, math.max(120, 50 + self:textHeight(t) + 26))
+end
+
 function HUDController:onIdleHint()
     if not self.panelOpen and not self.overlayOpen then
         self:toast(N.toasts.idleHint)
@@ -827,7 +948,11 @@ function HUDController:onFocus(h)
         local g = N.graves[h.grave]
         caption = "Examinar a sepultura " .. g.number
         local case = Flow.caseForGrave(h.grave)
-        if case and Flow.isOpen(case) then
+        if Flow.chiselCaseForGrave(h.grave) then
+            label.text = "[Segure E] Gravar a correção na pedra " .. g.number
+            label.visible = true
+            return
+        elseif case and Flow.isOpen(case) then
             caption = caption .. (Flow.isProven(case) and " — corrigir o registro" or " — caso aberto")
         end
     elseif h.kind == "book" then
@@ -836,7 +961,12 @@ function HUDController:onFocus(h)
         caption = "Pegar " .. N.places[h.place].label
     elseif h.kind == "spirit" then
         local name = N.spirits[h.caseId].name
-        caption = (Flow.isProven(caseById(h.caseId)) and "Corrigir o registro diante de " or "Confrontar ") .. name
+        local case = caseById(h.caseId)
+        if Flow.isChiseling(case) then
+            caption = name .. " espera o cinzel na pedra"
+        else
+            caption = (Flow.isProven(case) and "Corrigir o registro diante de " or "Confrontar ") .. name
+        end
     else
         caption = "Arquivo da Câmara"
     end
@@ -867,7 +997,13 @@ function HUDController:onWorldClick(h)
         local c = caseById(h.caseId)
         if c and Flow.isOpen(c) then
             Flow.setFocus(c)
-            if Flow.isProven(c) then self:openFix(c) else self:openConfront(c) end
+            if Flow.isChiseling(c) then
+                self:say("Mire na lápide " .. N.graves[c.grave].number .. " e segure E para gravar a correção.", "info")
+            elseif Flow.isProven(c) then
+                self:openFix(c)
+            else
+                self:openConfront(c)
+            end
         end
     else
         self:toast(N.toasts.crypt)
@@ -970,7 +1106,9 @@ function HUDController:openGrave(g)
             buttons[#buttons + 1] = { label = label, icon = readIcon(id), action = function() self:openEvidence(id, back) end }
         end
     end
-    if Flow.isProven(case) then
+    if Flow.isChiseling(case) then
+        buttons[#buttons + 1] = { label = "Feche e segure E diante da pedra para gravar", icon = "check", disabled = true }
+    elseif Flow.isProven(case) then
         buttons[#buttons + 1] = { label = "Corrigir o registro", icon = "check", action = function() self:openFix(case) end }
     elseif case.decision then
         local readCount, total = Flow.progress(case)
@@ -1243,20 +1381,10 @@ function HUDController:applyFix(case, optionIndex)
         })
         return
     end
+    -- correção decidida: agora o coveiro grava com as próprias mãos (segurar E diante da pedra)
+    self:closePanel()
     self:refreshObjective()
-    self:showPanel({
-        title = "Registro corrigido",
-        icon = "correct",
-        subtitle = "Sepultura " .. N.graves[case.grave].number .. " — " .. case.title,
-        body = result.text,
-        reveal = true,
-        talk = true,
-        buttons = { { label = "Continuar", icon = "play", action = function()
-            self:closePanel()
-            Flow.advance()
-            self:refreshObjective()
-        end } },
-    })
+    self:say("Mire na lápide " .. N.graves[case.grave].number .. " e segure E para gravar: " .. (case.fix and case.fix.options[case.fix.correct] or "a correção") .. ".", "info")
 end
 
 function HUDController:decide(case, index)
@@ -1529,6 +1657,17 @@ function HUDController:onKeyDown(key, isRepeat, mods)
     end
 
     local playing = Flow.state.phase == "playing" and not self.overlayOpen
+    -- Tab: caderno lateral, sem pausar
+    if key == Input.KEY_TAB and Flow.state.phase == "playing" and not self.overlayOpen then
+        if self.panelOpen then self:closePanel() end
+        self:setNotebookOpen(not self.notebookOpen)
+        return
+    end
+    -- E fecha o painel aberto e devolve o controle (documentos, sepultura, conversa)
+    if key == Input.KEY_E and self.panelOpen and not self.overlayOpen and self.panelFrame ~= self.frame then
+        self:closePanel()
+        return
+    end
     if key == Input.KEY_L and playing then
         if self.panelOpen then self:closePanel() else self:openBook() end
         return
@@ -1588,8 +1727,14 @@ function HUDController:onUpdate()
             self.demoWait = nextStep and nextStep[1] or 0
         end
     end
+    self.frame = self.frame + 1
+    if self.advanceTimer and Flow.state.phase == "playing" and not self.panelOpen and not self.overlayOpen then
+        self.advanceTimer = self.advanceTimer - dt
+        if self.advanceTimer <= 0 then self:flushAdvance() end
+    end
     Flow.tick(dt)
     self:updateReveal(dt)
+    self:updateNotebook()
 
     -- O motor mede os textos depois que eles mudam: refaz a diagramação com as medidas atuais
     if self.shrinkWait > 0 then self.shrinkWait = self.shrinkWait - 1 end

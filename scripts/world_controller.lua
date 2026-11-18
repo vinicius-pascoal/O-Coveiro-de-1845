@@ -16,6 +16,11 @@ local REACTION_ANIM = { taunt = "Skeletons_Taunt", hit = "Hit_A", nod = "Interac
 local SPIRIT_WAKE_RADIUS = 4.5
 local SPIRIT_TURN_SPEED = 4.0   -- quão rápido o morto se vira para o coveiro
 
+-- Cinzel: segurar E (ou o botão do mouse) diante da lápide grava a correção
+local CHISEL_TIME = 2.4        -- segundos segurando
+local CHISEL_DECAY = 0.6       -- quanto do progresso se perde por segundo ao soltar
+local CHISEL_STRIKE = 0.42     -- intervalo entre as batidas do cinzel
+
 local TRAIL_CANDLES = 6
 local TRAIL_STEP = 0.45   -- segundos entre uma vela da trilha e a próxima
 
@@ -322,6 +327,14 @@ end
 function WorldController:interact()
     if not self:canInteract() or not self.focused then return end
     local h = self.focused
+    -- lápide com correção decidida: em vez de abrir o painel, começa o cinzel
+    if h.kind == "grave" then
+        local case = Flow.chiselCaseForGrave(h.grave)
+        if case then
+            self:startChisel(h, case)
+            return
+        end
+    end
     self:setFocus(nil)
     Flow.emit("worldClick", h)
 end
@@ -517,6 +530,56 @@ function WorldController:updateSpirits(dt, px, pz, checkWake)
     end
 end
 
+----------------------------------------------------------------------
+-- Cinzel
+----------------------------------------------------------------------
+function WorldController:startChisel(h, case)
+    if self.chisel and self.chisel.hotspot == h then return end
+    self:stopChisel()
+    local obj = Object(self.scene, h.entity)
+    self.chisel = { hotspot = h, case = case, progress = 0, strike = 0, object = obj, home = obj.position }
+    Flow.emit("chiselProgress", case, 0)
+end
+
+function WorldController:stopChisel()
+    local c = self.chisel
+    if not c then return end
+    c.object.position = c.home
+    self.chisel = nil
+    Flow.emit("chiselProgress", c.case, nil)
+end
+
+-- held = E ou botão do mouse seguro com a lápide na mira
+function WorldController:updateChisel(dt, held)
+    local c = self.chisel
+    if not c then return end
+    if held then
+        c.progress = c.progress + dt / CHISEL_TIME
+        c.strike = c.strike - dt
+        if c.strike <= 0 then
+            -- cada batida: a pedra estremece e a câmera dá um tranco
+            c.strike = CHISEL_STRIKE
+            self.shake = math.max(self.shake or 0, 0.12)
+        end
+        local j = 0.018 * math.min(1, c.strike / CHISEL_STRIKE)
+        c.object.position = Vector3(c.home.x + (math.random() - 0.5) * j, c.home.y, c.home.z + (math.random() - 0.5) * j)
+    else
+        c.progress = c.progress - dt * CHISEL_DECAY
+        c.object.position = c.home
+        if c.progress <= 0 then
+            self:stopChisel()
+            return
+        end
+    end
+    if c.progress >= 1 then
+        local case = c.case
+        self:stopChisel()
+        Flow.completeChisel(case)
+        return
+    end
+    Flow.emit("chiselProgress", c.case, c.progress)
+end
+
 -- Noite 3: as velas acendem uma a uma, da mesa até a primeira cova
 function WorldController:startTrail()
     for _, c in ipairs(self.trail) do c.visible = false end
@@ -584,6 +647,7 @@ function WorldController:resetVisuals()
     self:clearMarkers()
     self:hideTrail()
     self:refreshPapers()
+    self:stopChisel()
     self.talkTarget = nil
     for _, sp in pairs(self.spirits) do
         sp.yaw = 0
@@ -624,6 +688,13 @@ function WorldController:onUpdate()
 
     local pp = self.player.position
     self:updateSpirits(dt, pp.x, pp.z, self:canInteract())
+
+    -- o cinzel só avança com a lápide certa na mira e E (ou o mouse) seguro
+    if self.chisel then
+        local onTarget = self:canInteract() and self.focused == self.chisel.hotspot
+        local held = self.forceChiselHold or (onTarget and (key(Input.KEY_E) or Input.isMousePressed(Input.MOUSE_BUTTON_LEFT)))
+        self:updateChisel(dt, held)
+    end
 
     -- Lua piscando após uma correção, ou sumindo após um erro (reage ao estado do jogo)
     local base = self.moonIntensity or 1.6
