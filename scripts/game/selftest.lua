@@ -80,12 +80,43 @@ local function playCase(hud, case, makeMistake)
     end
     for _, id in ipairs(case.evidence) do
         local ev = N.evidence[id]
-        local prefix = ev.kind == "book" and "Consultar o livro" or ("Ler: " .. ev.title)
-        clickPanel(hud, prefix)
-        check(Flow.isRead(id), "evidence should be read: " .. id)
-        hud:finishReveal()
-        noteAll(hud, id)
-        clickPanel(hud, "Voltar")
+        if ev.place then
+            -- o papel está espalhado pelo cemitério: a sepultura só diz onde procurar
+            local found = false
+            for i = 1, PANEL_SLOTS do
+                local b = hud.button["PanelBtn" .. i]
+                if b.visible and b.label:find("Procurar: " .. ev.title, 1, true) then
+                    found = true
+                    check(b.disabled, "search button should be disabled: " .. id)
+                end
+            end
+            check(found, "search button expected for " .. id)
+            local world = Flow.worldController
+            if world then
+                local active = false
+                for _, h in ipairs(world.hotspots) do
+                    if h.kind == "paper" and h.place == ev.place then active = h.enabled and h.object.visible end
+                end
+                check(active, "paper should be visible at " .. ev.place)
+            end
+            hud:closePanel()
+            hud:onWorldClick({ kind = "paper", place = ev.place })
+            check(Flow.isRead(id), "paper should be read: " .. id)
+            hud:finishReveal()
+            noteAll(hud, id)
+            clickPanel(hud, "Guardar o papel")
+            check(not hud.panelOpen, "paper panel should close")
+            hud:onWorldClick({ kind = "grave", grave = case.grave })
+            clickPanel(hud, "Reler: " .. ev.title)
+            clickPanel(hud, "Voltar")
+        else
+            local prefix = ev.kind == "book" and "Consultar o livro" or ("Ler: " .. ev.title)
+            clickPanel(hud, prefix)
+            check(Flow.isRead(id), "evidence should be read: " .. id)
+            hud:finishReveal()
+            noteAll(hud, id)
+            clickPanel(hud, "Voltar")
+        end
     end
     check(Flow.canConfront(case), "should be able to confront " .. case.id)
     clickPanel(hud, case.decision and "Decidir" or "Confrontar")
@@ -131,6 +162,7 @@ local function playCase(hud, case, makeMistake)
             if i ~= case.fix.correct then clickPanel(hud, opt); break end
         end
         check(hud.text.PanelTitle.text:find("hesita", 1, true) ~= nil, "wrong fix panel expected")
+        check(#Flow.scars(case.grave) == 1, "wrong fix should scar the stone: " .. case.id)
         clickPanel(hud, "Escrever de novo")
     end
     clickPanel(hud, case.fix.options[case.fix.correct])
@@ -206,6 +238,8 @@ function SelfTest.run(hud, endingKind)
         if night == 3 then
             -- a lápide lisa só abre depois da primeira cova
             check(#Flow.openCases() == 1, "only c5 should be open on night 3")
+            local world = Flow.worldController
+            if world then check(world.trailTimer ~= nil and #world.trail == 6, "candle trail should start on night 3") end
             hud:onWorldClick({ kind = "grave", grave = 6 })
             check(hud.text.PanelBody.text:find("primeira cova", 1, true) ~= nil, "locked grave message expected")
             hud:closePanel()
@@ -253,6 +287,7 @@ function SelfTest.aimTest(world)
     local ok, bad = 0, {}
     local savedYaw, savedPitch = world.yaw, world.pitch
     for _, h in ipairs(world.hotspots) do
+      if h.enabled then
         local c = h.mesh:getWorldAABB():getCenter()
         local dx, dy, dz = c.x - p.x, c.y - p.y, c.z - p.z
         world.yaw = math.deg(math.atan(-dx, -dz))
@@ -266,6 +301,7 @@ function SelfTest.aimTest(world)
         else
             bad[#bad + 1] = string.format("%s->%s", h.name, hit and hit.name or "nil")
         end
+      end
     end
     world.yaw, world.pitch = savedYaw, savedPitch
     world:applyLook()

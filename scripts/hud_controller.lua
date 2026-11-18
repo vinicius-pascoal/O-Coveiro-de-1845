@@ -221,6 +221,10 @@ function HUDController:init()
         self:say(w.text, w.speaker == "Severino" and "thought" or "whisper")
     end)
     Flow.on("reset", "hud", function() self.sayQueue = {} end)
+    Flow.on("mistake", "hud", function(_, count)
+        local lines = N.mistakeWhispers or {}
+        if #lines > 0 then self:say(lines[(count - 1) % #lines + 1], "whisper") end
+    end)
 
     self:hideToast()
     self:closePanel()
@@ -779,6 +783,8 @@ function HUDController:onFocus(h)
         end
     elseif h.kind == "book" then
         caption = "Ler o livro de registros"
+    elseif h.kind == "paper" then
+        caption = "Pegar " .. N.places[h.place].label
     else
         caption = "Arquivo da Câmara"
     end
@@ -803,6 +809,8 @@ function HUDController:onWorldClick(h)
         self:openGrave(h.grave)
     elseif h.kind == "book" then
         self:openBook()
+    elseif h.kind == "paper" then
+        self:openPlace(h.place)
     else
         self:toast(N.toasts.crypt)
     end
@@ -824,6 +832,39 @@ function HUDController:clueButtons(sourceId, reopen)
     return buttons
 end
 
+-- Inscrição atual + as correções erradas que ficaram riscadas na pedra
+local function graveText(g)
+    local text = Flow.inscription(g)
+    local scars = Flow.scars(g)
+    if #scars > 0 then
+        text = text .. "\n\nRiscado na pedra, pela sua mão: " .. table.concat(scars, " · ")
+    end
+    return text
+end
+
+-- Papel avulso pego no cemitério: lê direto (ou escolhe, se houver mais de um)
+function HUDController:openPlace(place)
+    local docs = Flow.docsAt(place)
+    if #docs == 0 then return end
+    if #docs == 1 then
+        self:openEvidence(docs[1], nil)
+        return
+    end
+    local buttons = {}
+    for _, id in ipairs(docs) do
+        buttons[#buttons + 1] = { label = "Ler: " .. N.evidence[id].title .. readMark(id), icon = readIcon(id),
+            action = function() self:openEvidence(id, function() self:openPlace(place) end) end }
+    end
+    buttons[#buttons + 1] = { label = "Fechar", icon = "x", action = function() self:closePanel() end }
+    self:showPanel({
+        title = "Papéis",
+        subtitle = N.places[place].where,
+        icon = "candle",
+        body = "Há mais de um papel aqui.",
+        buttons = buttons,
+    })
+end
+
 function HUDController:openGrave(g)
     local grave = N.graves[g]
     local case = Flow.caseForGrave(g)
@@ -842,7 +883,7 @@ function HUDController:openGrave(g)
             title = "Sepultura " .. grave.number,
             subtitle = "Inscrição da lápide",
             icon = "tomb",
-            body = Flow.inscription(g) .. "\n\n" .. note,
+            body = graveText(g) .. "\n\n" .. note,
             buttons = { { label = "Fechar", icon = "x", action = function() self:closePanel() end } },
         })
         return
@@ -855,13 +896,21 @@ function HUDController:openGrave(g)
     local buttons = self:clueButtons(graveId, back)
     for _, id in ipairs(case.evidence) do
         local ev = N.evidence[id]
-        local label
-        if ev.kind == "book" then
-            label = "Consultar o livro de registros" .. readMark(id)
+        if ev.place and not Flow.isRead(id) then
+            -- o papel não está aqui: só dá para reler depois de achá-lo pelo cemitério
+            buttons[#buttons + 1] = { label = "Procurar: " .. ev.title .. " — " .. N.places[ev.place].label,
+                icon = "minus", disabled = true }
         else
-            label = "Ler: " .. ev.title .. readMark(id)
+            local label
+            if ev.kind == "book" then
+                label = "Consultar o livro de registros" .. readMark(id)
+            elseif ev.place then
+                label = "Reler: " .. ev.title .. readMark(id)
+            else
+                label = "Ler: " .. ev.title .. readMark(id)
+            end
+            buttons[#buttons + 1] = { label = label, icon = readIcon(id), action = function() self:openEvidence(id, back) end }
         end
-        buttons[#buttons + 1] = { label = label, icon = readIcon(id), action = function() self:openEvidence(id, back) end }
     end
     if Flow.isProven(case) then
         buttons[#buttons + 1] = { label = "Corrigir o registro", icon = "check", action = function() self:openFix(case) end }
@@ -875,7 +924,7 @@ function HUDController:openGrave(g)
         buttons[#buttons + 1] = { label = "Confrontar registros", icon = "question", action = function() self:openConfront(case) end }
     end
 
-    local body = Flow.inscription(g) .. "\n\n" .. case.objective
+    local body = graveText(g) .. "\n\n" .. case.objective
     local thought = N.caseThoughts[case.id]
     if thought then body = body .. "\n\n— Severino pensa: \"" .. thought .. "\"" end
     self:showPanel({
@@ -896,7 +945,11 @@ function HUDController:openEvidence(id, back)
         body = body .. "\n\n— Severino pensa: \"" .. thought .. "\""
     end
     local buttons = self:clueButtons(id, function() self:openEvidence(id, back) end)
-    buttons[#buttons + 1] = { label = "Voltar", icon = "home", action = back }
+    if back then
+        buttons[#buttons + 1] = { label = "Voltar", icon = "home", action = back }
+    else
+        buttons[#buttons + 1] = { label = "Guardar o papel", icon = "x", action = function() self:closePanel() end }
+    end
     self:showPanel({
         title = ev.title,
         subtitle = ev.subtitle or KIND_LABEL[ev.kind] or "",

@@ -5,6 +5,10 @@
 
 local Flow = require("game.flow")
 local Settings = require("game.settings")
+local N = require("game.narrative")
+
+local TRAIL_CANDLES = 6
+local TRAIL_STEP = 0.45   -- segundos entre uma vela da trilha e a próxima
 
 local WorldController = {
     properties = {
@@ -84,8 +88,27 @@ function WorldController:init()
         if e then
             self.hotspots[#self.hotspots + 1] = {
                 entity = e, kind = h.kind, grave = h.grave, name = h.name,
-                mesh = Mesh(s, e),
+                mesh = Mesh(s, e), enabled = true,
             }
+        end
+    end
+    -- Papéis avulsos: só aparecem (e só respondem à mira) quando guardam um documento de caso aberto
+    for place, p in pairs(N.places) do
+        local e = find(s, p.entity)
+        if e then
+            local h = { entity = e, kind = "paper", place = place, name = p.entity,
+                        mesh = Mesh(s, e), object = Object(s, e), enabled = false }
+            h.object.visible = false
+            self.hotspots[#self.hotspots + 1] = h
+        end
+    end
+
+    -- Trilha de velas da noite 3 (da mesa até a primeira cova)
+    self.trail = {}
+    for i = 1, TRAIL_CANDLES do
+        local e = s:findEntity("TrailCandle" .. i)
+        if e and e ~= 0 then
+            self.trail[#self.trail + 1] = Object(s, e)
         end
     end
 
@@ -145,8 +168,14 @@ function WorldController:init()
     RegisterEngineEvent(self, "onFixedUpdate")
 
     Flow.on("reset", "world", function() self:resetVisuals() end)
-    Flow.on("nightStarted", "world", function(n) self:applyAtmosphere(NIGHT_LOOK[n] or NIGHT_LOOK[1]) end)
-    Flow.on("casesChanged", "world", function() self:markCases(Flow.openCases()) end)
+    Flow.on("nightStarted", "world", function(n)
+        self:applyAtmosphere(NIGHT_LOOK[n] or NIGHT_LOOK[1])
+        if n == 3 then self:startTrail() end
+    end)
+    Flow.on("casesChanged", "world", function()
+        self:markCases(Flow.openCases())
+        self:refreshPapers()
+    end)
     Flow.on("caseResolved", "world", function(case) self:onCaseResolved(case) end)
     Flow.on("mistake", "world", function() self:onMistake() end)
     Flow.on("ending", "world", function(kind) self:onEnding(kind) end)
@@ -232,7 +261,7 @@ function WorldController:pickCenter()
     local origin = ray.origin
     local best, bestDist = nil, math.huge
     for _, h in ipairs(self.hotspots) do
-        local hit = ray:intersects(h.mesh:getWorldAABB())
+        local hit = h.enabled and ray:intersects(h.mesh:getWorldAABB())
         if hit and hit.hit then
             local d = (ray:getPoint(hit.distance) - origin):length()
             if d < bestDist then best, bestDist = h, d end
@@ -307,19 +336,47 @@ function WorldController:markCases(cases)
     end
 end
 
+-- Mostra os papéis dos lugares que guardam documentos de casos abertos
+function WorldController:refreshPapers()
+    for _, h in ipairs(self.hotspots) do
+        if h.kind == "paper" then
+            local active = #Flow.docsAt(h.place) > 0
+            h.enabled = active
+            h.object.visible = active
+        end
+    end
+end
+
+-- Noite 3: as velas acendem uma a uma, da mesa até a primeira cova
+function WorldController:startTrail()
+    for _, c in ipairs(self.trail) do c.visible = false end
+    self.trailLit = 0
+    self.trailTimer = 1.2
+end
+
+function WorldController:hideTrail()
+    for _, c in ipairs(self.trail) do c.visible = false end
+    self.trailTimer = nil
+end
+
 function WorldController:onCaseResolved(case)
     if self.candles[case.grave] then
         self.candles[case.grave].visible = true
     end
     self:markCases(Flow.openCases())
-    -- Sobressalto sobrenatural: a lua pisca forte por um instante
-    self.flash = 0.6
+    self:refreshPapers()
+    if case.id == "c5" then self:hideTrail() end
+    -- Sobressalto sobrenatural: a lua pisca forte; em alguns casos o chão treme
+    local fx = N.resolutionEffects and N.resolutionEffects[case.id] or {}
+    self.flash = fx.flash or 0.6
+    if fx.shake then self.shake = fx.shake end
 end
 
 function WorldController:onMistake()
-    -- Consequência simbólica: a névoa engrossa um pouco a cada erro
+    -- Consequência simbólica: a névoa engrossa um pouco a cada erro e a lua some por um instante
     self.extraFog = math.min(self.extraFog + 0.008, 0.04)
     self.fog.density = self.baseFogDensity + self.extraFog
+    self.dim = 1.2
 end
 
 function WorldController:applyAtmosphere(look)
@@ -341,6 +398,8 @@ end
 
 function WorldController:onEnding(kind)
     self:clearMarkers()
+    self:hideTrail()
+    self:refreshPapers()
     self.extraFog = 0
     self:applyAtmosphere(ENDING_LOOK[kind] or ENDING_LOOK.preserve)
 end
@@ -348,8 +407,12 @@ end
 function WorldController:resetVisuals()
     self.extraFog = 0
     self.flash = nil
+    self.dim = nil
+    self.shake = nil
     for _, c in pairs(self.candles) do c.visible = false end
     self:clearMarkers()
+    self:hideTrail()
+    self:refreshPapers()
     self.hoverLight.intensity = 0
     self.focused = nil
     -- jogador volta ao portão olhando para o norte
@@ -381,14 +444,52 @@ function WorldController:onUpdate()
         self:setFocus(nil)
     end
 
-    -- Lua piscando após uma correção (reage ao estado do jogo)
+    -- Lua piscando após uma correção, ou sumindo após um erro (reage ao estado do jogo)
+    local base = self.moonIntensity or 1.6
     if self.flash then
         self.flash = self.flash - dt
         if self.flash <= 0 then
             self.flash = nil
-            self.moon.intensity = self.moonIntensity or 1.6
+            self.moon.intensity = base
         else
-            self.moon.intensity = (self.moonIntensity or 1.6) * (1.0 + 2.5 * self.flash)
+            self.moon.intensity = base * (1.0 + 2.5 * self.flash)
+        end
+    elseif self.dim then
+        self.dim = self.dim - dt
+        if self.dim <= 0 then
+            self.dim = nil
+            self.moon.intensity = base
+        else
+            -- apaga rápido e volta devagar
+            self.moon.intensity = base * (1.0 - 0.75 * math.min(1, self.dim / 0.6))
+        end
+    end
+
+    -- Tremor da câmera (o sino, a pedra que range)
+    if self.shake then
+        self.shake = self.shake - dt
+        if self.shake <= 0 then
+            self.shake = nil
+            self:applyLook()
+        else
+            local a = 1.6 * math.min(1, self.shake * 2)
+            self.camera.rotation = Quaternion(self.yaw + (math.random() - 0.5) * a, UP)
+                * Quaternion(self.pitch + (math.random() - 0.5) * a, RIGHT)
+        end
+    end
+
+    -- Trilha de velas da noite 3
+    if self.trailTimer and Flow.state.phase == "playing" then
+        self.trailTimer = self.trailTimer - dt
+        if self.trailTimer <= 0 then
+            self.trailLit = self.trailLit + 1
+            local c = self.trail[self.trailLit]
+            if c then c.visible = true end
+            if self.trailLit >= #self.trail then
+                self.trailTimer = nil
+            else
+                self.trailTimer = TRAIL_STEP
+            end
         end
     end
 end

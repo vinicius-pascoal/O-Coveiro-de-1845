@@ -35,25 +35,25 @@ N.graves = {
 N.evidence = {
     ["book:07"] = { kind = "book", title = "Livro de registros — nº 07",
         body = "Registro nº 07 — Antônio Ferreira, 52 anos, mestre do saveiro Bom Jesus. Falecido de febre em 3 de março de 1845. Sepultado no mesmo dia.\n\nAo pé da linha: \"Lançado por ordem da Câmara.\"" },
-    ["carta_rosa"] = { kind = "letter", title = "Carta de Rosa Ferreira",
+    ["carta_rosa"] = { kind = "letter", place = "desk", title = "Carta de Rosa Ferreira",
         subtitle = "Estância, 20 de junho de 1844",
         body = "\"Meu pai, recebi as redes que o senhor mandou no Bom Jesus em maio. Mãe diz que o senhor tosse demais e que é para largar o sal das velas antes da chuva. Mande notícias pelo próximo saveiro.\n\nSua filha, Rosa Ferreira.\"" },
 
     ["book:02"] = { kind = "book", title = "Livro de registros — nº 02",
         body = "Registro nº 02 — Maria das Dores Nunes, 34 anos, lavadeira. Sepultada em 12 de agosto de 1845.\n\nÀ margem, em outra tinta: \"Não confundir com M. das Dores Santos — sem registro de óbito.\"" },
-    ["assento_casamento"] = { kind = "record", title = "Assento de casamento",
+    ["assento_casamento"] = { kind = "record", place = "crypt", title = "Assento de casamento",
         subtitle = "Livro de casamentos da Matriz, 1840",
         body = "\"Aos nove dias de maio de 1840, recebem-se em matrimônio Firmino dos Santos e Maria das Dores Nunes, lavadeira, que daqui em diante passa a assinar Maria das Dores Santos.\"\n\nAssina o Padre Inácio." },
 
     ["book:04"] = { kind = "book", title = "Livro de registros — nº 04",
         body = "Duas linhas para o mesmo número, na mesma letra:\n\n• José de Santana, 61 anos, sineiro. Sepultado em 9 de abril de 1844.\n• José de Santana, 27 anos, carpinteiro. Sepultado em 9 de abril de 1844." },
-    ["testemunho_vigario"] = { kind = "testimony", title = "Testemunho do Padre Inácio",
+    ["testemunho_vigario"] = { kind = "testimony", place = "desk", title = "Testemunho do Padre Inácio",
         subtitle = "Escrito em abril de 1844",
         body = "\"Enterrei o velho José com a corda do sino nas mãos, como ele pediu. O moço carpinteiro, do mesmo nome, foi levado junto com os outros da febre para a vala do fundo, sem cruz.\"",
         variants = {
             { flag = "night2_event", append = "\n\nUma frase nova surgiu ao pé da página, na mesma letra:\n\"Quem lançava os mortos da febre era Benedito Ramos, o zelador. Dizia que a Câmara mandava escrever menos. Depois do São João, ninguém o viu mais.\"" },
         } },
-    ["inventario_04"] = { kind = "record", title = "Inventário da sepultura 04",
+    ["inventario_04"] = { kind = "record", place = "grave04", title = "Inventário da sepultura 04",
         subtitle = "Reforma do muro, 1845",
         body = "Objetos achados ao reabrir a sepultura 04:\n\n• um pedaço de corda de sino, trançada;\n• um rosário de contas pretas;\n• nenhuma ferramenta." },
 
@@ -62,7 +62,7 @@ N.evidence = {
     ["carta_tomas"] = { kind = "letter", title = "Carta de Tomás de Almeida",
         subtitle = "4 de setembro de 1845",
         body = "\"Meu tio, enterramos Ana ontem, ao lado da cova do sineiro. Os alunos levaram flores de algodão. Não sei como contar à mãe.\"" },
-    ["bilhete_canteiro"] = { kind = "letter", title = "Bilhete do canteiro Firmino",
+    ["bilhete_canteiro"] = { kind = "letter", place = "gate", title = "Bilhete do canteiro Firmino",
         subtitle = "Preso à grade do portão",
         body = "\"Gravei 1845, como me pediram, e cobrei por isso. Se a pedra agora diz outra coisa, não foi a minha mão. Os sulcos do 6 são novos — qualquer um vê.\"" },
 
@@ -71,7 +71,7 @@ N.evidence = {
     ["pagina_rasgada"] = { kind = "letter", title = "Página rasgada",
         subtitle = "Presa entre as últimas folhas do livro",
         body = "\"...os mortos da febre não cabem no número que a Câmara quer. Mandam lançar com datas espalhadas, para o porto não fechar. Não escrevo mais o que me mandam. Se eu sumir, procurem na primeira cova.\"\n\n— B. R." },
-    ["oficio_camara"] = { kind = "record", title = "Ofício da Câmara Municipal",
+    ["oficio_camara"] = { kind = "record", place = "crypt", title = "Ofício da Câmara Municipal",
         subtitle = "Julho de 1844 — achado no arquivo da cripta",
         body = "\"Ordena-se ao zelador que os óbitos da febre sejam lançados com datas diversas e em números separados, para não alarmar o porto nem afastar os navios. O desobediente será dispensado, e seu nome, riscado.\"" },
 
@@ -80,6 +80,36 @@ N.evidence = {
     ["nota_benedito"] = { kind = "letter", title = "Bilhete de Benedito Ramos",
         subtitle = "Dobrado dentro do ofício da Câmara",
         body = "\"O livro guarda a vila inteira. Quem o mantém em ordem acaba escrito nele. Para que uma história fique limpa, outra precisa ser esquecida.\n\nEu escolhi não esquecer. Agora é a sua vez de escolher.\"" },
+}
+
+----------------------------------------------------------------------
+-- Lugares do cemitério onde papéis avulsos ficam esperando (documentos com place = ...).
+-- O papel brilha enquanto guardar um documento de um caso aberto.
+----------------------------------------------------------------------
+N.places = {
+    desk    = { entity = "PaperDesk", label = "o papel sobre a mesa", where = "sobre a mesa do livro, ao fundo do cemitério" },
+    crypt   = { entity = "PaperCrypt", label = "o papel na porta do arquivo", where = "pregado na porta do arquivo da Câmara (a cripta, a noroeste)" },
+    gate    = { entity = "PaperGate", label = "o papel preso no portão", where = "preso na grade do portão de entrada, atrás de você ao chegar" },
+    grave04 = { entity = "PaperGrave04", label = "o papel no chão", where = "no chão, ao pé da sepultura 04" },
+}
+
+-- O que o cemitério faz quando um registro é corrigido (além das velas na cova e do clarão da lua)
+-- shake = segundos de tremor da câmera; flash = força do clarão
+N.resolutionEffects = {
+    c1 = { flash = 0.6 },                -- remos n'água, velas acesas
+    c2 = { flash = 0.5 },
+    c3 = { flash = 0.4, shake = 0.35 },  -- o sino toca uma vez
+    c4 = { flash = 0.8 },                -- tinta úmida: alguém continua escrevendo
+    c5 = { flash = 1.0, shake = 0.8 },   -- a pedra da primeira cova range
+}
+
+-- Sussurros depois de uma conclusão errada (em ordem, um por erro)
+N.mistakeWhispers = {
+    "...não foi assim que aconteceu...",
+    "...a pedra lembra o que você escreve...",
+    "...mais um nome torto no livro...",
+    "...nós vimos. nós estávamos lá...",
+    "...quem escreve errado também é escrito...",
 }
 
 ----------------------------------------------------------------------
@@ -349,19 +379,19 @@ N.nights = {
     {
         title = "Noite 1",
         subtitle = "O primeiro nome",
-        intro = "Seu primeiro turno no cemitério. O livro de registros está aberto na mesa, ao fundo, perto da estante. Duas lápides, marcadas pela luz fria, não batem com o que está escrito nele. Resolva-as na ordem que quiser.\n\nComo jogar: ande com W A S D e olhe com o mouse; mire numa sepultura e aperte E. Leia a lápide e os documentos e anote no caderno os detalhes que importam. Em \"Confrontar registros\", escolha uma conclusão e apresente a anotação que a prova. Depois, corrija o registro com a sua própria mão.",
+        intro = "Seu primeiro turno no cemitério. O livro de registros está aberto na mesa, ao fundo, perto da estante. Duas lápides, marcadas pela luz fria, não batem com o que está escrito nele. Resolva-as na ordem que quiser.\n\nComo jogar: ande com W A S D e olhe com o mouse; mire numa sepultura e aperte E. Leia a lápide e os documentos e anote no caderno os detalhes que importam; alguns papéis não estão na cova, e sim espalhados pelo cemitério, brilhando no escuro. Em \"Confrontar registros\", escolha uma conclusão e apresente a anotação que a prova. Depois, corrija o registro com a sua própria mão.",
         outro = "Ao fechar o livro, você nota que a inscrição da sepultura 03 mudou. Ninguém passou pelo portão.\n\nEntre as últimas folhas, há uma página rasgada assinada com as iniciais B. R. — Benedito Ramos, o coveiro antes de você.",
     },
     {
         title = "Noite 2",
         subtitle = "As histórias trocadas",
-        intro = "Esta noite, dois registros parecem contar a história errada — e um deles, de propósito.",
+        intro = "Esta noite, dois registros parecem contar a história errada — e um deles, de propósito.\n\nNem todo papel fica junto da cova. Quando a sepultura pedir um documento que não está ali, procure o brilho de papel pelo cemitério.",
         outro = "Ao reler o testemunho do Padre Inácio, você encontra uma frase que não estava lá antes. Ela fala de Benedito Ramos, o antigo zelador, e de mortos que a Câmara mandava esconder.\n\nA primeira cova, a 01, nunca teve nome.",
     },
     {
         title = "Noite 3",
         subtitle = "O nome que falta",
-        intro = "A primeira cova espera um nome. A última também.",
+        intro = "A primeira cova espera um nome. A última também.\n\nDa mesa do livro, uma fileira de velas que você não acendeu leva até a sepultura 01.",
     },
 }
 

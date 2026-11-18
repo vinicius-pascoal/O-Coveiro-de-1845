@@ -54,6 +54,7 @@ local function freshState()
         notes = {},            -- histórico de descobertas (strings)
         whispersSeen = {},     -- whisperId -> true
         inscriptions = {},     -- graveIndex -> texto atual
+        scars = {},            -- graveIndex -> correções erradas que ficaram riscadas na pedra
     }
     for i, g in pairs(N.graves) do
         s.inscriptions[i] = g.inscription
@@ -158,6 +159,27 @@ function Flow.evidenceBody(id)
         end
     end
     return body
+end
+
+-- Lugar do cemitério onde o documento está (nil = junto da própria sepultura)
+function Flow.placeOf(id)
+    local ev = N.evidence[id]
+    return ev and ev.place
+end
+
+-- Documentos de casos abertos esperando num lugar
+function Flow.docsAt(place)
+    local list = {}
+    for _, c in ipairs(Flow.openCases()) do
+        for _, id in ipairs(c.evidence) do
+            if N.evidence[id].place == place then list[#list + 1] = id end
+        end
+    end
+    return list
+end
+
+function Flow.scars(graveIndex)
+    return Flow.state.scars[graveIndex] or {}
 end
 
 -- Lista de fontes exigidas pelo caso: a lápide + documentos
@@ -360,6 +382,10 @@ function Flow.fix(case, optionIndex)
     if not Flow.isProven(case) then return nil end
     local fix = case.fix
     if fix and optionIndex ~= fix.correct then
+        -- a tentativa errada fica riscada na pedra até o fim
+        local scars = Flow.state.scars[case.grave] or {}
+        scars[#scars + 1] = fix.options[optionIndex]
+        Flow.state.scars[case.grave] = scars
         mistake(case)
         local fb = fix.feedback and fix.feedback[optionIndex]
         return { kind = "fixWrong", case = case, text = fb or "Não foi isso que as provas mostraram." }
@@ -447,6 +473,8 @@ function Flow.hintText()
             where = "Vá até a sepultura " .. number .. ", marcada pela luz fria, mire nela e aperte E para ler a lápide."
         elseif id:sub(1, 5) == "book:" then
             where = "Aperte L (ou vá até o livro sobre a mesa, ao norte) para ler a entrada do registro."
+        elseif Flow.placeOf(id) then
+            where = "Esse papel não está na cova. Procure o brilho de papel " .. N.places[Flow.placeOf(id)].where .. "."
         else
             where = "Examine a sepultura " .. number .. " e leia o documento \"" .. Flow.sourceTitle(id) .. "\"."
         end
