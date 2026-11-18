@@ -55,19 +55,21 @@ local HOTSPOTS = {
 }
 
 -- Atmosfera por noite (cores sRGB). zenith/moonDisc/stars/clouds alimentam o shader do céu.
+-- Névoa exponencial ao quadrado: quase limpa a poucos metros, fecha rápido depois de ~15 m
+-- e esconde a borda do mapa. A cor clara faz a névoa "aparecer" contra as silhuetas.
 local NIGHT_LOOK = {
-    [1] = { fog = { 0.08, 0.09, 0.14 }, density = 0.045, moon = { 0.60, 0.70, 1.00 }, moonI = 1.6,
+    [1] = { fog = { 0.30, 0.33, 0.40 }, density = 0.085, moon = { 0.60, 0.70, 1.00 }, moonI = 1.6,
             zenith = { 0.025, 0.035, 0.075 }, moonDisc = { 0.85, 0.90, 1.00 }, stars = 1.0, clouds = 0.50 },
-    [2] = { fog = { 0.07, 0.10, 0.10 }, density = 0.050, moon = { 0.55, 0.78, 0.80 }, moonI = 1.4,
+    [2] = { fog = { 0.27, 0.33, 0.33 }, density = 0.092, moon = { 0.55, 0.78, 0.80 }, moonI = 1.4,
             zenith = { 0.020, 0.045, 0.055 }, moonDisc = { 0.80, 0.95, 0.90 }, stars = 0.8, clouds = 0.62 },
-    [3] = { fog = { 0.11, 0.06, 0.07 }, density = 0.058, moon = { 0.78, 0.60, 0.70 }, moonI = 1.2,
+    [3] = { fog = { 0.33, 0.25, 0.27 }, density = 0.100, moon = { 0.78, 0.60, 0.70 }, moonI = 1.2,
             zenith = { 0.045, 0.020, 0.035 }, moonDisc = { 1.00, 0.72, 0.65 }, stars = 0.5, clouds = 0.75 },
 }
 
 local ENDING_LOOK = {
-    preserve = { fog = { 0.05, 0.05, 0.07 }, density = 0.090, moon = { 0.45, 0.50, 0.70 }, moonI = 0.8,
+    preserve = { fog = { 0.10, 0.10, 0.13 }, density = 0.100, moon = { 0.45, 0.50, 0.70 }, moonI = 0.8,
                  zenith = { 0.012, 0.014, 0.025 }, moonDisc = { 0.50, 0.55, 0.65 }, stars = 0.1, clouds = 0.92 },
-    reveal   = { fog = { 0.16, 0.13, 0.12 }, density = 0.020, moon = { 1.00, 0.90, 0.80 }, moonI = 2.4,
+    reveal   = { fog = { 0.22, 0.19, 0.18 }, density = 0.045, moon = { 1.00, 0.90, 0.80 }, moonI = 2.4,
                  zenith = { 0.060, 0.070, 0.130 }, moonDisc = { 1.00, 0.95, 0.85 }, stars = 1.8, clouds = 0.25 },
 }
 
@@ -184,6 +186,8 @@ function WorldController:init()
     end
 
     self.fog = Fog(s, find(s, "Fog"))
+    local okType, err = pcall(function() self.fog.type = FogType.EXPONENTIALSQUARED end)
+    if not okType then Log.print("WorldController: fog type not set: " .. tostring(err)) end
     self.moon = Light(s, find(s, "Moon"))
     local skyEntity = find(s, "Sky")
     if skyEntity then
@@ -921,7 +925,7 @@ end
 
 function WorldController:onMistake()
     -- Consequência simbólica: a névoa engrossa um pouco a cada erro e a lua some por um instante
-    self.extraFog = math.min(self.extraFog + 0.008, 0.04)
+    self.extraFog = math.min(self.extraFog + 0.006, 0.03)
     self.fog.density = self.baseFogDensity + self.extraFog
     self.dim = 1.2
 end

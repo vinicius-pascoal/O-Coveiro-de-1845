@@ -434,6 +434,37 @@ function SelfTest.demoSteps(hud)
     }
 end
 
+-- Vistas do cenário (atmosfera): olha para o centro e para as bordas do mapa
+function SelfTest.demoViewSteps(hud)
+    local world = Flow.worldController
+    local function place(x, z, yaw, pitch)
+        world.character.position = Vector3(x, 0.05, z)
+        world.yaw, world.pitch = yaw, pitch or -4
+        world:applyLook()
+    end
+    local night = SelfTest.viewNight or 1
+    return {
+        { 0.5, function()
+            clickOverlay(hud, "Iniciar")
+            hud:finishReveal(); clickOverlay(hud, "Pular")
+            Flow.state.night = night
+            hud:finishReveal(); clickOverlay(hud, "Começar")
+            place(0, 13, 0)
+        end },
+        { 2.0, function() end },                         -- 2: do portão para dentro
+        { 0.3, function() place(0, 13, 180) end },
+        { 1.2, function() end },                         -- 4: para fora do portão
+        { 0.3, function() place(-9, -10, 90) end },
+        { 1.2, function() end },                         -- 6: borda oeste
+        { 0.3, function() place(9, 0, -90) end },
+        { 1.2, function() end },                         -- 8: borda leste
+        { 0.3, function() place(2, -14, 0) end },
+        { 1.2, function() end },                         -- 10: fundo (norte)
+        { 0.3, function() place(0, 0, 30, 2) end },
+        { 1.2, function() end },                         -- 12: centro, olhando o horizonte
+    }
+end
+
 -- Demonstração do guia: pula para a noite 3, acompanha Benedito pela trilha e mostra a despedida
 function SelfTest.demoGuideSteps(hud)
     local world = Flow.worldController
