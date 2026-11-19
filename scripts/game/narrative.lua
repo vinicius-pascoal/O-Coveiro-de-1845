@@ -540,7 +540,7 @@ N.menu = {
 
 N.controls = "W A S D (ou setas): andar   ·   Shift: correr   ·   Mouse: olhar\nE ou clique: examinar, pegar papéis e falar com os mortos sob a mira\nSegurar E diante da lápide: gravar a correção com o cinzel\nTab: caderno (sem pausar)   ·   L: livro de registros   ·   H: ajuda (sem penalidade)\nE ou Esc: fecha o painel aberto   ·   Esc: pausa o jogo\n\nControls (EN): WASD to walk, Shift to run, mouse to look. E or click to inspect, pick up papers and talk to the dead. Hold E at a gravestone to carve the correction. Tab toggles the notebook without pausing, L opens the record book, H gives a hint, E or Esc closes panels, Esc pauses. Game text is in Portuguese."
 
-N.credits = "O Coveiro de 1845: Os Nomes Esquecidos\nDoriax Flash Jam 2026\n\nModelos 3D: KayKit por Kay Lousberg — Halloween Bits, Dungeon Pack e RPG Tools Bits (CC0).\nFonte: Roboto (Google, Apache 2.0), fonte padrão do Doriax.\nMotor: Doriax Engine.\nCódigo e textos produzidos com auxílio de IA (Claude).\n\nTodas as pessoas, lugares e acontecimentos são ficcionais, inspirados no Sergipe da década de 1840."
+N.credits = "O Coveiro de 1845: Os Nomes Esquecidos\nDoriax Flash Jam 2026\n\nDesenvolvimento: Vinicius Pascoal Queiroz Maynard\n\nModelos 3D: KayKit por Kay Lousberg — Halloween Bits, Dungeon Pack e RPG Tools Bits (CC0).\nFonte: Roboto (Google, Apache 2.0), fonte padrão do Doriax.\nMotor: Doriax Engine.\nCódigo e textos produzidos com auxílio de IA (Claude).\n\nTodas as pessoas, lugares e acontecimentos são ficcionais, inspirados no Sergipe da década de 1840."
 
 ----------------------------------------------------------------------
 -- Prólogo (antes da Noite 1)
