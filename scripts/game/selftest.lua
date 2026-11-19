@@ -290,23 +290,47 @@ function SelfTest.run(hud, endingKind)
     check(hud.overlayMode == "options", "options expected")
     check(#hud.keySlots.OverlayBtn == 5, "options: Áudio, Controles, Texto, Restaurar, Voltar")
     local Settings = require("game.settings")
-    -- áudio: os três volumes voltam ao valor inicial depois de uma volta completa e ficam guardados
+    -- áudio: três sliders; o número escolhe, as setas mudam de 5 em 5 e o valor fica guardado
     clickOverlay(hud, "Áudio")
     check(hud.text.OverlayTitle.text == "Áudio", "audio section expected")
-    for kind, label in pairs({ master = "Volume geral", ambient = "Volume do ambiente", effects = "Volume dos efeitos" }) do
-        local vol0 = Settings.volumeIndex[kind]
-        clickOverlay(hud, label)
-        local okv, stored = pcall(UserSettings.getIntegerForKey, Settings.prefix .. "vol_" .. kind, -1)
-        check(okv and stored == Settings.volumeIndex[kind], kind .. " volume should be stored")
-        for _ = 2, #Settings.volumeLevels do clickOverlay(hud, label) end
-        check(Settings.volumeIndex[kind] == vol0, kind .. " volume should cycle back")
+    local LEFT, RIGHT = Input.KEY_LEFT, Input.KEY_RIGHT
+    for i, kind in ipairs({ "master", "ambient", "effects" }) do
+        local name = hud.keySlots.OverlayBtn[i]
+        check(hud.sliderSpec[name] ~= nil and hud.sliders[name].track.visible, kind .. " row should be a slider")
+        local vol0 = Settings.volumePct[kind]
+        hud:onKeyDown(({ Input.KEY_1, Input.KEY_2, Input.KEY_3 })[i], false, 0)
+        check(hud.sliderFocus == name, "digit " .. i .. " should focus the " .. kind .. " slider")
+        local dir = vol0 >= 5 and LEFT or RIGHT
+        hud:onKeyDown(dir, false, 0)
+        hud:onKeyDown(dir, true, 0)   -- segurar a tecla repete
+        local expected = vol0 + (dir == LEFT and -10 or 10)
+        check(Settings.volumePct[kind] == expected, kind .. " volume should move 10 with two presses")
+        local okv, stored = pcall(UserSettings.getIntegerForKey, Settings.prefix .. "volpct_" .. kind, -1)
+        check(okv and stored == expected, kind .. " volume should be stored")
+        check((hud.button[name].label or ""):find(Settings.volumeLabel(kind), 1, true) ~= nil, kind .. " label shows the value")
+        hud:setSliderValue(name, vol0); hud:commitSlider(name)
+        check(Settings.volumePct[kind] == vol0, kind .. " volume should return")
     end
+    -- arrastar: o valor segue a posição na barra e não passa dos limites
+    local master = hud.keySlots.OverlayBtn[1]
+    local v0 = Settings.volumePct.master
+    hud:setSliderValue(master, 150); check(Settings.volumePct.master == 100, "volume clamps at 100")
+    hud:setSliderValue(master, -3); check(Settings.volumePct.master == 0 and Settings.volumeLabel("master") == "Mudo", "volume clamps at Mudo")
+    hud:setSliderValue(master, 52); check(Settings.volumePct.master == 50, "volume snaps to 5%")
+    hud:setSliderValue(master, v0); hud:commitSlider(master)
+    check(hud.sliderRects[master] ~= nil, "slider rect should be laid out for the mouse")
     clickOverlay(hud, "Voltar")
-    -- controles: sensibilidade, eixo e a lista de atalhos (que saiu do menu inicial)
+    check(not hud.sliders[master].track.visible, "sliders hide outside their screen")
+    -- controles: sensibilidade (slider), eixo e a lista de atalhos (que saiu do menu inicial)
     clickOverlay(hud, "Controles")
-    local sens0 = Settings.sensitivityIndex
-    for _ = 1, #Settings.sensitivityLevels do clickOverlay(hud, "Sensibilidade") end
-    check(Settings.sensitivityIndex == sens0, "sensitivity should cycle back")
+    local sens0 = Settings.sensitivityLevel
+    local sensRow = hud.keySlots.OverlayBtn[1]
+    check(hud.sliderSpec[sensRow] ~= nil, "sensitivity should be a slider")
+    hud:onKeyDown(Input.KEY_RIGHT, false, 0)
+    check(Settings.sensitivityLevel == math.min(10, sens0 + 1), "right arrow raises sensitivity")
+    hud:setSliderValue(sensRow, 99); check(Settings.sensitivityLevel == 10, "sensitivity clamps at 10")
+    hud:setSliderValue(sensRow, sens0); hud:commitSlider(sensRow)
+    check(Settings.sensitivityLevel == sens0, "sensitivity should return")
     clickOverlay(hud, "Inverter"); clickOverlay(hud, "Inverter")
     clickOverlay(hud, "Ver atalhos")
     check(hud.overlayMode == "info" and not hud.overlayLogo.visible, "shortcuts list expected, without the logo")
@@ -321,7 +345,7 @@ function SelfTest.run(hud, endingKind)
     -- restaurar padrões: muda algo, confirma e volta tudo ao início
     local wasDefault = Settings.isDefault()
     if wasDefault then
-        clickOverlay(hud, "Áudio"); clickOverlay(hud, "Volume dos efeitos"); clickOverlay(hud, "Voltar")
+        clickOverlay(hud, "Áudio"); hud:onKeyDown(Input.KEY_3, false, 0); hud:onKeyDown(Input.KEY_LEFT, false, 0); clickOverlay(hud, "Voltar")
         check(not Settings.isDefault(), "changing a volume leaves the defaults")
         clickOverlay(hud, "Restaurar")
         clickOverlay(hud, "Sim, restaurar")
@@ -545,11 +569,24 @@ function SelfTest.demoMenuSteps(hud)
     return {
         { 0.5, function() useTestSaves(); hud:showMainMenu() end },                        -- 1: menu
         { 1.0, function() clickOverlay(hud, "Opções") end },                               -- 2: opções
-        { 1.0, function() clickOverlay(hud, "Áudio") end },                                -- 3: áudio
+        { 3.0, function()                                                                  -- 3: áudio (ambiente a 40%, foco nele)
+            clickOverlay(hud, "Áudio")
+            hud:onKeyDown(Input.KEY_2, false, 0)
+            for _ = 1, 12 do hud:onKeyDown(Input.KEY_LEFT, true, 0) end
+        end },
         { 1.0, function() clickOverlay(hud, "Voltar"); clickOverlay(hud, "Controles") end },  -- 4: controles
         { 1.0, function() clickOverlay(hud, "Ver atalhos") end },                          -- 5: atalhos
         { 1.0, function() clickOverlay(hud, "Voltar"); clickOverlay(hud, "Voltar"); clickOverlay(hud, "Texto e leitura") end }, -- 6
-        { 1.0, function() clickOverlay(hud, "Voltar"); clickOverlay(hud, "Voltar") end },  -- 7: menu de novo
+        { 1.0, function()                                                                  -- 7: texto grande + áudio
+            clickOverlay(hud, "Texto grande"); clickOverlay(hud, "Voltar"); clickOverlay(hud, "Controles")
+        end },
+        { 1.0, function()                                                                  -- 8: desfaz tudo
+            clickOverlay(hud, "Voltar"); clickOverlay(hud, "Texto e leitura"); clickOverlay(hud, "Texto grande")
+            hud:onKeyDown(Input.KEY_ESCAPE, false, 0); clickOverlay(hud, "Áudio")
+            hud:onKeyDown(Input.KEY_2, false, 0)
+            for _ = 1, 12 do hud:onKeyDown(Input.KEY_RIGHT, true, 0) end
+        end },
+        { 0.5, function() clickOverlay(hud, "Voltar"); clickOverlay(hud, "Voltar") end },  -- 9: menu de novo
     }
 end
 

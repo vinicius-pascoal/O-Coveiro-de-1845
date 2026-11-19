@@ -38,6 +38,7 @@ local ICONS = {
     home = "ui/horror/icon_home.png", x = "ui/horror/icon_x.png", check = "ui/horror/icon_check.png",
     plus = "ui/horror/icon_plus.png", minus = "ui/horror/icon_minus.png", pause = "ui/horror/icon_pause.png",
     candle = "ui/horror/candle.png", skull = "ui/horror/skull.png", tomb = "ui/horror/tombstone.png",
+    speaker = "ui/horror/icon_speaker.png", mute = "ui/horror/icon_mute.png",
     correct = "ui/horror/tile_check_on.png", wrong = "ui/horror/tile_x_on.png", help = "ui/horror/tile_help_hover.png",
 }
 local PROGRESS_ON = "ui/horror/tile_check_on.png"
@@ -130,6 +131,17 @@ end
 local OVERLAY_ALPHA = { menu = 0.30, options = 0.45, info = 0.50, pause = 0.45, confirm = 0.55, credits = 0.55 }
 local OVERLAY_ALPHA_DEFAULT = 0.78
 
+-- Sliders das opções: trilho à direita do botão (OverlayBtnNTrack, filho do botão,
+-- ancorado em CENTER_RIGHT), com preenchimento e marcador dentro dele
+local SLIDER_TRACK_W, SLIDER_TRACK_H, SLIDER_RIGHT = 170, 12, 26
+local SLIDER_INNER_PAD = 2
+local SLIDER_KNOB_W = 10
+local SLIDER_LABEL_X = 62          -- onde começa o texto do botão quando há slider (depois do ícone)
+local SLIDER_GRAB_PAD = 14         -- folga horizontal para pegar o trilho com o mouse
+local KNOB_COLOR = { 0.95, 0.86, 0.66 }
+local KNOB_COLOR_FOCUS = { 1.0, 0.62, 0.30 }
+local FOOTER_SLIDERS = "Arraste na barra ou use as setas   ·   1–4 escolhe   ·   Esc: voltar"
+
 local FOOTER_DEFAULT = "1–4 ou clique para escolher   ·   Enter: primeira opção"
 local FOOTER_BACK = "1–4 ou clique para escolher   ·   Esc: voltar"
 
@@ -215,8 +227,22 @@ function HUDController:init()
     for i = 1, PANEL_SLOTS do
         self.btnIcon["PanelBtn" .. i] = Image(s, findEntity(s, "PanelBtn" .. i .. "Icon"))
     end
+    self.sliders = {}        -- nome do botão -> peças do slider
+    self.sliderSpec = {}     -- nome do botão -> spec.slider da tela atual
     for i = 1, OVERLAY_SLOTS do
-        self.btnIcon["OverlayBtn" .. i] = Image(s, findEntity(s, "OverlayBtn" .. i .. "Icon"))
+        local name = "OverlayBtn" .. i
+        self.btnIcon[name] = Image(s, findEntity(s, name .. "Icon"))
+        local sl = {
+            track = Image(s, findEntity(s, name .. "Track")),
+            fill = Image(s, findEntity(s, name .. "Fill")),
+            knob = Image(s, findEntity(s, name .. "Knob")),
+            label = self.button[name]:getLabelObject(),
+        }
+        sl.track.visible = false
+        sl.track.width, sl.track.height = SLIDER_TRACK_W, SLIDER_TRACK_H
+        sl.track.positionOffset = Vector2(-SLIDER_RIGHT, 0)
+        sl.knob.width = SLIDER_KNOB_W
+        self.sliders[name] = sl
     end
     self.progressIcons = {}
     for i = 1, PROGRESS_ICONS do
@@ -404,6 +430,7 @@ local function assignButtons(self, prefix, slots, list)
         local btn = self.button[name]
         local index = i - first + 1
         local spec = (i >= first) and list[index] or nil
+        local slider = self.sliders and self.sliders[name]
         if spec then
             btn.visible = true
             btn.label = string.format("%d   %s", index, spec.label)
@@ -418,6 +445,20 @@ local function assignButtons(self, prefix, slots, list)
             setVisible(self.btnIcon[name], false)
             self.slotLabels[name] = nil
             self.actions[name] = nil
+        end
+        -- linha com slider: o clique no botão só escolhe o slider (o valor muda pela barra e pelas setas)
+        if slider then
+            local sliderSpec = spec and spec.slider or nil
+            self.sliderSpec[name] = sliderSpec
+            setVisible(slider.track, sliderSpec ~= nil)
+            if sliderSpec then
+                sliderSpec.index = index
+                self.actions[name] = function() self:focusSlider(name) end
+                self:refreshSlider(name)
+            elseif slider.labelShifted then
+                slider.label.positionOffset = Vector2(0, 0)
+                slider.labelShifted = false
+            end
         end
     end
     self.keySlots[prefix] = keys
@@ -654,8 +695,11 @@ function HUDController:showOverlay(spec)
     t.OverlaySubtitle.text = spec.subtitle or ""
     self:setRevealText(t.OverlayBody, spec.body or "", spec.reveal)
     -- o atalho do rodapé acompanha quantas opções a tela tem (Opções chega a 7)
-    local footer = spec.footer or (spec.back and FOOTER_BACK or FOOTER_DEFAULT)
     local nButtons = #(spec.buttons or {})
+    local hasSlider = false
+    for _, b in ipairs(spec.buttons or {}) do hasSlider = hasSlider or b.slider ~= nil end
+    if not hasSlider then self.sliderFocus = nil end
+    local footer = spec.footer or (hasSlider and FOOTER_SLIDERS) or (spec.back and FOOTER_BACK or FOOTER_DEFAULT)
     footer = footer:gsub("1–4", nButtons > 1 and ("1–" .. nButtons) or "1")
     t.OverlayFooter.text = footer
     -- só a cena escurece; o conteúdo fica num cartão do tamanho dele (OverlayCard)
@@ -740,10 +784,109 @@ function HUDController:layoutOverlay()
         setSize(self.overlayLogo, LOGO_SIZE, LOGO_SIZE)
         self:place(self.overlayLogo, 0, top + logoY)
     end
+    self.sliderRects = {}
     for i, name in ipairs(slots) do
-        self:place(self.button[name], 0, top + btnY + (i - 1) * (OVERLAY_BUTTON_H + OVERLAY_BUTTON_GAP))
+        local by = top + btnY + (i - 1) * (OVERLAY_BUTTON_H + OVERLAY_BUTTON_GAP)
+        self:place(self.button[name], 0, by)
+        local sl = self.sliders[name]
+        if self.sliderSpec[name] then
+            -- texto encostado à esquerda (depois do ícone), deixando a direita para o trilho
+            self:place(sl.label, -OVERLAY_BUTTON_W / 2 + SLIDER_LABEL_X + sl.label.width / 2, 0)
+            sl.labelShifted = true
+            local x0 = (canvasW - OVERLAY_BUTTON_W) / 2 + OVERLAY_BUTTON_W - SLIDER_RIGHT - SLIDER_TRACK_W
+            self.sliderRects[name] = { x0 = x0, x1 = x0 + SLIDER_TRACK_W, y0 = by, y1 = by + OVERLAY_BUTTON_H }
+        end
     end
     self:place(t.OverlayFooter, 0, top + footY)
+end
+
+----------------------------------------------------------------------
+-- Sliders (volume e sensibilidade nas opções)
+-- spec.slider = { name, min, max, keyStep, get = fn, set = fn(v), text = fn, icon = fn (opcional),
+--                 commit = fn (opcional, chamado ao soltar o mouse ou depois das setas) }
+----------------------------------------------------------------------
+function HUDController:refreshSlider(name)
+    local spec, sl = self.sliderSpec[name], self.sliders[name]
+    if not spec or not sl then return end
+    local range = spec.max - spec.min
+    local frac = range > 0 and clamp((spec.get() - spec.min) / range, 0, 1) or 0
+    self.button[name].label = string.format("%d   %s   %s", spec.index, spec.name, spec.text())
+    local inner = SLIDER_TRACK_W - 2 * SLIDER_INNER_PAD
+    local fillW = inner * frac
+    setVisible(sl.fill, fillW >= 1)
+    setSize(sl.fill, math.max(1, fillW), SLIDER_TRACK_H - 2 * SLIDER_INNER_PAD)
+    self:place(sl.knob, SLIDER_INNER_PAD + fillW - SLIDER_KNOB_W / 2, -7)
+    local c = (self.sliderFocus == name) and KNOB_COLOR_FOCUS or KNOB_COLOR
+    sl.knob:setColor(c[1], c[2], c[3], 1)
+    if spec.icon then self:setIcon(self.btnIcon[name], spec.icon()) end
+end
+
+function HUDController:focusSlider(name)
+    local old = self.sliderFocus
+    self.sliderFocus = name
+    if old and old ~= name then self:refreshSlider(old) end
+    self:refreshSlider(name)
+end
+
+-- Slider com foco (ou o primeiro da tela)
+function HUDController:currentSlider()
+    if self.sliderFocus and self.sliderSpec[self.sliderFocus] then return self.sliderFocus end
+    for _, name in ipairs(self.keySlots.OverlayBtn or {}) do
+        if self.sliderSpec[name] then return name end
+    end
+end
+
+function HUDController:setSliderValue(name, v)
+    local spec = self.sliderSpec[name]
+    if not spec then return end
+    spec.set(clamp(v, spec.min, spec.max))
+    self:refreshSlider(name)
+end
+
+function HUDController:commitSlider(name)
+    local spec = name and self.sliderSpec[name]
+    if spec and spec.commit then spec.commit() end
+end
+
+-- Setas (ou A/D) mudam o slider com foco
+function HUDController:nudgeSlider(dir)
+    local name = self:currentSlider()
+    if not name then return false end
+    local spec = self.sliderSpec[name]
+    if self.sliderFocus ~= name then self:focusSlider(name) end
+    self:setSliderValue(name, spec.get() + dir * spec.keyStep)
+    self:commitSlider(name)
+    return true
+end
+
+-- Mouse: apertar sobre um trilho pega o slider; arrastar muda o valor; soltar guarda
+function HUDController:updateSliderDrag()
+    local down = self.overlayOpen and Input.isMousePressed(Input.MOUSE_BUTTON_LEFT)
+    if down then
+        local m = Input.getMousePosition()
+        if not self.mouseWasDown then
+            self.dragSlider = nil
+            for name, r in pairs(self.sliderRects or {}) do
+                if self.sliderSpec[name] and m.x >= r.x0 - SLIDER_GRAB_PAD and m.x <= r.x1 + SLIDER_GRAB_PAD
+                    and m.y >= r.y0 and m.y <= r.y1 then
+                    self.dragSlider = name
+                    self:focusSlider(name)
+                end
+            end
+        end
+        local name = self.dragSlider
+        local r = name and self.sliderRects[name]
+        if r and self.sliderSpec[name] then
+            local spec = self.sliderSpec[name]
+            local inner = SLIDER_TRACK_W - 2 * SLIDER_INNER_PAD
+            local frac = clamp((m.x - r.x0 - SLIDER_INNER_PAD) / inner, 0, 1)
+            self:setSliderValue(name, spec.min + frac * (spec.max - spec.min))
+        end
+    elseif self.dragSlider then
+        self:commitSlider(self.dragSlider)
+        self.dragSlider = nil
+    end
+    self.mouseWasDown = down
 end
 
 -- Legenda: largura do texto (até TOAST_MAX_TEXT_W) + ícone + margens
@@ -1749,10 +1892,10 @@ function HUDController:showOptions(back)
         subtitle = "Salvas automaticamente",
         body = string.format(
             "Som: geral %s   ·   ambiente %s   ·   efeitos %s\n"
-            .. "Mouse: sensibilidade %s   ·   eixo vertical %s\n"
+            .. "Mouse: sensibilidade %s de 10   ·   eixo vertical %s\n"
             .. "Texto: %s   ·   %s",
             S.volumeLabel("master"), S.volumeLabel("ambient"), S.volumeLabel("effects"),
-            S.sensitivityLabel():lower(), S.invertY and "invertido" or "normal",
+            S.sensitivityLabel(), S.invertY and "invertido" or "normal",
             S.largeText and "grande" or "normal", S.animateText and "animado" or "instantâneo"),
         back = back,
         buttons = {
@@ -1768,25 +1911,34 @@ function HUDController:showOptions(back)
     })
 end
 
+-- Linha de volume com slider (0–100%, setas de 5 em 5)
+local function volumeSlider(kind, name)
+    return {
+        label = name, icon = Settings.volume(kind) > 0 and "speaker" or "mute",
+        slider = {
+            name = name, min = 0, max = 100, keyStep = 5,
+            get = function() return Settings.volumePct[kind] end,
+            set = function(v) Settings.setVolume(kind, v) end,
+            text = function() return Settings.volumeLabel(kind) end,
+            icon = function() return Settings.volume(kind) > 0 and "speaker" or "mute" end,
+            commit = Settings.save,
+        },
+    }
+end
+
 function HUDController:showOptionsAudio(back)
-    local refresh = function() self:showOptionsAudio(back) end
-    local function volumeButton(kind, name)
-        return { label = name .. ": " .. Settings.volumeLabel(kind), icon = Settings.volume(kind) > 0 and "play" or "x",
-            action = function() Settings.cycleVolume(kind); Settings.save(); refresh() end }
-    end
     self:showOverlay({
         mode = "options",
         title = "Áudio",
-        subtitle = "Clique para mudar: Mudo, 25%, 50%, 75%, 100%",
-        body = "Volume geral: todos os sons do jogo.\n"
+        subtitle = "Os sons mudam na hora",
+        body = "Geral: todos os sons do jogo.\n"
             .. "Ambiente: o vento e as rajadas sobre o cemitério.\n"
-            .. "Efeitos: passos, portões, rangidos, os mortos e os sussurros.\n"
-            .. "Os sons mudam na hora, então dá para ajustar ouvindo o vento ao fundo.",
+            .. "Efeitos: passos, portões, rangidos, os mortos e os sussurros.",
         back = back,
         buttons = {
-            volumeButton("master", "Volume geral"),
-            volumeButton("ambient", "Volume do ambiente"),
-            volumeButton("effects", "Volume dos efeitos"),
+            volumeSlider("master", "Geral"),
+            volumeSlider("ambient", "Ambiente"),
+            volumeSlider("effects", "Efeitos"),
             { label = "Voltar", icon = "home", action = back },
         },
     })
@@ -1798,14 +1950,18 @@ function HUDController:showOptionsControls(back)
         mode = "options",
         title = "Controles",
         subtitle = "Mouse e teclado",
-        body = "Sensibilidade do mouse: quanto a câmera gira ao mover o mouse.\n"
+        body = "Sensibilidade: quanto a câmera gira ao mover o mouse (1 a 10).\n"
             .. "Inverter eixo vertical: mover o mouse para cima olha para baixo.\n"
             .. "Durante o jogo, H abre a ajuda com estes atalhos e uma pista.",
         back = back,
         buttons = {
-            { label = "Sensibilidade do mouse: " .. Settings.sensitivityLabel(), icon = "gear", action = function()
-                Settings.cycleSensitivity(); Settings.save(); refresh()
-            end },
+            { label = "Sensibilidade", icon = "gear", slider = {
+                name = "Sensibilidade", min = Settings.SENSITIVITY_MIN, max = Settings.SENSITIVITY_MAX, keyStep = 1,
+                get = function() return Settings.sensitivityLevel end,
+                set = function(v) Settings.setSensitivity(v) end,
+                text = Settings.sensitivityLabel,
+                commit = Settings.save,
+            } },
             { label = "Inverter eixo vertical: " .. yesNo(Settings.invertY), icon = Settings.invertY and "check" or "x", action = function()
                 Settings.toggleInvertY(); Settings.save(); refresh()
             end },
@@ -1991,6 +2147,12 @@ function HUDController:pressSlot(n)
 end
 
 function HUDController:onKeyDown(key, isRepeat, mods)
+    -- setas (ou A/D) ajustam o slider com foco; segurar a tecla repete
+    if self.overlayOpen and not self.panelOpen then
+        local dir = (key == Input.KEY_LEFT or key == Input.KEY_A) and -1
+            or ((key == Input.KEY_RIGHT or key == Input.KEY_D) and 1) or nil
+        if dir and self:nudgeSlider(dir) then return end
+    end
     if isRepeat then return end
 
     -- Espaço completa o texto que está se escrevendo
@@ -2101,6 +2263,7 @@ function HUDController:onUpdate()
     self:updateReveal(dt)
     self:updateNotebook()
     self:updateBubble(dt)
+    self:updateSliderDrag()
 
     -- O motor mede os textos depois que eles mudam: refaz a diagramação com as medidas atuais
     if self.shrinkWait > 0 then self.shrinkWait = self.shrinkWait - 1 end

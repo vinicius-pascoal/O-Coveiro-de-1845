@@ -1,56 +1,61 @@
 -- Opções do jogador, compartilhadas entre as cenas World e HUD.
 -- Ficam guardadas no UserSettings do motor (o mesmo arquivo dos saves) e voltam ao abrir o jogo.
+-- Volume e sensibilidade são contínuos (ajustados por sliders); o resto liga e desliga.
 
 local Settings = {}
 
 Settings.prefix = "coveiro1845_opt_"
 
-Settings.sensitivityLevels = {
-    { label = "Baixa", value = 0.08 },
-    { label = "Média", value = 0.14 },
-    { label = "Alta", value = 0.22 },
-    { label = "Muito alta", value = 0.32 },
+-- Sensibilidade do mouse: nível de 1 a 10; o nível 4 equivale à antiga "Média" (0.14)
+Settings.SENSITIVITY_MIN, Settings.SENSITIVITY_MAX = 1, 10
+local SENSITIVITY_STEP = 0.035
+
+-- Volume em porcentagem (0–100). "master" vale para todos os sons; "ambient" para o vento
+-- e as rajadas; "effects" para o resto (passos, rangidos, grunhidos, sussurros)
+Settings.VOLUME_KINDS = { "master", "ambient", "effects" }
+
+local DEFAULTS = {
+    sensitivity = 4, invertY = false, largeText = false, animateText = true,
+    volume = { master = 100, ambient = 100, effects = 100 },
 }
 
-Settings.sensitivityIndex = 2
-Settings.invertY = false
-Settings.largeText = false
-Settings.animateText = true
+Settings.sensitivityLevel = DEFAULTS.sensitivity
+Settings.invertY = DEFAULTS.invertY
+Settings.largeText = DEFAULTS.largeText
+Settings.animateText = DEFAULTS.animateText
+Settings.volumePct = { master = 100, ambient = 100, effects = 100 }
+
+local function clampRound(v, lo, hi, step)
+    v = math.floor(v / step + 0.5) * step
+    if v < lo then return lo end
+    if v > hi then return hi end
+    return v
+end
 
 function Settings.sensitivity()
-    return Settings.sensitivityLevels[Settings.sensitivityIndex].value
+    return Settings.sensitivityLevel * SENSITIVITY_STEP
 end
 
 function Settings.sensitivityLabel()
-    return Settings.sensitivityLevels[Settings.sensitivityIndex].label
+    return tostring(Settings.sensitivityLevel)
 end
 
-function Settings.cycleSensitivity()
-    Settings.sensitivityIndex = Settings.sensitivityIndex % #Settings.sensitivityLevels + 1
+function Settings.setSensitivity(level)
+    Settings.sensitivityLevel = clampRound(level, Settings.SENSITIVITY_MIN, Settings.SENSITIVITY_MAX, 1)
 end
-
--- Volume: "master" vale para todos os sons; "ambient" para o vento e as rajadas;
--- "effects" para o resto (passos, rangidos, grunhidos, sussurros)
-Settings.volumeLevels = {
-    { label = "Mudo", value = 0 },
-    { label = "25%", value = 0.25 },
-    { label = "50%", value = 0.5 },
-    { label = "75%", value = 0.75 },
-    { label = "100%", value = 1.0 },
-}
-Settings.volumeIndex = { master = 5, ambient = 5, effects = 5 }
-Settings.VOLUME_KINDS = { "master", "ambient", "effects" }
 
 function Settings.volume(kind)
-    return Settings.volumeLevels[Settings.volumeIndex[kind]].value
+    return Settings.volumePct[kind] / 100
 end
 
 function Settings.volumeLabel(kind)
-    return Settings.volumeLevels[Settings.volumeIndex[kind]].label
+    local pct = Settings.volumePct[kind]
+    return pct == 0 and "Mudo" or (pct .. "%")
 end
 
-function Settings.cycleVolume(kind)
-    Settings.volumeIndex[kind] = Settings.volumeIndex[kind] % #Settings.volumeLevels + 1
+-- Volume em passos de 5%
+function Settings.setVolume(kind, pct)
+    Settings.volumePct[kind] = clampRound(pct, 0, 100, 5)
 end
 
 function Settings.toggleInvertY()
@@ -68,54 +73,48 @@ end
 ----------------------------------------------------------------------
 -- Persistência
 ----------------------------------------------------------------------
-local DEFAULTS = {
-    sensitivityIndex = 2, invertY = false, largeText = false, animateText = true,
-    volume = { master = 5, ambient = 5, effects = 5 },
-}
-
 local function setInt(k, v) pcall(UserSettings.setIntegerForKey, Settings.prefix .. k, v) end
 local function getInt(k, d)
     local ok, v = pcall(UserSettings.getIntegerForKey, Settings.prefix .. k, d)
     if ok and type(v) == "number" then return math.floor(v) end
     return d
 end
-local function inRange(v, max, d) if v >= 1 and v <= max then return v end return d end
 
 function Settings.save()
-    setInt("sensitivity", Settings.sensitivityIndex)
+    setInt("sens10", Settings.sensitivityLevel)
     setInt("invertY", Settings.invertY and 1 or 0)
     setInt("largeText", Settings.largeText and 1 or 0)
     setInt("animateText", Settings.animateText and 1 or 0)
-    for _, kind in ipairs(Settings.VOLUME_KINDS) do setInt("vol_" .. kind, Settings.volumeIndex[kind]) end
+    for _, kind in ipairs(Settings.VOLUME_KINDS) do setInt("volpct_" .. kind, Settings.volumePct[kind]) end
 end
 
 function Settings.load()
-    Settings.sensitivityIndex = inRange(getInt("sensitivity", DEFAULTS.sensitivityIndex), #Settings.sensitivityLevels, DEFAULTS.sensitivityIndex)
+    Settings.setSensitivity(getInt("sens10", DEFAULTS.sensitivity))
     Settings.invertY = getInt("invertY", DEFAULTS.invertY and 1 or 0) == 1
     Settings.largeText = getInt("largeText", DEFAULTS.largeText and 1 or 0) == 1
     Settings.animateText = getInt("animateText", DEFAULTS.animateText and 1 or 0) == 1
     for _, kind in ipairs(Settings.VOLUME_KINDS) do
-        Settings.volumeIndex[kind] = inRange(getInt("vol_" .. kind, DEFAULTS.volume[kind]), #Settings.volumeLevels, DEFAULTS.volume[kind])
+        Settings.setVolume(kind, getInt("volpct_" .. kind, DEFAULTS.volume[kind]))
     end
 end
 
 function Settings.isDefault()
-    if Settings.sensitivityIndex ~= DEFAULTS.sensitivityIndex or Settings.invertY ~= DEFAULTS.invertY
+    if Settings.sensitivityLevel ~= DEFAULTS.sensitivity or Settings.invertY ~= DEFAULTS.invertY
         or Settings.largeText ~= DEFAULTS.largeText or Settings.animateText ~= DEFAULTS.animateText then
         return false
     end
     for _, kind in ipairs(Settings.VOLUME_KINDS) do
-        if Settings.volumeIndex[kind] ~= DEFAULTS.volume[kind] then return false end
+        if Settings.volumePct[kind] ~= DEFAULTS.volume[kind] then return false end
     end
     return true
 end
 
 function Settings.resetDefaults()
-    Settings.sensitivityIndex = DEFAULTS.sensitivityIndex
+    Settings.sensitivityLevel = DEFAULTS.sensitivity
     Settings.invertY = DEFAULTS.invertY
     Settings.largeText = DEFAULTS.largeText
     Settings.animateText = DEFAULTS.animateText
-    for _, kind in ipairs(Settings.VOLUME_KINDS) do Settings.volumeIndex[kind] = DEFAULTS.volume[kind] end
+    for _, kind in ipairs(Settings.VOLUME_KINDS) do Settings.volumePct[kind] = DEFAULTS.volume[kind] end
     Settings.save()
 end
 
