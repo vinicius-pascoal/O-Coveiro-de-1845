@@ -119,11 +119,9 @@ function Soundscape:startLoop(s, volume)
     s:play()
 end
 
--- Volume escolhido nas Opções (ambient = vento e rajadas)
+-- Volume escolhido nas Opções (ambient = vento e rajadas; o resto são efeitos)
 local function mix(ambient)
-    local v = Settings.volume("master")
-    if ambient then v = v * Settings.volume("ambient") end
-    return v
+    return Settings.volume("master") * Settings.volume(ambient and "ambient" or "effects")
 end
 
 -- Toca um som uma vez. opts: volume, pan, speed, ambient

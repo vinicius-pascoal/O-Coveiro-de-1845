@@ -276,10 +276,11 @@ function SelfTest.run(hud, endingKind)
     useTestSaves()
     hud:showMainMenu()
     check(hud.overlayOpen and hud.overlayMode == "menu", "main menu expected")
-    check(hud.slotLabels.OverlayBtn4 == "Jogar", "without saves the menu starts with 'Jogar'")
-    clickOverlay(hud, "Controles")
-    check(not hud.overlayLogo.visible, "the KayKit logo belongs only to the credits")
-    clickOverlay(hud, "Voltar")
+    check(hud.slotLabels.OverlayBtn5 == "Jogar", "without saves the menu starts with 'Jogar'")
+    for _, label in pairs(hud.slotLabels) do
+        check(not label:find("Controles", 1, true), "the main menu no longer lists Controles")
+    end
+    check(#hud.keySlots.OverlayBtn == 3, "main menu without saves: Jogar, Opções, Créditos")
     clickOverlay(hud, "Créditos")
     check(hud.overlayLogo.visible, "menu credits should show the KayKit logo")
     clickOverlay(hud, "Voltar")
@@ -287,21 +288,45 @@ function SelfTest.run(hud, endingKind)
     -- opções: alterna tudo e volta ao estado original
     clickOverlay(hud, "Opções")
     check(hud.overlayMode == "options", "options expected")
+    check(#hud.keySlots.OverlayBtn == 5, "options: Áudio, Controles, Texto, Restaurar, Voltar")
     local Settings = require("game.settings")
+    -- áudio: os três volumes voltam ao valor inicial depois de uma volta completa e ficam guardados
+    clickOverlay(hud, "Áudio")
+    check(hud.text.OverlayTitle.text == "Áudio", "audio section expected")
+    for kind, label in pairs({ master = "Volume geral", ambient = "Volume do ambiente", effects = "Volume dos efeitos" }) do
+        local vol0 = Settings.volumeIndex[kind]
+        clickOverlay(hud, label)
+        local okv, stored = pcall(UserSettings.getIntegerForKey, Settings.prefix .. "vol_" .. kind, -1)
+        check(okv and stored == Settings.volumeIndex[kind], kind .. " volume should be stored")
+        for _ = 2, #Settings.volumeLevels do clickOverlay(hud, label) end
+        check(Settings.volumeIndex[kind] == vol0, kind .. " volume should cycle back")
+    end
+    clickOverlay(hud, "Voltar")
+    -- controles: sensibilidade, eixo e a lista de atalhos (que saiu do menu inicial)
+    clickOverlay(hud, "Controles")
     local sens0 = Settings.sensitivityIndex
     for _ = 1, #Settings.sensitivityLevels do clickOverlay(hud, "Sensibilidade") end
     check(Settings.sensitivityIndex == sens0, "sensitivity should cycle back")
-    -- volume: os dois botões aparecem e voltam ao valor inicial depois de uma volta completa
-    check(#hud.keySlots.OverlayBtn == 7, "options should show 7 buttons")
-    for _, kind in ipairs({ "master", "ambient" }) do
-        local vol0 = Settings.volumeIndex[kind]
-        local label = kind == "master" and "Volume geral" or "Volume do ambiente"
-        for _ = 1, #Settings.volumeLevels do clickOverlay(hud, label) end
-        check(Settings.volumeIndex[kind] == vol0, kind .. " volume should cycle back")
-    end
     clickOverlay(hud, "Inverter"); clickOverlay(hud, "Inverter")
+    clickOverlay(hud, "Ver atalhos")
+    check(hud.overlayMode == "info" and not hud.overlayLogo.visible, "shortcuts list expected, without the logo")
+    clickOverlay(hud, "Voltar")
+    check(hud.text.OverlayTitle.text == "Controles", "back from the shortcuts returns to the controls")
+    hud:onKeyDown(Input.KEY_ESCAPE, false, 0)
+    -- texto
+    clickOverlay(hud, "Texto e leitura")
     clickOverlay(hud, "Texto grande"); check(Settings.largeText, "large text on")
     clickOverlay(hud, "Texto grande"); check(not Settings.largeText, "large text off")
+    clickOverlay(hud, "Voltar")
+    -- restaurar padrões: muda algo, confirma e volta tudo ao início
+    local wasDefault = Settings.isDefault()
+    if wasDefault then
+        clickOverlay(hud, "Áudio"); clickOverlay(hud, "Volume dos efeitos"); clickOverlay(hud, "Voltar")
+        check(not Settings.isDefault(), "changing a volume leaves the defaults")
+        clickOverlay(hud, "Restaurar")
+        clickOverlay(hud, "Sim, restaurar")
+        check(Settings.isDefault() and hud.overlayMode == "options", "restore defaults should reset everything")
+    end
     hud:onKeyDown(Input.KEY_ESCAPE, false, 0)
     check(hud.overlayMode == "menu", "esc should return to menu")
     -- atalho numérico: 1 = Jogar -> saves; 1 = espaço 1 (vazio) -> prólogo
@@ -331,7 +356,7 @@ function SelfTest.run(hud, endingKind)
             local clues, notes, mistakes = #Flow.state.clueOrder, #Flow.state.notes, Flow.state.mistakes
             Flow.reset()
             hud:showMainMenu()
-            check((hud.slotLabels.OverlayBtn3 or ""):find("Continuar", 1, true) == 1, "menu should offer 'Continuar'")
+            check((hud.slotLabels.OverlayBtn4 or ""):find("Continuar", 1, true) == 1, "menu should offer 'Continuar'")
             clickOverlay(hud, "Continuar")
             check(hud.overlayMode == "night" and Flow.state.night == 2 and Saves.current == 1, "loading should reopen night 2")
             check(Flow.state.resolved.c1 and Flow.state.resolved.c2, "loaded save should keep the resolved cases")
@@ -353,7 +378,7 @@ function SelfTest.run(hud, endingKind)
             hud:openPause()
             check(hud.overlayMode == "pause", "pause expected")
             clickOverlay(hud, "Salvar jogo")
-            check(hud.overlayMode == "pause" and hud.slotLabels.OverlayBtn4 == "Jogo salvo", "manual save should confirm")
+            check(hud.overlayMode == "pause" and hud.slotLabels.OverlayBtn5 == "Jogo salvo", "manual save should confirm")
             check(Saves.info(1) and Saves.info(1).night == 1, "manual save should write slot 1")
             clickOverlay(hud, "Voltar ao menu")
             check(hud.overlayMode == "confirm", "confirm expected")
@@ -459,7 +484,7 @@ function SelfTest.run(hud, endingKind)
     check(Saves.info(1) and Saves.info(1).ending == endingKind, "slot 1 should record the ending")
     clickOverlay(hud, "Jogar novamente")
     check(hud.overlayMode == "menu" and Flow.state.phase == "menu", "back to menu expected")
-    check(hud.slotLabels.OverlayBtn4 == "Jogar", "a finished campaign is not offered as 'Continuar'")
+    check(hud.slotLabels.OverlayBtn5 == "Jogar", "a finished campaign is not offered as 'Continuar'")
     clickOverlay(hud, "Jogar")
     check((hud.slotLabels.OverlayBtn3 or ""):find("concluído", 1, true) ~= nil, "slot 1 should show as finished")
     clickOverlay(hud, "Apagar um save")
@@ -512,6 +537,19 @@ function SelfTest.demoSteps(hud)
         { 2.0, function() world.forceChiselHold = false end },     -- 14: gravado: morto desaba, legenda conta
         { 1.0, function() hud:setNotebookOpen(true) end },         -- 15: caderno com Tab, sem pausa
         { 1.5, function() hud:setNotebookOpen(false) end },        -- 16: fim
+    }
+end
+
+-- Telas do menu inicial e das opções, uma por passo
+function SelfTest.demoMenuSteps(hud)
+    return {
+        { 0.5, function() useTestSaves(); hud:showMainMenu() end },                        -- 1: menu
+        { 1.0, function() clickOverlay(hud, "Opções") end },                               -- 2: opções
+        { 1.0, function() clickOverlay(hud, "Áudio") end },                                -- 3: áudio
+        { 1.0, function() clickOverlay(hud, "Voltar"); clickOverlay(hud, "Controles") end },  -- 4: controles
+        { 1.0, function() clickOverlay(hud, "Ver atalhos") end },                          -- 5: atalhos
+        { 1.0, function() clickOverlay(hud, "Voltar"); clickOverlay(hud, "Voltar"); clickOverlay(hud, "Texto e leitura") end }, -- 6
+        { 1.0, function() clickOverlay(hud, "Voltar"); clickOverlay(hud, "Voltar") end },  -- 7: menu de novo
     }
 end
 

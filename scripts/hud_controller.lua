@@ -105,7 +105,7 @@ local REVEAL_CHARS_PER_SECOND = 70
 -- Botões do topo só aparecem com o cursor livre (painel aberto); na exploração o
 -- mouse fica preso e os atalhos L / H / Esc fazem o mesmo papel.
 local TOP_BUTTONS = { "BtnBook", "BtnHelp", "BtnPause" }
--- Atalhos aparecem na barra só durante a primeira noite; depois ficam na Pausa > Controles
+-- Atalhos aparecem na barra só durante a primeira noite; depois ficam em Opções > Controles e na Ajuda (H)
 local KEY_HINTS = "E examinar  ·  Tab caderno  ·  L livro  ·  H ajuda  ·  Esc pausa"
 
 local PANEL_SLOTS = 6
@@ -240,6 +240,7 @@ function HUDController:init()
     self.sayQueue = {}
     self.reveal = nil
 
+    Settings.load()
     self:applyTextSize()
 
     RegisterEngineEvent(self, "onUpdate")
@@ -655,7 +656,7 @@ function HUDController:showOverlay(spec)
     -- o atalho do rodapé acompanha quantas opções a tela tem (Opções chega a 7)
     local footer = spec.footer or (spec.back and FOOTER_BACK or FOOTER_DEFAULT)
     local nButtons = #(spec.buttons or {})
-    if nButtons > 1 then footer = footer:gsub("1–4", "1–" .. nButtons) end
+    footer = footer:gsub("1–4", nButtons > 1 and ("1–" .. nButtons) or "1")
     t.OverlayFooter.text = footer
     -- só a cena escurece; o conteúdo fica num cartão do tamanho dele (OverlayCard)
     self.overlayBg:setColor(0, 0, 0, OVERLAY_ALPHA[spec.mode] or OVERLAY_ALPHA_DEFAULT)
@@ -1616,7 +1617,6 @@ function HUDController:showMainMenu()
         action = function() self:showSlots(false) end }
     for _, b in ipairs({
             { label = "Opções", icon = "gear", action = function() self:showOptions(function() self:showMainMenu() end) end },
-            { label = "Controles", icon = "question", action = function() self:showInfo("Controles", N.controls, function() self:showMainMenu() end) end },
             { label = "Créditos", icon = "candle", action = function() self:showInfo("Créditos", N.credits, function() self:showMainMenu() end, true) end },
         }) do
         buttons[#buttons + 1] = b
@@ -1736,37 +1736,102 @@ function HUDController:showInfo(title, body, back, logo)
     })
 end
 
--- Opções: cada botão alterna um valor e a tela se redesenha com o novo estado
+-- Opções: uma tela com as seções; cada seção alterna valores e se redesenha com o novo estado.
+-- Tudo é guardado na hora (Settings.save) e volta na próxima vez que o jogo abrir.
+local function yesNo(v) return v and "Sim" or "Não" end
+
 function HUDController:showOptions(back)
-    local refresh = function() self:showOptions(back) end
+    local here = function() self:showOptions(back) end
+    local S = Settings
     self:showOverlay({
         mode = "options",
         title = "Opções",
-        subtitle = "Valem até fechar o jogo",
-        body = "Volume geral: todos os sons do jogo. Ambiente: o vento e as rajadas.\n"
-            .. "Sensibilidade do mouse: quanto a câmera gira ao mover o mouse.\n"
-            .. "Inverter eixo vertical: mover o mouse para cima olha para baixo.\n"
-            .. "Texto grande: aumenta os textos dos painéis, documentos e avisos.\n"
-            .. "Texto animado: documentos e cenas se escrevem aos poucos (Espaço completa).",
+        subtitle = "Salvas automaticamente",
+        body = string.format(
+            "Som: geral %s   ·   ambiente %s   ·   efeitos %s\n"
+            .. "Mouse: sensibilidade %s   ·   eixo vertical %s\n"
+            .. "Texto: %s   ·   %s",
+            S.volumeLabel("master"), S.volumeLabel("ambient"), S.volumeLabel("effects"),
+            S.sensitivityLabel():lower(), S.invertY and "invertido" or "normal",
+            S.largeText and "grande" or "normal", S.animateText and "animado" or "instantâneo"),
         back = back,
         buttons = {
-            { label = "Volume geral: " .. Settings.volumeLabel("master"), icon = Settings.volume("master") > 0 and "play" or "x", action = function()
-                Settings.cycleVolume("master"); refresh()
+            { label = "Áudio", icon = "play", action = function() self:showOptionsAudio(here) end },
+            { label = "Controles", icon = "question", action = function() self:showOptionsControls(here) end },
+            { label = "Texto e leitura", icon = "candle", action = function() self:showOptionsText(here) end },
+            { label = "Restaurar padrões", icon = "minus", disabled = S.isDefault(), action = function()
+                self:confirm("Restaurar os padrões?", "Volume, mouse e texto voltam aos valores iniciais. Seus saves não são afetados.",
+                    "Sim, restaurar", function() S.resetDefaults(); self:applyTextSize(); here() end, here)
             end },
-            { label = "Volume do ambiente: " .. Settings.volumeLabel("ambient"), icon = Settings.volume("ambient") > 0 and "play" or "x", action = function()
-                Settings.cycleVolume("ambient"); refresh()
-            end },
+            { label = "Voltar", icon = "home", action = back },
+        },
+    })
+end
+
+function HUDController:showOptionsAudio(back)
+    local refresh = function() self:showOptionsAudio(back) end
+    local function volumeButton(kind, name)
+        return { label = name .. ": " .. Settings.volumeLabel(kind), icon = Settings.volume(kind) > 0 and "play" or "x",
+            action = function() Settings.cycleVolume(kind); Settings.save(); refresh() end }
+    end
+    self:showOverlay({
+        mode = "options",
+        title = "Áudio",
+        subtitle = "Clique para mudar: Mudo, 25%, 50%, 75%, 100%",
+        body = "Volume geral: todos os sons do jogo.\n"
+            .. "Ambiente: o vento e as rajadas sobre o cemitério.\n"
+            .. "Efeitos: passos, portões, rangidos, os mortos e os sussurros.\n"
+            .. "Os sons mudam na hora, então dá para ajustar ouvindo o vento ao fundo.",
+        back = back,
+        buttons = {
+            volumeButton("master", "Volume geral"),
+            volumeButton("ambient", "Volume do ambiente"),
+            volumeButton("effects", "Volume dos efeitos"),
+            { label = "Voltar", icon = "home", action = back },
+        },
+    })
+end
+
+function HUDController:showOptionsControls(back)
+    local refresh = function() self:showOptionsControls(back) end
+    self:showOverlay({
+        mode = "options",
+        title = "Controles",
+        subtitle = "Mouse e teclado",
+        body = "Sensibilidade do mouse: quanto a câmera gira ao mover o mouse.\n"
+            .. "Inverter eixo vertical: mover o mouse para cima olha para baixo.\n"
+            .. "Durante o jogo, H abre a ajuda com estes atalhos e uma pista.",
+        back = back,
+        buttons = {
             { label = "Sensibilidade do mouse: " .. Settings.sensitivityLabel(), icon = "gear", action = function()
-                Settings.cycleSensitivity(); refresh()
+                Settings.cycleSensitivity(); Settings.save(); refresh()
             end },
-            { label = "Inverter eixo vertical: " .. (Settings.invertY and "Sim" or "Não"), icon = Settings.invertY and "check" or "x", action = function()
-                Settings.toggleInvertY(); refresh()
+            { label = "Inverter eixo vertical: " .. yesNo(Settings.invertY), icon = Settings.invertY and "check" or "x", action = function()
+                Settings.toggleInvertY(); Settings.save(); refresh()
             end },
-            { label = "Texto grande: " .. (Settings.largeText and "Sim" or "Não"), icon = Settings.largeText and "check" or "x", action = function()
-                Settings.toggleLargeText(); self:applyTextSize(); refresh()
+            { label = "Ver atalhos do teclado", icon = "question", action = function()
+                self:showInfo("Atalhos do teclado", N.controls, refresh)
             end },
-            { label = "Texto animado: " .. (Settings.animateText and "Sim" or "Não"), icon = Settings.animateText and "check" or "x", action = function()
-                Settings.toggleAnimateText(); refresh()
+            { label = "Voltar", icon = "home", action = back },
+        },
+    })
+end
+
+function HUDController:showOptionsText(back)
+    local refresh = function() self:showOptionsText(back) end
+    self:showOverlay({
+        mode = "options",
+        title = "Texto e leitura",
+        subtitle = "Documentos, cartas e avisos",
+        body = "Texto grande: aumenta os textos dos painéis, documentos e avisos.\n"
+            .. "Texto animado: documentos e cenas se escrevem aos poucos. Espaço mostra o texto todo de uma vez.",
+        back = back,
+        buttons = {
+            { label = "Texto grande: " .. yesNo(Settings.largeText), icon = Settings.largeText and "check" or "x", action = function()
+                Settings.toggleLargeText(); Settings.save(); self:applyTextSize(); refresh()
+            end },
+            { label = "Texto animado: " .. yesNo(Settings.animateText), icon = Settings.animateText and "check" or "x", action = function()
+                Settings.toggleAnimateText(); Settings.save(); refresh()
             end },
             { label = "Voltar", icon = "home", action = back },
         },
@@ -1834,7 +1899,6 @@ function HUDController:openPause(savedNow)
             { label = savedNow and "Jogo salvo" or "Salvar jogo", icon = savedNow and "check" or "tomb", disabled = not slot,
               action = function() Saves.save(); self:openPause(true) end },
             { label = "Opções", icon = "gear", action = function() self:showOptions(function() self:openPause() end) end },
-            { label = "Controles", icon = "question", action = function() self:showInfo("Controles", N.controls, function() self:openPause() end) end },
             { label = "Voltar ao menu principal", icon = "home", action = function()
                 self:confirm("Voltar ao menu principal?",
                     slot and ("O jogo será salvo no espaço " .. slot .. ". Ao continuar, você volta a esta noite, no mesmo lugar, com tudo o que já descobriu.")
